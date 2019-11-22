@@ -1,0 +1,8 @@
+alt + Return
+	urxvt
+
+super + @space
+	rofi -show run -font "consolas 20"
+
+super + Return
+	killall karmen

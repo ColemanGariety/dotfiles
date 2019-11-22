@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=RetroTux
+Description=Retro Tux theme.
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/RetroTux
+ScriptFile=/usr/share/plymouth/themes/RetroTux/RetroTux.script
