@@ -1,5 +1,5 @@
 alt + Return
-	urxvt
+	konsole
 
 super + @space
 	rofi -show run -font "consolas 20"

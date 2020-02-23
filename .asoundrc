@@ -1,9 +1,0 @@
-pcm.!default {
-    type hw
-    card Generic
-}
-
-ctl.!default {
-    type hw
-    card Generic
-}

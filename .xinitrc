@@ -5,10 +5,11 @@ xrdb ~/.Xresources
 xset m 3/2 0
 xset r rate 200 30
 
-compton -o 0.25 -r 5 -l -3 -t -3 --backend xrender -I 1 -O 1 &
+# compton -o 0.25 -r 5 -l -3 -t -3 --backend xrender -I 1 -O 1 &
+picom -r 7 -o .33 -D 0 --no-fading-openclose --experimental-backends --vsync --backend glx --use-damage &
 xscreensaver -no-splash &
 emacs --daemon &
-# conky &
-redshift -l 45.5155:122.6793 -t 6500K:3000K &
+conky &
+# redshift -l 45.5155:122.6793 -t 6500K:3000K &
 sxhkd &
 exec karmen
