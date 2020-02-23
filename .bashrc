@@ -23,8 +23,8 @@ export GOPATH="/home/coleman/Git/go/"
 export DYNAMO_ENDPOINT="http://localhost:8000"
 
 # path
-PATH=$PATH:~/.cargo/bin
-PATH=$PATH:~/.bin
+PATH=$PATH:$HOME/.cargo/bin
+PATH=$PATH:$HOME/.bin
 
 # TERM
 TERM=xterm-256color
