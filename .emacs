@@ -7,7 +7,7 @@
 
 (defvar gc-cons-threshold-original)
 (setq gc-cons-threshold-original gc-cons-threshold)
-(setq gc-cons-threshold (* 1024 1024 100))
+(setq gc-cons-threshold most-positive-fixnum)
 
 (defvar file-name-handler-alist-original)
 (setq file-name-handler-alist-original file-name-handler-alist)
@@ -41,15 +41,20 @@
  '(ansi-term-color-vector
    [unspecified "#2d2a2e" "#ff6188" "#a9dc76" "#ffd866" "#78dce8" "#ab9df2" "#ff6188" "#fcfcfa"])
  '(c-basic-offset 4)
+ '(company-backends
+   (quote
+    (company-tide company-semantic company-capf company-files
+                  (company-dabbrev-code company-gtags company-keywords)
+                  company-oddmuse company-dabbrev)))
  '(company-idle-delay 0)
- '(company-minimum-prefix-length 1)
+ '(company-minimum-prefix-length 2)
  '(compilation-message-face (quote default))
  '(css-indent-offset 2)
- '(cua-rectangle-modifier-key (quote meta))
  '(custom-safe-themes
    (quote
     ("0fffa9669425ff140ff2ae8568c7719705ef33b7a927a0ba7c5e2ffcfac09b75" "09cadcc2784baa744c6a7c5ebf2a30df59c275414768b0719b800cabd8d1b842" "669e02142a56f63861288cc585bee81643ded48a19e36bfdf02b66d745bcc626" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "40f6a7af0dfad67c0d4df2a1dd86175436d79fc69ea61614d668a635c2cd94ab" default)))
- '(focus-dimness 1)
+ '(flycheck-temp-prefix ".flycheck")
+ '(focus-dimness nil)
  '(frame-background-mode (quote dark))
  '(haskell-indentation-cycle-warn nil)
  '(haskell-interactive-mode-eval-mode nil)
@@ -57,14 +62,13 @@
  '(helm-default-prompt-display-function (quote evil-collection-helm--set-prompt-display))
  '(helm-ff-file-name-history-use-recentf t)
  '(helm-ff-search-library-in-sexp t)
- '(helm-mode nil)
  '(helm-move-to-line-cycle-in-source t)
  '(helm-scroll-amount 8)
  '(helm-split-window-inside-p t)
- '(helm-swoop-pre-input-function (lambda nil ""))
+ '(helm-swoop-pre-input-function (lambda nil))
  '(package-selected-packages
    (quote
-    (simpleclip rjsx-mode solarized-theme gruvbox-theme monokai-pro-theme one-dark-theme atom-one-dark-theme nord-theme doom-modeline auto-compile spaceline-config spaceline powerline-evil purescript-mode general tide json-mode evil-collection avy typescript-mode handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers powerline svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term helm-ag go-autocomplete go-mode smex pophint evil-avy grizzl slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils color-theme-solarized auctex ace-flyspell)))
+    (helm-adaptive diredfl company-prescient evil-vimish-fold move-text rainbow-delimiters helm-swoop doom-themes solarized-theme one-dark-theme doom-modeline auto-compile spaceline-config spaceline purescript-mode general tide json-mode evil-collection avy typescript-mode handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term helm-ag go-autocomplete go-mode smex pophint evil-avy grizzl slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils color-theme-solarized)))
  '(projectile-enable-caching t)
  '(show-paren-delay 0.0)
  '(showkey-log-mode nil)
@@ -78,102 +82,28 @@
  '(window-divider-default-places (quote right-only))
  '(window-divider-mode t))
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ac-candidate-face ((t (:inherit popup-face :background "black" :foreground "brightyellow"))))
- '(ac-candidate-mouse-face ((t (:background "black" :foreground "cyan"))))
- '(ac-completion-face ((t (:foreground "brightgreen"))))
- '(ac-selection-face ((t (:inherit popup-menu-selection-face :background "black" :foreground "green"))))
- '(avy-lead-face ((t (:background "#e52b50" :foreground "black"))))
- '(avy-lead-face-0 ((t (:background "#4f57f9" :foreground "black"))))
- '(border ((t nil)))
- '(cursor ((t (:background "#93a1a1" :height 1.0))))
- '(flycheck-error ((t (:inherit error :background "white" :foreground "red" :underline t))))
- '(flycheck-info ((t (:inherit success :background "red" :foreground "white" :underline nil))))
- '(flycheck-warning ((t (:inherit warning :background "yellow" :foreground "white" :underline t))))
- '(font-lock-type-face ((t (:foreground "magenta"))))
- '(font-lock-variable-name-face ((t (:foreground "yellow"))))
- '(helm-bookmark-directory ((t (:inherit nil))))
- '(helm-buffer-directory ((t (:foreground "DarkRed"))))
- '(helm-ff-directory ((t (:background "brightblack" :foreground "green"))))
- '(helm-ff-dotted-directory ((t nil)))
- '(helm-ff-executable ((t (:foreground "red" :weight bold))))
- '(helm-header ((t (:background "brightyellow" :foreground "black"))))
- '(helm-header-line-left-margin ((t nil)))
- '(helm-prefarg ((t (:foreground "green"))))
- '(helm-selection ((t (:inherit region :background "white" :foreground "black" :weight normal))))
- '(helm-source-header ((t (:inherit helm-header :background "brightblack" :foreground "cyan" :weight bold))))
- '(helm-visible-mark ((t (:background "brightblack" :foreground "blue" :weight bold))))
- '(mode-line ((t (:background "black" :foreground "brightyellow" :inverse-video t :box nil))))
- '(mode-line-highlight ((t (:box (:line-width 2 :color "grey40" :style released-button)))))
- '(mode-line-inactive ((t (:background "brightgreen" :foreground "black" :inverse-video t :box nil))))
- '(region ((t (:inverse-video t))))
- '(term-color-white ((t (:background "white" :foreground "white"))))
- '(vertical-border ((t (:background "black" :foreground "brightgreen" :inverse-video nil))))
- '(web-mode-block-delimiter-face ((t (:inherit font-lock-preprocessor-face :foreground "brightred"))))
- '(web-mode-css-variable-face ((t (:inherit web-mode-variable-name-face :foreground "brightred" :slant italic))))
- '(web-mode-filter-face ((t (:inherit font-lock-function-name-face))))
- '(web-mode-function-call-face ((t (:inherit font-lock-function-name-face))))
- '(web-mode-function-name-face ((t (:inherit font-lock-function-name-face :foreground "brightred"))))
- '(web-mode-html-attr-name-face ((t (:foreground "yellow"))))
- '(web-mode-html-attr-value-face ((t (:inherit font-lock-string-face :foreground "cyan"))))
- '(web-mode-html-tag-bracket-face ((t (:foreground "yellow"))))
- '(web-mode-html-tag-face ((t (:foreground "yellow"))))
- '(web-mode-javascript-comment-face ((t (:inherit web-mode-comment-face :foreground "brightgreen"))))
- '(web-mode-javascript-string-face ((t (:inherit web-mode-string-face))))
- '(web-mode-type-face ((t (:inherit font-lock-type-face :foreground "yellow"))))
- '(web-mode-variable-name-face ((t (:inherit default :foreground "magenta")))))
-
 ;;;;;;;;;;;;
 ;; Nudity ;;
 ;;;;;;;;;;;;
 
-;; (transient-mark-mode t)     ;; show region, drop mark
-;; (global-font-lock-mode t)   ;; for all buffers
-;; (global-visual-line-mode t) ;; word-wrap
-;; (setq shift-select-mode nil) ;; Shift select
+(transient-mark-mode t)     ;; show region, drop mark
+(global-font-lock-mode t)   ;; for all buffers
+(global-visual-line-mode t) ;; word-wrap
+(setq shift-select-mode nil) ;; Shift select
 (show-paren-mode t)         ;; show matching parentheses
-;; (setq initial-scratch-message ";; ^    first non-whitespace
-;; ;; mx   set mark
-;; ;; 'x   go to mark
-;; ;; '.   last changed line
-;; ;; zz   center cursor line
-;; ;; C-o  previous location
-;; ;; C-i  next location
-;; ;; #    previous token under cursor
-;; ;; *    next token under cursor
-
-;; ;; cc   replace line
-;; ;; C    change to end of line
-;; ;; D    delete to end of line
-;; ;; ci(  change in parens (or anything)
-;; ;; cib  change current block
-;; ;; I    insert at first non-whitespace")
 (setq initial-scratch-message nil)
 (setq load-prefer-newer t)
 (setq initial-buffer-choice t)
-;; (setq inhibit-startup-screen t)
-;; (scroll-bar-mode -1)
+(setq inhibit-startup-screen t)
+(scroll-bar-mode -1)
 (menu-bar-mode -1)
-;; (tool-bar-mode 0)
-;; (setq visible-bell nil)
-;; (setq ring-bell-function 'ignore)
+(tool-bar-mode 0)
+(setq visible-bell nil)
+(setq ring-bell-function 'ignore)
 (save-place-mode)
-;; (blink-cursor-mode 0)
-;; (setq visible-cursor nil)
-;; (set-face-inverse-video-p 'vertical-border nil)
-;; (setq-default mode-line-format (list (make-string 10 ? )
-;;                                      "%b"
-;;                                      "%*"
-;;                                      (make-string 10 ? )
-;;                                      "%l,%c"
-;;                                      (make-string 10 ? )))
-;; (set-display-table-slot standard-display-table
-;;                         'vertical-border
-;;                         (make-glyph-code ?|))
+(blink-cursor-mode 0)
+(setq visible-cursor nil)
+(set-face-inverse-video 'vertical-border nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package management ;;
@@ -203,7 +133,6 @@
 (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
 (add-to-list 'auto-mode-alist '("\\.sld\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
-(add-to-list 'auto-mode-alist '("\\.conf\\'" . xml-mode))
 
 ;;;;;;;;;;;;;;;;;
 ;; Auto-compie ;;
@@ -224,20 +153,6 @@
 ;; Mode line ;;
 ;;;;;;;;;;;;;;;
 
-;; (use-package powerline
-;;   :ensure t
-;;   :init
-;;   (powerline-evil-center-color-theme))
-
-;; (use-package powerline-evil
-;;   :ensure t)
-
-;; (use-package spaceline
-;;   :ensure t
-;;   :config
-;;   (spaceline-spacemacs-theme)
-;;   (setq spaceline-highlight-face-fun 'spaceline-highlight-face-evil-state))
-
 (use-package doom-modeline
   :ensure t
   :init
@@ -256,23 +171,13 @@
   (global-evil-surround-mode)
   (evil-collection-init)
   (evil-mode)
-  (evil-set-initial-state 'erc-mode 'insert)
+  (define-key evil-normal-state-map "\C-j" 'move-text-down)
+  (define-key evil-normal-state-map "\C-k" 'move-text-up)
+  (define-key evil-normal-state-map "\C-j" 'move-text-down)
   (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
   (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
   (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
   (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-  (define-key evil-normal-state-map "\C-a" 'evil-beginning-of-line)
-  (define-key evil-insert-state-map "\C-a" 'beginning-of-line)
-  (define-key evil-visual-state-map "\C-a" 'evil-beginning-of-line)
-  (define-key evil-motion-state-map "\C-a" 'evil-beginning-of-line)
-  (define-key evil-normal-state-map "\C-e" 'evil-end-of-line)
-  (define-key evil-insert-state-map "\C-e" 'end-of-line)
-  (define-key evil-visual-state-map "\C-e" 'evil-end-of-line)
-  (define-key evil-motion-state-map "\C-e" 'evil-end-of-line)
-  (define-key evil-normal-state-map "\C-k" 'kill-line)
-  (define-key evil-insert-state-map "\C-k" 'kill-line)
-  (define-key evil-visual-state-map "\C-k" 'kill-line)
-  (define-key evil-motion-state-map "\C-k" 'kill-line)
   (define-key evil-normal-state-map "\C-n" 'evil-next-line)
   (define-key evil-insert-state-map "\C-n" 'evil-next-line)
   (define-key evil-visual-state-map "\C-n" 'evil-next-line)
@@ -286,9 +191,25 @@
 (use-package evil-surround
   :ensure t)
 
-;;;;;;:;;
-;; Avy ;;
-;;;;;;;;;
+(use-package move-text
+  :ensure t)
+
+;;;;;;;;;;;;;;
+;; Hideshow ;;
+;;;;;;;;;;;;;;
+
+(add-hook 'c-mode-common-hook   'hs-minor-mode)
+(add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
+(add-hook 'java-mode-hook       'hs-minor-mode)
+(add-hook 'lisp-mode-hook       'hs-minor-mode)
+(add-hook 'perl-mode-hook       'hs-minor-mode)
+(add-hook 'sh-mode-hook         'hs-minor-mode)
+(add-hook 'web-mode-hook        'hs-minor-mode)
+(add-hook 'purescript-mode-hook 'hs-minor-mode)
+
+;;;;;;:;;;;;;;;;;;;
+;; Easymotion(s) ;;
+;;;;;;;;;;;;;;;;;;;
 
 (use-package avy
   :ensure t)
@@ -302,8 +223,16 @@
   (general-define-key
    :states '(normal visual motion)
    :keymaps 'override
-   "SPC" 'avy-goto-char-2))
+   "SPC" 'evil-avy-goto-char-2))
 
+;;;;;;;;;;;
+;; Dired ;;
+;;;;;;;;;;;
+
+(use-package diredfl
+  :ensure t
+  :init
+  (diredfl-global-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Completion (Company, Auto-Complete) ;;
@@ -313,6 +242,10 @@
   :ensure t
   :init
   (add-hook 'after-init-hook 'global-company-mode))
+
+(use-package company-prescient
+  :ensure t
+  :hook (company-mode . company-prescient-mode))
 
 ;;;;;;;;;;;;;;;
 ;; Helm Mode ;;
@@ -328,7 +261,7 @@
   (helm-mode 1)
   (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
   (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; makes TAB work in terminal
-  (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+  ;; (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
   (setq helm-split-window-inside-p           t ; open helm buffer inside current window, not occupy whole other window
 	helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
 	helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
@@ -347,70 +280,18 @@
   (global-set-key (kbd "C-x C-b") 'helm-mini)
 
   ;; A lil' performance
-  (remove-hook 'find-file-hooks 'vc-find-file-hook))
+  (remove-hook 'find-file-hooks 'vc-find-file-hook)
+
+  ;; adaptive
+  (with-eval-after-load 'helm
+    (helm-adaptive-mode t nil (helm-adaptive))))
 
 (use-package helm-ag
   :ensure t)
 
-;;;;;;;;;;;;;;
-;; Windmove ;;
-;;;;;;;;;;;;;;
-
-(global-set-key (kbd "C-q") 'kill-buffer-and-window)
-
-;; Buffer swaping
-(defun buffer-up-swap()
-  (interactive)
-  (let ((current-window (selected-window))
-	(current-buffer (buffer-name))
-	(swaped-window nil)
-	(swaped-buffer nil))
-    (progn (windmove-up)
-	   (setq swaped-window (selected-window))
-	   (setq swaped-buffer (buffer-name))
-	   (if (and (not (string= swaped-buffer current-buffer)))
-	       (progn (set-window-buffer swaped-window current-buffer)
-		      (set-window-buffer current-window swaped-buffer))))))
-
-(defun buffer-down-swap()
-  (interactive)
-  (let ((current-window (selected-window))
-	(current-buffer (buffer-name))
-	(swaped-window nil)
-	(swaped-buffer nil))
-    (progn (windmove-down)
-	   (setq swaped-window (selected-window))
-	   (setq swaped-buffer (buffer-name))
-	   (if (and (not (string= swaped-buffer current-buffer)))
-	       (progn (set-window-buffer swaped-window current-buffer)
-		      (set-window-buffer current-window swaped-buffer))))))
-
-(defun buffer-right-swap()
-  (interactive)
-  (let ((current-window (selected-window))
-	(current-buffer (buffer-name))
-	(swaped-window nil)
-	(swaped-buffer nil))
-    (progn (windmove-right)
-	   (setq swaped-window (selected-window))
-	   (setq swaped-buffer (buffer-name))
-	   (if (and (not (string= swaped-buffer current-buffer)))
-	       (progn (set-window-buffer swaped-window current-buffer)
-		      (set-window-buffer current-window swaped-buffer))))))
-
-(defun buffer-left-swap()
-  (interactive)
-  (let ((current-window (selected-window))
-	(current-buffer (buffer-name))
-	(swaped-window nil)
-	(swaped-buffer nil))
-    (progn (windmove-left)
-	   (setq swaped-window (selected-window))
-	   (setq swaped-buffer (buffer-name))
-	   (if (and (not (string= swaped-buffer current-buffer)))
-	       (progn (set-window-buffer swaped-window current-buffer)
-		      (set-window-buffer current-window swaped-buffer))))))
-
+;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Management ;;
+;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; keys
 (define-key global-map (kbd "M-k") 'windmove-up)
@@ -421,10 +302,7 @@
 (define-key global-map (kbd "M-J") 'evil-window-split)
 (define-key global-map (kbd "M-H") 'evil-window-vsplit)
 (define-key global-map (kbd "M-L") 'evil-window-vsplit)
-(define-key global-map (kbd "C-M-j") 'buffer-down-swap)
-(define-key global-map (kbd "C-M-k") 'buffer-up-swap)
-(define-key global-map (kbd "C-M-h") 'buffer-left-swap)
-(define-key global-map (kbd "C-M-l") 'buffer-right-swap)
+(define-key global-map (kbd "C-q") 'delete-window)
 
 ;;;;;;;;;;;;;;;;
 ;; Copy/paste ;;
@@ -467,30 +345,15 @@
 ;; Solarized ;;
 ;;;;;;;;;;;;;;;
 
-(use-package color-theme-solarized
+;; (use-package color-theme-solarized
+;;   :ensure t
+;;   :init
+;;   (load-theme 'solarized t))
+
+(use-package doom-themes
   :ensure t
   :init
-  (load-theme 'solarized t))
-
-;; (use-package atom-one-dark-theme
-;;   :ensure t
-;;   :init
-;;   (load-theme 'atom-one-dark t))
-
-;; (use-package monokai-pro-theme
-;;   :ensure t
-;;   :init
-;;   (load-theme 'monokai-pro t))
-
-;; (use-package gruvbox-theme
-;;   :ensure t
-;;   :init
-;;   (load-theme 'gruvbox t))
-
-;; (use-package nord-theme
-;;   :ensure t
-;;   :init
-;;   (load-theme 'nord))
+  (load-theme 'doom-one t))
 
 ;;;;;;;;;;;;;;
 ;; Flycheck ;;
@@ -525,6 +388,14 @@
   ;; (flycheck-disable-checker 'tsx-tide)
   ;; (flycheck-disable-checker 'typescript-eslint))
 
+;;;;;;;;;;;;;
+;; Rainbow ;;
+;;;;;;;;;;;;;
+
+(use-package rainbow-delimiters
+  :init
+  (add-hook 'web-mode-hook #'rainbow-delimiters-mode))
+
 ;;;;;;;;;;;;
 ;; Etc... ;;
 ;;;;;;;;;;;;
@@ -533,7 +404,7 @@
 (setq large-file-warning-threshold 100000) ;; Large file warning
 (setq mode-require-final-newline t) ;; Newlines
 ;; Scrolling
-;; (setq scroll-margin 4)
+(setq scroll-margin 4)
 ;; (setq scroll-step 1)
 (setq scroll-conservatively 1)
 ;; (setq scroll-margin 4
@@ -570,3 +441,14 @@
 (electric-pair-mode) ;; electric pair
 ;; single quotes too
 (push '(?\' . ?\') electric-pair-pairs)
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(avy-lead-face ((t (:background "#51afef" :foreground "brightblack" :weight bold))))
+ '(font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground "color-239")))))
+
+(provide '.emacs)
+;;; .emacs ends here

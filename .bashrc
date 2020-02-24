@@ -25,6 +25,7 @@ export DYNAMO_ENDPOINT="http://localhost:8000"
 # path
 PATH=$PATH:$HOME/.cargo/bin
 PATH=$PATH:$HOME/.bin
+PATH=$PATH:$HOME/.emacs.d/bin
 
 # TERM
 TERM=xterm-256color
