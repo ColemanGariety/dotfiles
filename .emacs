@@ -5,9 +5,11 @@
 ;; Performance ;;
 ;;;;;;;;;;;;;;;;;
 
+(defvar gc-cons-threshold-original)
 (setq gc-cons-threshold-original gc-cons-threshold)
 (setq gc-cons-threshold (* 1024 1024 100))
 
+(defvar file-name-handler-alist-original)
 (setq file-name-handler-alist-original file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
@@ -36,17 +38,17 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["black" "red" "green" "yellow" "PaleBlue" "magenta" "cyan" "white"])
+ '(ansi-term-color-vector
+   [unspecified "#2d2a2e" "#ff6188" "#a9dc76" "#ffd866" "#78dce8" "#ab9df2" "#ff6188" "#fcfcfa"])
  '(c-basic-offset 4)
- '(company-idle-delay 0.25)
+ '(company-idle-delay 0)
  '(company-minimum-prefix-length 1)
  '(compilation-message-face (quote default))
  '(css-indent-offset 2)
  '(cua-rectangle-modifier-key (quote meta))
  '(custom-safe-themes
    (quote
-    ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "40f6a7af0dfad67c0d4df2a1dd86175436d79fc69ea61614d668a635c2cd94ab" default)))
+    ("0fffa9669425ff140ff2ae8568c7719705ef33b7a927a0ba7c5e2ffcfac09b75" "09cadcc2784baa744c6a7c5ebf2a30df59c275414768b0719b800cabd8d1b842" "669e02142a56f63861288cc585bee81643ded48a19e36bfdf02b66d745bcc626" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "40f6a7af0dfad67c0d4df2a1dd86175436d79fc69ea61614d668a635c2cd94ab" default)))
  '(focus-dimness 1)
  '(frame-background-mode (quote dark))
  '(haskell-indentation-cycle-warn nil)
@@ -58,12 +60,11 @@
  '(helm-mode nil)
  '(helm-move-to-line-cycle-in-source t)
  '(helm-scroll-amount 8)
- '(helm-split-window-in-side-p t)
  '(helm-split-window-inside-p t)
  '(helm-swoop-pre-input-function (lambda nil ""))
  '(package-selected-packages
    (quote
-    (purescript-mode general tide json-mode evil-collection avy typescript-mode handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers powerline svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term helm-ag go-autocomplete go-mode smex pophint evil-avy grizzl slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils color-theme-solarized auctex ace-flyspell)))
+    (simpleclip rjsx-mode solarized-theme gruvbox-theme monokai-pro-theme one-dark-theme atom-one-dark-theme nord-theme doom-modeline auto-compile spaceline-config spaceline powerline-evil purescript-mode general tide json-mode evil-collection avy typescript-mode handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers powerline svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term helm-ag go-autocomplete go-mode smex pophint evil-avy grizzl slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils color-theme-solarized auctex ace-flyspell)))
  '(projectile-enable-caching t)
  '(show-paren-delay 0.0)
  '(showkey-log-mode nil)
@@ -93,7 +94,8 @@
  '(flycheck-error ((t (:inherit error :background "white" :foreground "red" :underline t))))
  '(flycheck-info ((t (:inherit success :background "red" :foreground "white" :underline nil))))
  '(flycheck-warning ((t (:inherit warning :background "yellow" :foreground "white" :underline t))))
- '(font-lock-variable-name-face ((t (:foreground "magenta"))))
+ '(font-lock-type-face ((t (:foreground "magenta"))))
+ '(font-lock-variable-name-face ((t (:foreground "yellow"))))
  '(helm-bookmark-directory ((t (:inherit nil))))
  '(helm-buffer-directory ((t (:foreground "DarkRed"))))
  '(helm-ff-directory ((t (:background "brightblack" :foreground "green"))))
@@ -109,15 +111,20 @@
  '(mode-line-highlight ((t (:box (:line-width 2 :color "grey40" :style released-button)))))
  '(mode-line-inactive ((t (:background "brightgreen" :foreground "black" :inverse-video t :box nil))))
  '(region ((t (:inverse-video t))))
- '(show-paren-match ((t nil)))
  '(term-color-white ((t (:background "white" :foreground "white"))))
  '(vertical-border ((t (:background "black" :foreground "brightgreen" :inverse-video nil))))
+ '(web-mode-block-delimiter-face ((t (:inherit font-lock-preprocessor-face :foreground "brightred"))))
+ '(web-mode-css-variable-face ((t (:inherit web-mode-variable-name-face :foreground "brightred" :slant italic))))
+ '(web-mode-filter-face ((t (:inherit font-lock-function-name-face))))
  '(web-mode-function-call-face ((t (:inherit font-lock-function-name-face))))
- '(web-mode-html-attr-value-face ((t (:inherit font-lock-string-face :foreground "yellow"))))
- '(web-mode-html-tag-bracket-face ((t (:foreground "white"))))
- '(web-mode-html-tag-face ((t (:foreground "white"))))
+ '(web-mode-function-name-face ((t (:inherit font-lock-function-name-face :foreground "brightred"))))
+ '(web-mode-html-attr-name-face ((t (:foreground "yellow"))))
+ '(web-mode-html-attr-value-face ((t (:inherit font-lock-string-face :foreground "cyan"))))
+ '(web-mode-html-tag-bracket-face ((t (:foreground "yellow"))))
+ '(web-mode-html-tag-face ((t (:foreground "yellow"))))
  '(web-mode-javascript-comment-face ((t (:inherit web-mode-comment-face :foreground "brightgreen"))))
  '(web-mode-javascript-string-face ((t (:inherit web-mode-string-face))))
+ '(web-mode-type-face ((t (:inherit font-lock-type-face :foreground "yellow"))))
  '(web-mode-variable-name-face ((t (:inherit default :foreground "magenta")))))
 
 ;;;;;;;;;;;;
@@ -128,7 +135,7 @@
 ;; (global-font-lock-mode t)   ;; for all buffers
 ;; (global-visual-line-mode t) ;; word-wrap
 ;; (setq shift-select-mode nil) ;; Shift select
-;; (show-paren-mode nil)         ;; show matching parentheses
+(show-paren-mode t)         ;; show matching parentheses
 ;; (setq initial-scratch-message ";; ^    first non-whitespace
 ;; ;; mx   set mark
 ;; ;; 'x   go to mark
@@ -146,6 +153,8 @@
 ;; ;; cib  change current block
 ;; ;; I    insert at first non-whitespace")
 (setq initial-scratch-message nil)
+(setq load-prefer-newer t)
+(setq initial-buffer-choice t)
 ;; (setq inhibit-startup-screen t)
 ;; (scroll-bar-mode -1)
 (menu-bar-mode -1)
@@ -194,6 +203,45 @@
 (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
 (add-to-list 'auto-mode-alist '("\\.sld\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+(add-to-list 'auto-mode-alist '("\\.conf\\'" . xml-mode))
+
+;;;;;;;;;;;;;;;;;
+;; Auto-compie ;;
+;;;;;;;;;;;;;;;;;
+
+(use-package auto-compile
+  :ensure t
+  :config
+  (auto-compile-on-load-mode)
+  (auto-compile-on-save-mode)
+  (setq auto-compile-display-buffer nil)
+  (setq auto-compile-mode-line-counter t)
+  (setq auto-compile-source-recreate-deletes-dest t)
+  (setq auto-compile-toggle-deletes-nonlib-dest t)
+  (setq auto-compile-update-autoloads t))
+
+;;;;;;;;;;;;;;;
+;; Mode line ;;
+;;;;;;;;;;;;;;;
+
+;; (use-package powerline
+;;   :ensure t
+;;   :init
+;;   (powerline-evil-center-color-theme))
+
+;; (use-package powerline-evil
+;;   :ensure t)
+
+;; (use-package spaceline
+;;   :ensure t
+;;   :config
+;;   (spaceline-spacemacs-theme)
+;;   (setq spaceline-highlight-face-fun 'spaceline-highlight-face-evil-state))
+
+(use-package doom-modeline
+  :ensure t
+  :init
+  (doom-modeline-mode))
 
 ;;;;;;;;;;;;;;;
 ;; Evil Mode ;;
@@ -203,8 +251,7 @@
   :ensure t
   :init
   (setq evil-want-keybinding nil)
-  (setq-default evil-cross-lines nil)
-  (setq-default evil-kill-on-visual-paste nil)
+  (setq-default evil-cross-lines t)
   :config
   (global-evil-surround-mode)
   (evil-collection-init)
@@ -282,7 +329,7 @@
   (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
   (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; makes TAB work in terminal
   (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-  (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+  (setq helm-split-window-inside-p           t ; open helm buffer inside current window, not occupy whole other window
 	helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
 	helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
 	helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
@@ -290,7 +337,7 @@
 
   ;; Helm + Projectile
   (helm-projectile-on)
-  (projectile-global-mode)
+  (projectile-mode)
   (global-set-key (kbd "C-x C-d") 'helm-projectile-find-file)
   (global-set-key (kbd "C-x C-g") 'helm-projectile-ag)
   (global-set-key (kbd "M-x") 'helm-M-x)
@@ -309,7 +356,7 @@
 ;; Windmove ;;
 ;;;;;;;;;;;;;;
 
-(global-set-key (kbd "C-q") 'delete-window)
+(global-set-key (kbd "C-q") 'kill-buffer-and-window)
 
 ;; Buffer swaping
 (defun buffer-up-swap()
@@ -416,8 +463,6 @@
       (setq interprogram-cut-function 'xsel-cut-function)
       (setq interprogram-paste-function 'xsel-paste-function))))
 
-;; (require 'cl)
-
 ;;;;;;;;;;;;;;;
 ;; Solarized ;;
 ;;;;;;;;;;;;;;;
@@ -426,6 +471,26 @@
   :ensure t
   :init
   (load-theme 'solarized t))
+
+;; (use-package atom-one-dark-theme
+;;   :ensure t
+;;   :init
+;;   (load-theme 'atom-one-dark t))
+
+;; (use-package monokai-pro-theme
+;;   :ensure t
+;;   :init
+;;   (load-theme 'monokai-pro t))
+
+;; (use-package gruvbox-theme
+;;   :ensure t
+;;   :init
+;;   (load-theme 'gruvbox t))
+
+;; (use-package nord-theme
+;;   :ensure t
+;;   :init
+;;   (load-theme 'nord))
 
 ;;;;;;;;;;;;;;
 ;; Flycheck ;;
@@ -437,14 +502,8 @@
   (global-flycheck-mode)
   ;; disable jshint since we prefer eslint checking
   (setq flycheck-check-syntax-automatically '(save))
-  (setq-default flycheck-disabled-checkers
-		(append flycheck-disabled-checkers
-			'(javascript-jshint)))
   ;; customize flycheck temp file prefix
-  (setq-default flycheck-temp-prefix ".flycheck")
-  :config
-  (flycheck-add-mode 'javascript-eslint 'web-mode))
-
+  (setq-default flycheck-temp-prefix ".flycheck"))
 
 ;;;;;;;;;;
 ;; Tide ;;
@@ -460,11 +519,11 @@
   (tide-setup)
   (flycheck-mode +1)
   (eldoc-mode +1)
-  (company-mode +1)
-  (flycheck-add-next-checker 'typescript-tslint 'javascript-eslint 'append)
-  (flycheck-add-next-checker 'tsx-tide 'javascript-eslint 'append)
-  (flycheck-disable-checker 'tsx-tide)
-  (flycheck-disable-checker 'typescript-eslint))
+  (company-mode +1))
+  ;; (flycheck-add-next-checker 'typescript-tslint 'javascript-eslint 'append)
+  ;; (flycheck-add-next-checker 'tsx-tide 'javascript-eslint 'append)
+  ;; (flycheck-disable-checker 'tsx-tide)
+  ;; (flycheck-disable-checker 'typescript-eslint))
 
 ;;;;;;;;;;;;
 ;; Etc... ;;
@@ -474,11 +533,13 @@
 (setq large-file-warning-threshold 100000) ;; Large file warning
 (setq mode-require-final-newline t) ;; Newlines
 ;; Scrolling
-(setq redisplay-dont-pause nil
-      scroll-margin 4
-      scroll-step 1
-      scroll-conservatively 10000
-      scroll-preserve-screen-position 1)
+;; (setq scroll-margin 4)
+;; (setq scroll-step 1)
+(setq scroll-conservatively 1)
+;; (setq scroll-margin 4
+;;       ;; scroll-step 1
+;;       scroll-conservatively 10000
+;;       scroll-preserve-screen-position 1)
 (setq column-number-mode t) ;; Column numbers in modeline
 
 ;; Remove whitespace on save (web-mode + ruby-mode)
@@ -504,7 +565,7 @@
 ;; (set-selection-coding-system 'utf-8)
 ;; (prefer-coding-system 'utf-8)
 
-;; (setq-default indent-tabs-mode nil) ;; soft Tabs
+(setq-default indent-tabs-mode nil) ;; soft Tabs
 ;; (-default tab-width 2)
 (electric-pair-mode) ;; electric pair
 ;; single quotes too

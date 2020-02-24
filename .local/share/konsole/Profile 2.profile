@@ -2,7 +2,8 @@
 AntiAliasFonts=true
 BoldIntense=true
 ColorScheme=Solarized
-Font=Hasklig Medium,10,-1,5,57,0,0,0,0,0,Regular
+Font=Cascadia Code,10,-1,5,50,0,0,0,0,0,Regular
+LineSpacing=0
 UseFontLineChararacters=false
 
 [Cursor Options]
@@ -12,8 +13,10 @@ UseCustomCursorColor=false
 [General]
 Name=Profile 2
 Parent=FALLBACK/
+TerminalCenter=true
 TerminalColumns=80
-TerminalRows=23
+TerminalMargin=1
+TerminalRows=25
 
 [Keyboard]
 KeyBindings=default
