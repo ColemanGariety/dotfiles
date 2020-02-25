@@ -68,7 +68,7 @@
  '(helm-swoop-pre-input-function (lambda nil))
  '(package-selected-packages
    (quote
-    (helm-adaptive diredfl company-prescient evil-vimish-fold move-text rainbow-delimiters helm-swoop doom-themes solarized-theme one-dark-theme doom-modeline auto-compile spaceline-config spaceline purescript-mode general tide json-mode evil-collection avy typescript-mode handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term helm-ag go-autocomplete go-mode smex pophint evil-avy grizzl slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils color-theme-solarized)))
+    (evil-easymotion easymotion helm-adaptive diredfl company-prescient evil-vimish-fold move-text rainbow-delimiters helm-swoop doom-themes solarized-theme one-dark-theme doom-modeline auto-compile spaceline-config spaceline purescript-mode general tide json-mode evil-collection avy typescript-mode handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term helm-ag go-autocomplete go-mode smex pophint evil-avy grizzl slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils color-theme-solarized)))
  '(projectile-enable-caching t)
  '(show-paren-delay 0.0)
  '(showkey-log-mode nil)
@@ -104,6 +104,27 @@
 (blink-cursor-mode 0)
 (setq visible-cursor nil)
 (set-face-inverse-video 'vertical-border nil)
+(setq scroll-error-top-bottom t) ;; Pgdn & Pgup work properly
+(setq large-file-warning-threshold 100000) ;; Large file warning
+(setq mode-require-final-newline t) ;; Newlines
+(setq scroll-margin 4)
+(setq scroll-conservatively 1)
+(setq column-number-mode t) ;; Column numbers in modeline
+(delete-selection-mode) ;; Replace selection
+(fset 'yes-or-no-p 'y-or-n-p) ;; Changes all yes/no questions to y/n type
+(setq create-lockfiles nil) ;; Disable lockfiles in server mode
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(setq-default indent-tabs-mode nil) ;; soft Tabs
+(electric-pair-mode) ;; electric pair
+(push '(?\' . ?\') electric-pair-pairs) ;; single quote pairs
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package management ;;
@@ -280,11 +301,11 @@
   (global-set-key (kbd "C-x C-b") 'helm-mini)
 
   ;; A lil' performance
-  (remove-hook 'find-file-hooks 'vc-find-file-hook)
+  (remove-hook 'find-file-hooks 'vc-find-file-hook))
 
-  ;; adaptive
-  (with-eval-after-load 'helm
-    (helm-adaptive-mode t nil (helm-adaptive))))
+(use-package helm-adaptive
+  :config
+  (helm-adaptive-mode))
 
 (use-package helm-ag
   :ensure t)
@@ -383,10 +404,11 @@
   (flycheck-mode +1)
   (eldoc-mode +1)
   (company-mode +1))
-  ;; (flycheck-add-next-checker 'typescript-tslint 'javascript-eslint 'append)
-  ;; (flycheck-add-next-checker 'tsx-tide 'javascript-eslint 'append)
-  ;; (flycheck-disable-checker 'tsx-tide)
-  ;; (flycheck-disable-checker 'typescript-eslint))
+
+(add-hook 'web-mode-hook
+          (lambda ()
+            (add-to-list 'write-file-functions
+                         'delete-trailing-whitespace)))
 
 ;;;;;;;;;;;;;
 ;; Rainbow ;;
@@ -396,51 +418,9 @@
   :init
   (add-hook 'web-mode-hook #'rainbow-delimiters-mode))
 
-;;;;;;;;;;;;
-;; Etc... ;;
-;;;;;;;;;;;;
-
-(setq scroll-error-top-bottom t) ;; Pgdn & Pgup work properly
-(setq large-file-warning-threshold 100000) ;; Large file warning
-(setq mode-require-final-newline t) ;; Newlines
-;; Scrolling
-(setq scroll-margin 4)
-;; (setq scroll-step 1)
-(setq scroll-conservatively 1)
-;; (setq scroll-margin 4
-;;       ;; scroll-step 1
-;;       scroll-conservatively 10000
-;;       scroll-preserve-screen-position 1)
-(setq column-number-mode t) ;; Column numbers in modeline
-
-;; Remove whitespace on save (web-mode + ruby-mode)
-(add-hook 'web-mode-hook
-	  (lambda ()
-	    (add-to-list 'write-file-functions
-			 'delete-trailing-whitespace)))
-
-(delete-selection-mode) ;; Replace selection
-(fset 'yes-or-no-p 'y-or-n-p) ;; Changes all yes/no questions to y/n type
-(setq create-lockfiles nil) ;; Disable lockfiles in server mode
-
-;; Store all backup and autosave files in the tmp dir
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-
-;; ;;; UTF-8 4 lyfe
-;; (setq locale-coding-system 'utf-8)
-;; (set-terminal-coding-system 'utf-8)
-;; (set-keyboard-coding-system 'utf-8)
-;; (set-selection-coding-system 'utf-8)
-;; (prefer-coding-system 'utf-8)
-
-(setq-default indent-tabs-mode nil) ;; soft Tabs
-;; (-default tab-width 2)
-(electric-pair-mode) ;; electric pair
-;; single quotes too
-(push '(?\' . ?\') electric-pair-pairs)
+;;;;;;;;;;;;;;;;;;;;;
+;; Custom faces... ;;
+;;;;;;;;;;;;;;;;;;;;;
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -448,6 +428,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(avy-lead-face ((t (:background "#51afef" :foreground "brightblack" :weight bold))))
+ '(font-lock-comment-face ((t (:foreground "#525252" :slant italic))))
  '(font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground "color-239")))))
 
 (provide '.emacs)
