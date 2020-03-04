@@ -7,6 +7,7 @@ xset r rate 200 30
 
 # compton -o 0.25 -r 5 -l -3 -t -3 --backend xrender -I 1 -O 1 &
 picom -r 7 -o .33 -D 0 --no-fading-openclose --experimental-backends --vsync --backend glx --use-damage &
+dunst &
 xscreensaver -no-splash &
 emacs --daemon &
 conky &

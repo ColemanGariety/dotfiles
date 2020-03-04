@@ -24,11 +24,11 @@ export DYNAMO_ENDPOINT="http://localhost:8000"
 
 # path
 PATH=$PATH:$HOME/.cargo/bin
+PATH=$PATH:$HOME/.yarn/bin
 PATH=$PATH:$HOME/.bin
-PATH=$PATH:$HOME/.emacs.d/bin
 
 # TERM
-TERM=xterm-256color
+# TERM=xterm-256color
 
 # sudo completion
 complete -cf sudo
@@ -40,6 +40,9 @@ fi
 
 # nvm
 source /usr/share/nvm/init-nvm.sh
+
+# opam
+test -r /home/coleman/.opam/opam-init/init.sh && . /home/coleman/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
 
 # gitstatus
 source ~/.prompt.sh

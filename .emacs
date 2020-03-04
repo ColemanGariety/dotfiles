@@ -66,9 +66,10 @@
  '(helm-scroll-amount 8)
  '(helm-split-window-inside-p t)
  '(helm-swoop-pre-input-function (lambda nil))
+ '(json-reformat:indent-width 2)
  '(package-selected-packages
    (quote
-    (evil-easymotion easymotion helm-adaptive diredfl company-prescient evil-vimish-fold move-text rainbow-delimiters helm-swoop doom-themes solarized-theme one-dark-theme doom-modeline auto-compile spaceline-config spaceline purescript-mode general tide json-mode evil-collection avy typescript-mode handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term helm-ag go-autocomplete go-mode smex pophint evil-avy grizzl slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils color-theme-solarized)))
+    (evil-mc hl-todo rjsx-mode import-js psc-ide reason-mode evil-easymotion easymotion helm-adaptive diredfl company-prescient evil-vimish-fold move-text rainbow-delimiters helm-swoop doom-themes solarized-theme one-dark-theme doom-modeline auto-compile spaceline-config spaceline general tide json-mode evil-collection avy typescript-mode handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term helm-ag go-autocomplete go-mode smex pophint evil-avy grizzl slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils color-theme-solarized)))
  '(projectile-enable-caching t)
  '(show-paren-delay 0.0)
  '(showkey-log-mode nil)
@@ -142,6 +143,8 @@
 ;; Auto-modes ;;
 ;;;;;;;;;;;;;;;;
 
+(load-file "~/Git/web-mode/web-mode.el")
+
 (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
@@ -155,9 +158,9 @@
 (add-to-list 'auto-mode-alist '("\\.sld\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
 
-;;;;;;;;;;;;;;;;;
-;; Auto-compie ;;
-;;;;;;;;;;;;;;;;;
+;; ;;;;;;;;;;;;;;;;;
+;; ;; Auto-compie ;;
+;; ;;;;;;;;;;;;;;;;;
 
 (use-package auto-compile
   :ensure t
@@ -219,14 +222,13 @@
 ;; Hideshow ;;
 ;;;;;;;;;;;;;;
 
-(add-hook 'c-mode-common-hook   'hs-minor-mode)
-(add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
-(add-hook 'java-mode-hook       'hs-minor-mode)
-(add-hook 'lisp-mode-hook       'hs-minor-mode)
-(add-hook 'perl-mode-hook       'hs-minor-mode)
-(add-hook 'sh-mode-hook         'hs-minor-mode)
-(add-hook 'web-mode-hook        'hs-minor-mode)
-(add-hook 'purescript-mode-hook 'hs-minor-mode)
+;; (add-hook 'c-mode-common-hook   'hs-minor-mode)
+;; (add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
+;; (add-hook 'java-mode-hook       'hs-minor-mode)
+;; (add-hook 'lisp-mode-hook       'hs-minor-mode)
+;; (add-hook 'perl-mode-hook       'hs-minor-mode)
+;; (add-hook 'sh-mode-hook         'hs-minor-mode)
+;; (add-hook 'web-mode-hook        'hs-minor-mode)
 
 ;;;;;;:;;;;;;;;;;;;
 ;; Easymotion(s) ;;
@@ -393,6 +395,10 @@
 ;; Tide ;;
 ;;;;;;;;;;
 
+;; (use-package web-mode
+;;   :ensure nil
+;;   )
+
 (use-package tide
   :ensure t
   :init
@@ -417,6 +423,24 @@
 (use-package rainbow-delimiters
   :init
   (add-hook 'web-mode-hook #'rainbow-delimiters-mode))
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Highlight Todos ;;
+;;;;;;;;;;;;;;;;;;;;;
+
+(use-package hl-todo
+  :ensure t
+  :init
+  (global-hl-todo-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;
+;; Multiple Cursors ;;
+;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package evil-mc
+  :ensure t
+  :init
+  (global-evil-mc-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Custom faces... ;;
