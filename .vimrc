@@ -43,7 +43,7 @@ let mapleader = ","
 " Fast saving
 nmap <leader>w :w!<cr>
 
-" :W sudo saves the file 
+" :W sudo saves the file
 " (useful for handling the permission-denied error)
 command W w !sudo tee % > /dev/null
 
@@ -133,7 +133,7 @@ let g:CommandTCancelMap = '<Esc>'
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
-syntax enable 
+syntax enable
 
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf8
@@ -167,8 +167,10 @@ set noswapfile
 set smarttab
 
 " 1 tab == 4 spaces
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=2
+set tabstop=2
+:set autoindent
+:set smartindent
 
 " Linebreak on 500 characters
 set lbr
@@ -232,7 +234,7 @@ vmap <C-j> :m'>+<cr>`<my`>mzgv`yo`z
 vmap <C-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Denite 
+" => Denite
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " === Denite shorcuts === "
 "   ;         - Browser currently open buffers
