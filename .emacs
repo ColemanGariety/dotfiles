@@ -56,6 +56,7 @@
  '(flycheck-temp-prefix ".flycheck")
  '(focus-dimness nil)
  '(frame-background-mode (quote dark))
+ '(global-linum-mode t)
  '(haskell-indentation-cycle-warn nil)
  '(haskell-interactive-mode-eval-mode nil)
  '(helm-completion-window-scroll-margin 5)
@@ -67,6 +68,7 @@
  '(helm-split-window-inside-p t)
  '(helm-swoop-pre-input-function (lambda nil))
  '(json-reformat:indent-width 2)
+ '(linum-format " %d ")
  '(package-selected-packages
    (quote
     (evil-mc hl-todo rjsx-mode import-js psc-ide reason-mode evil-easymotion easymotion helm-adaptive diredfl company-prescient evil-vimish-fold move-text rainbow-delimiters helm-swoop doom-themes solarized-theme one-dark-theme doom-modeline auto-compile spaceline-config spaceline general tide json-mode evil-collection avy typescript-mode handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term helm-ag go-autocomplete go-mode smex pophint evil-avy grizzl slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils color-theme-solarized)))
@@ -92,6 +94,21 @@
 (global-visual-line-mode t) ;; word-wrap
 (setq shift-select-mode nil) ;; Shift select
 (show-paren-mode t)         ;; show matching parentheses
+;; (setq initial-scratch-message ";; ^    first non-whitespace
+;; mx   set mark
+;; 'x   go to mark
+;; '.   last changed line
+;; zz   center cursor line
+;; C-o  previous location
+;; C-i  next location
+;; #    previous token under cursor
+;; *    next token under cursor
+;; cc   replace line
+;; C    change to end of line
+;; D    delete to end of line
+;; dab  change around block (or anything)
+;; dab  change in block (or anything)
+;; I    insert at first non-whitespace")
 (setq initial-scratch-message nil)
 (setq load-prefer-newer t)
 (setq initial-buffer-choice t)
@@ -126,6 +143,20 @@
 (setq-default indent-tabs-mode nil) ;; soft Tabs
 (electric-pair-mode) ;; electric pair
 (push '(?\' . ?\') electric-pair-pairs) ;; single quote pairs
+(global-linum-mode)
+(setq linum-format " %d ")
+
+;; Ask before closing
+
+(defun ask-before-closing ()
+  "Close only if y was pressed."
+  (interactive)
+  (if (y-or-n-p (format "Are you sure you want to close this frame? "))
+      (save-buffers-kill-emacs)
+    (message "Canceled frame close")))
+
+(when (daemonp)
+  (global-set-key (kbd "C-x C-c") 'ask-before-closing))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package management ;;
@@ -195,7 +226,6 @@
   (global-evil-surround-mode)
   (evil-collection-init)
   (evil-mode)
-  (define-key evil-normal-state-map "\C-j" 'move-text-down)
   (define-key evil-normal-state-map "\C-k" 'move-text-up)
   (define-key evil-normal-state-map "\C-j" 'move-text-down)
   (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
@@ -453,7 +483,8 @@
  ;; If there is more than one, they won't work right.
  '(avy-lead-face ((t (:background "#51afef" :foreground "brightblack" :weight bold))))
  '(font-lock-comment-face ((t (:foreground "#525252" :slant italic))))
- '(font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground "color-239")))))
+ '(font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground "color-239"))))
+ '(linum ((t (:inherit default :foreground "#587094" :strike-through nil :underline nil :slant normal :weight normal)))))
 
 (provide '.emacs)
 ;;; .emacs ends here
