@@ -113,7 +113,7 @@
 (setq load-prefer-newer t)
 (setq initial-buffer-choice t)
 (setq inhibit-startup-screen t)
-(scroll-bar-mode -1)
+;; (scroll-bar-mode -1)
 (menu-bar-mode -1)
 (tool-bar-mode 0)
 (setq visible-bell nil)
@@ -125,7 +125,7 @@
 (setq scroll-error-top-bottom t) ;; Pgdn & Pgup work properly
 (setq large-file-warning-threshold 100000) ;; Large file warning
 (setq mode-require-final-newline t) ;; Newlines
-(setq scroll-margin 4)
+(setq scroll-margin 5)
 (setq scroll-conservatively 1)
 (setq column-number-mode t) ;; Column numbers in modeline
 (delete-selection-mode) ;; Replace selection
@@ -152,7 +152,7 @@
   "Close only if y was pressed."
   (interactive)
   (if (y-or-n-p (format "Are you sure you want to close this frame? "))
-      (save-buffers-kill-emacs)
+      (save-buffers-kill-terminal)
     (message "Canceled frame close")))
 
 (when (daemonp)
@@ -168,7 +168,7 @@
   (add-to-list 'package-archives
 	       '("gnu" . "http://elpa.gnu.org/packages/") t)
   (add-to-list 'package-archives
-	       '("melpa" . "https://melpa.org/packages/") t))
+	       '("melpa" . "https://melpa.org/packages/") t))'
 
 ;;;;;;;;;;;;;;;;
 ;; Auto-modes ;;
@@ -347,10 +347,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; keys
-(define-key global-map (kbd "M-k") 'windmove-up)
-(define-key global-map (kbd "M-j") 'windmove-down)
-(define-key global-map (kbd "M-h") 'windmove-left)
-(define-key global-map (kbd "M-l") 'windmove-right)
+(define-key global-map (kbd "M-k") 'evil-window-up)
+(define-key global-map (kbd "M-j") 'evil-window-down)
+(define-key global-map (kbd "M-h") 'evil-window-left)
+(define-key global-map (kbd "M-l") 'evil-window-right)
 (define-key global-map (kbd "M-K") 'evil-window-split)
 (define-key global-map (kbd "M-J") 'evil-window-split)
 (define-key global-map (kbd "M-H") 'evil-window-vsplit)
@@ -484,7 +484,7 @@
  '(avy-lead-face ((t (:background "#51afef" :foreground "brightblack" :weight bold))))
  '(font-lock-comment-face ((t (:foreground "#525252" :slant italic))))
  '(font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground "color-239"))))
- '(linum ((t (:inherit default :foreground "#587094" :strike-through nil :underline nil :slant normal :weight normal)))))
+ '(linum ((t (:inherit default :foreground "#a9a1e1" :strike-through nil :underline nil :slant normal :weight normal)))))
 
 (provide '.emacs)
 ;;; .emacs ends here
