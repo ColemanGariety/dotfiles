@@ -10,8 +10,7 @@ picom -r 7 -o .33 -D 0 --no-fading-openclose --experimental-backends --vsync --b
 dunst &
 xscreensaver -no-splash &
 emacs --daemon &
-# conky &
-redshift -l 45.5155:122.6793 -t 6500K:3000K &
+# redshift -l 45.5155:122.6793 -t 6500K:3000K &
 sxhkd &
-exec bspwm -c ~/.config/bspwm/bspwmrc
-# exec karmen
+# exec bspwm -c ~/.config/bspwm/bspwmrc
+exec karmen

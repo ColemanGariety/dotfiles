@@ -53,10 +53,10 @@
  '(custom-safe-themes
    (quote
     ("0fffa9669425ff140ff2ae8568c7719705ef33b7a927a0ba7c5e2ffcfac09b75" "09cadcc2784baa744c6a7c5ebf2a30df59c275414768b0719b800cabd8d1b842" "669e02142a56f63861288cc585bee81643ded48a19e36bfdf02b66d745bcc626" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "40f6a7af0dfad67c0d4df2a1dd86175436d79fc69ea61614d668a635c2cd94ab" default)))
+ '(evil-goggles-duration 0.3)
  '(flycheck-temp-prefix ".flycheck")
  '(focus-dimness nil)
  '(frame-background-mode (quote dark))
- '(global-linum-mode t)
  '(haskell-indentation-cycle-warn nil)
  '(haskell-interactive-mode-eval-mode nil)
  '(helm-completion-window-scroll-margin 5)
@@ -64,14 +64,18 @@
  '(helm-ff-file-name-history-use-recentf t)
  '(helm-ff-search-library-in-sexp t)
  '(helm-move-to-line-cycle-in-source t)
+ '(helm-rg-thing-at-point (quote none))
  '(helm-scroll-amount 8)
  '(helm-split-window-inside-p t)
  '(helm-swoop-pre-input-function (lambda nil))
+ '(helm-swoop-split-direction (quote split-window-vertically))
+ '(helm-swoop-split-with-multiple-windows nil)
+ '(js-indent-level 2)
  '(json-reformat:indent-width 2)
- '(linum-format " %d ")
+ '(linum-format " %d " t)
  '(package-selected-packages
    (quote
-    (evil-mc hl-todo rjsx-mode import-js psc-ide reason-mode evil-easymotion easymotion helm-adaptive diredfl company-prescient evil-vimish-fold move-text rainbow-delimiters helm-swoop doom-themes solarized-theme one-dark-theme doom-modeline auto-compile spaceline-config spaceline general tide json-mode evil-collection avy typescript-mode handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term helm-ag go-autocomplete go-mode smex pophint evil-avy grizzl slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils color-theme-solarized)))
+    (evil-easymotion evil-textobj-column origami evil-textobj-syntax evil-textobj-line evil-snipe ivy-smex doom-todo-ivy ivy-posframe counsel-projectile counsel ivy-mode evil-args evil-matchit iedit git-gutter smartparens helm-rg hl-todo psc-ide easymotion helm-adaptive diredfl company-prescient move-text rainbow-delimiters helm-swoop doom-themes one-dark-theme doom-modeline auto-compile spaceline-config general tide json-mode evil-collection avy handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term go-autocomplete go-mode smex pophint evil-avy slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils no-littering use-package)))
  '(projectile-enable-caching t)
  '(show-paren-delay 0.0)
  '(showkey-log-mode nil)
@@ -93,7 +97,9 @@
 (global-font-lock-mode t)   ;; for all buffers
 (global-visual-line-mode t) ;; word-wrap
 (setq shift-select-mode nil) ;; Shift select
+;; (global-hl-line-mode)
 (show-paren-mode t)         ;; show matching parentheses
+
 ;; (setq initial-scratch-message ";; ^    first non-whitespace
 ;; mx   set mark
 ;; 'x   go to mark
@@ -106,11 +112,20 @@
 ;; cc   replace line
 ;; C    change to end of line
 ;; D    delete to end of line
-;; dab  change around block (or anything)
-;; dab  change in block (or anything)
-;; I    insert at first non-whitespace")
+;; cib  change in block (or symbol)
+;; cil change in line
+;; cia change in argument
+;; I    insert at first non-whitespace"
+;; g d  jump to definition
+;; C-x C-e  iedit
+;; L    next argument
+;; H    previous argument
+;; C-x RET evil marks)
+
 (setq initial-scratch-message nil)
+(setq text-quoting-style 'grave)
 (setq load-prefer-newer t)
+(setq line-number-display-limit-width 2000000)
 (setq initial-buffer-choice t)
 (setq inhibit-startup-screen t)
 ;; (scroll-bar-mode -1)
@@ -139,36 +154,46 @@
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
+(display-time)
 (prefer-coding-system 'utf-8)
 (setq-default indent-tabs-mode nil) ;; soft Tabs
-(electric-pair-mode) ;; electric pair
-(push '(?\' . ?\') electric-pair-pairs) ;; single quote pairs
-(global-linum-mode)
-(setq linum-format " %d ")
-
-;; Ask before closing
-
-(defun ask-before-closing ()
-  "Close only if y was pressed."
-  (interactive)
-  (if (y-or-n-p (format "Are you sure you want to close this frame? "))
-      (save-buffers-kill-terminal)
-    (message "Canceled frame close")))
-
-(when (daemonp)
-  (global-set-key (kbd "C-x C-c") 'ask-before-closing))
+(put 'narrow-to-region 'disabled nil)
+;; (electric-pair-mode) ;; electric pair
+;; (push '(?\' . ?\') electric-pair-pairs) ;; single quote pairs
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package management ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (package-initialize)
-  (add-to-list 'package-archives
-	       '("gnu" . "http://elpa.gnu.org/packages/") t)
-  (add-to-list 'package-archives
-	       '("melpa" . "https://melpa.org/packages/") t))'
+(require 'package)
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
+(package-initialize)
+(setq package-enable-at-startup nil)
+
+(unless (and (file-exists-p (expand-file-name "elpa/archives/gnu" user-emacs-directory))
+             (file-exists-p (expand-file-name "elpa/archives/melpa" user-emacs-directory)))
+  (package-refresh-contents))
+
+(defvar my-package-list '(no-littering use-package))
+
+(dolist (package my-package-list)
+  (unless (package-installed-p package)
+    (message "Pre-installing %s" (symbol-name package))
+    (package-install package)))
+
+(dolist (package my-package-list)
+  (message "Pre-loading %s" (symbol-name package))
+  (require package))
+
+;;;;;;;;;;;;;;;;;
+;; Use Package ;;
+;;;;;;;;;;;;;;;;;
+
+(defvar use-package-verbose)
+(setq use-package-verbose t)
+(defvar use-package-always-ensure)
+(setq use-package-always-ensure t)
 
 ;;;;;;;;;;;;;;;;
 ;; Auto-modes ;;
@@ -194,7 +219,6 @@
 ;; ;;;;;;;;;;;;;;;;;
 
 (use-package auto-compile
-  :ensure t
   :config
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode)
@@ -204,13 +228,22 @@
   (setq auto-compile-toggle-deletes-nonlib-dest t)
   (setq auto-compile-update-autoloads t))
 
+;;;;;;;;;;;;;;;;;;
+;; Code Folding ;;
+;;;;;;;;;;;;;;;;;;
+
+;; (add-hook 'web-mode-hook 'hs-minor-mode)
+(use-package origami
+  :config
+  (global-origami-mode)
+  (global-set-key (kbd "M-o") 'origami-toggle-node))
+
 ;;;;;;;;;;;;;;;
 ;; Mode line ;;
 ;;;;;;;;;;;;;;;
 
 (use-package doom-modeline
-  :ensure t
-  :init
+  :config
   (doom-modeline-mode))
 
 ;;;;;;;;;;;;;;;
@@ -218,14 +251,10 @@
 ;;;;;;;;;;;;;;;
 
 (use-package evil
-  :ensure t
   :init
   (setq evil-want-keybinding nil)
-  (setq-default evil-cross-lines t)
   :config
-  (global-evil-surround-mode)
-  (evil-collection-init)
-  (evil-mode)
+  (setq-default evil-cross-lines t)
   (define-key evil-normal-state-map "\C-k" 'move-text-up)
   (define-key evil-normal-state-map "\C-j" 'move-text-down)
   (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
@@ -237,39 +266,79 @@
   (define-key evil-visual-state-map "\C-n" 'evil-next-line)
   (define-key evil-normal-state-map "\C-p" 'evil-previous-line)
   (define-key evil-insert-state-map "\C-p" 'evil-previous-line)
-  (define-key evil-visual-state-map "\C-p" 'evil-previous-line))
+  (define-key evil-visual-state-map "\C-p" 'evil-previous-line)
+  (evil-mode))
+
+;; (use-package evil-visual-mark-mode
+;;   :config
+;;   (define-globalized-minor-mode global-evil-visual-mark-mode evil-visual-mark-mode
+;;     (lambda () (evil-visual-mark-mode)))
+;;   (global-evil-visual-mark-mode))
+
+;; (use-package evil-goggles
+;;   :config
+;;   (evil-goggles-mode))
+
+;; (use-package evil-string-inflection)
+
+(use-package evil-textobj-column)
+(use-package evil-textobj-line)
+(use-package evil-textobj-syntax)
+
+;; (use-package evil-nerd-commenter
+;;   :config
+;;   (evilnc-default-hotkeys))
 
 (use-package evil-collection
-  :ensure t)
+  :config
+  (evil-collection-init))
 
 (use-package evil-surround
-  :ensure t)
+  :config
+  (global-evil-surround-mode))
 
-(use-package move-text
-  :ensure t)
+(use-package move-text)
 
-;;;;;;;;;;;;;;
-;; Hideshow ;;
-;;;;;;;;;;;;;;
+(use-package evil-matchit
+  :config
+  (global-evil-matchit-mode))
 
-;; (add-hook 'c-mode-common-hook   'hs-minor-mode)
-;; (add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
-;; (add-hook 'java-mode-hook       'hs-minor-mode)
-;; (add-hook 'lisp-mode-hook       'hs-minor-mode)
-;; (add-hook 'perl-mode-hook       'hs-minor-mode)
-;; (add-hook 'sh-mode-hook         'hs-minor-mode)
-;; (add-hook 'web-mode-hook        'hs-minor-mode)
+(use-package evil-args
+  :config
+  (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
+  (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
+  (define-key evil-normal-state-map "L" 'evil-forward-arg)
+  (define-key evil-normal-state-map "H" 'evil-backward-arg)
+  (define-key evil-motion-state-map "L" 'evil-forward-arg)
+  (define-key evil-motion-state-map "H" 'evil-backward-arg)
+  (define-key evil-normal-state-map "H" 'evil-backward-arg)
+  (define-key evil-motion-state-map "L" 'evil-forward-arg))
 
-;;;;;;:;;;;;;;;;;;;
-;; Easymotion(s) ;;
-;;;;;;;;;;;;;;;;;;;
+;; ;; This is ALMOST useful. But not quite.
+;; (use-package evil-easymotion
+;;   :config
+;;   (define-key evil-normal-state-map "f" 'evilem-motion-find-char)
+;;   (define-key evil-normal-state-map "F" 'evilem-motion-find-char-backward)
+;;   (define-key evil-normal-state-map "t" 'evilem-motion-find-char-to)
+;;   (define-key evil-normal-state-map "T" 'evilem-motion-find-char-to-backward))
 
-(use-package avy
-  :ensure t)
+;;;;;;:;;
+;; Avy ;;
+;;;;;;;;;
+
+(use-package avy)
+
+;; ;; It's so buggy...
+;; (use-package evil-snipe
+;;   :config
+;;   (define-key evil-normal-state-map "f" 'evil-snipe-f)
+;;   (define-key evil-motion-state-map "f" 'evil-snipe-f)
+;;   (define-key evil-normal-state-map "F" 'evil-snipe-F)
+;;   (define-key evil-motion-state-map "F" 'evil-snipe-F))
 
 (use-package general
-  :ensure t
-  :init
+  :config
+  (defvar general-override-states)
   (setq general-override-states '(insert emacs hybrid normal visual motion operator replace))
   (setq avy-all-windows nil)
   :config
@@ -283,8 +352,7 @@
 ;;;;;;;;;;;
 
 (use-package diredfl
-  :ensure t
-  :init
+  :config
   (diredfl-global-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -292,55 +360,67 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package company
-  :ensure t
-  :init
+  :config
   (add-hook 'after-init-hook 'global-company-mode))
 
 (use-package company-prescient
-  :ensure t
   :hook (company-mode . company-prescient-mode))
 
-;;;;;;;;;;;;;;;
-;; Helm Mode ;;
-;;;;;;;;;;;;;;;
+;;;;;;;;;
+;; Ivy ;;
+;;;;;;;;;
 
-(use-package helm-projectile
-  :ensure t
-  :init
-  ;; Hide advice
-  (defadvice helm-display-mode-line (after undisplay-header activate)
-    (setq header-line-format nil))
-
-  (helm-mode 1)
-  (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
-  (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; makes TAB work in terminal
-  ;; (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-  (setq helm-split-window-inside-p           t ; open helm buffer inside current window, not occupy whole other window
-	helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-	helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
-	helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
-	helm-ff-file-name-history-use-recentf t)
-
-  ;; Helm + Projectile
-  (helm-projectile-on)
-  (projectile-mode)
-  (global-set-key (kbd "C-x C-d") 'helm-projectile-find-file)
-  (global-set-key (kbd "C-x C-g") 'helm-projectile-ag)
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x C-k") 'helm-swoop)
-  (global-set-key (kbd "C-x C-l") 'helm-locate)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  (global-set-key (kbd "C-x C-b") 'helm-mini)
-
-  ;; A lil' performance
-  (remove-hook 'find-file-hooks 'vc-find-file-hook))
-
-(use-package helm-adaptive
+(use-package counsel
   :config
-  (helm-adaptive-mode))
+  (setq counsel-grep-base-command "rg --no-heading --line-number --color never '%s' %s")
+  (counsel-mode)
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+  (global-set-key (kbd "C-x C-b") 'counsel-ibuffer)
+  (global-set-key (kbd "M-y") 'counsel-yank-pop)
+  (global-set-key (kbd "M-p") 'counsel-evil-registers)
+  (global-set-key (kbd "C-x C-k") 'counsel-buffer-or-recentf))
 
-(use-package helm-ag
-  :ensure t)
+(use-package counsel-projectile
+  :config
+  (counsel-projectile-mode)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (define-key projectile-mode-map (kbd "C-x C-j") 'counsel-projectile)
+  (define-key projectile-mode-map (kbd "C-x C-g") 'counsel-projectile-rg))
+
+(use-package ivy
+  :config
+  (ivy-mode)
+  (global-set-key (kbd "C-x b") 'ivy-switch-buffer)
+  (global-set-key (kbd "C-c v") 'ivy-push-view)
+  (global-set-key (kbd "C-c V") 'ivy-pop-view)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "(%d/%d) ")
+  (defun ivy-resize--minibuffer-setup-hook ()
+    (add-hook 'post-command-hook #'ivy-resize--post-command-hook nil t))
+  (defun ivy-resize--post-command-hook ()
+    (when ivy-mode
+      (shrink-window (1+ ivy-height))))
+  (add-hook 'minibuffer-setup-hook 'ivy-resize--minibuffer-setup-hook)
+  (define-key ivy-minibuffer-map (kbd "<ESC>") 'minibuffer-keyboard-quit))
+
+(use-package swiper
+  :config
+  (global-set-key (kbd "C-s") 'counsel-grep-or-swiper))
+
+;; ;; Package isn't in MELPA
+;; (use-package doom-todo-ivy
+;;   :hook (after-init . doom-todo-ivy))
+
+;; ;; This doesn't work :(
+;; (use-package ivy-posframe
+;;   :config
+;;   (setq ivy-posframe-display-functions-alist
+;;         '((swiper          . ivy-posframe-display-at-point)
+;;           (complete-symbol . ivy-posframe-display-at-point)
+;;           (counsel-M-x     . ivy-posframe-display-at-window-bottom-left)
+;;           (t               . ivy-posframe-display)))
+;;   (ivy-posframe-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Management ;;
@@ -394,18 +474,16 @@
       (setq interprogram-cut-function 'xsel-cut-function)
       (setq interprogram-paste-function 'xsel-paste-function))))
 
-;;;;;;;;;;;;;;;
-;; Solarized ;;
-;;;;;;;;;;;;;;;
+;;;;;;;;;;;
+;; Color ;;
+;;;;;;;;;;;
 
 ;; (use-package color-theme-solarized
-;;   :ensure t
-;;   :init
+;;   :config
 ;;   (load-theme 'solarized t))
 
 (use-package doom-themes
-  :ensure t
-  :init
+  :config
   (load-theme 'doom-one t))
 
 ;;;;;;;;;;;;;;
@@ -413,8 +491,7 @@
 ;;;;;;;;;;;;;;
 
 (use-package flycheck
-  :ensure t
-  :init
+  :config
   (global-flycheck-mode)
   ;; disable jshint since we prefer eslint checking
   (setq flycheck-check-syntax-automatically '(save))
@@ -425,16 +502,14 @@
 ;; Tide ;;
 ;;;;;;;;;;
 
-;; (use-package web-mode
-;;   :ensure nil
-;;   )
+(use-package web-mode)
 
 (use-package tide
-  :ensure t
-  :init
+  :config
   (add-hook 'web-mode-hook #'setup-tide-mode))
 
 (defun setup-tide-mode ()
+  "Setup tide mode"
   (interactive)
   (tide-setup)
   (flycheck-mode +1)
@@ -446,12 +521,45 @@
             (add-to-list 'write-file-functions
                          'delete-trailing-whitespace)))
 
+;; (use-package prettier-js
+;;   :config
+;;   (setq prettier-js-args '("--bracket-spacing" "true"
+;;                            "---single-quote" "true")))
+
+;;;;;;;;;;;;;;;;;
+;; Indentation ;;
+;;;;;;;;;;;;;;;;;
+
+;; (use-package aggressive-indent)
+
+;;;;;;;;;;;
+;; Magit ;;
+;;;;;;;;;;;
+
+;; (use-package magit)
+
+;;;;;;;;;;;
+;; iedit ;;
+;;;;;;;;;;;
+
+(use-package iedit
+  :config
+  (global-set-key (kbd "C-x C-e") 'iedit-mode))
+
+;;;;;;;;;;;;;;;;;;
+;; Smart Parens ;;
+;;;;;;;;;;;;;;;;;;
+
+(use-package smartparens
+  :config
+  (smartparens-global-mode))
+
 ;;;;;;;;;;;;;
 ;; Rainbow ;;
 ;;;;;;;;;;;;;
 
 (use-package rainbow-delimiters
-  :init
+  :config
   (add-hook 'web-mode-hook #'rainbow-delimiters-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -459,18 +567,20 @@
 ;;;;;;;;;;;;;;;;;;;;;
 
 (use-package hl-todo
-  :ensure t
-  :init
+  :config
   (global-hl-todo-mode))
 
-;;;;;;;;;;;;;;;;;;;;;;
-;; Multiple Cursors ;;
-;;;;;;;;;;;;;;;;;;;;;;
+;; (use-package smart-jump
+;;   :config
+;;   (smart-jump-setup-default-registers))
 
-(use-package evil-mc
-  :ensure t
-  :init
-  (global-evil-mc-mode))
+;;;;;;;;;;;;;;;;
+;; Git Gutter ;;
+;;;;;;;;;;;;;;;;
+
+(use-package git-gutter
+  :config
+  (global-git-gutter-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Custom faces... ;;
@@ -481,9 +591,25 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(avy-lead-face ((t (:background "#51afef" :foreground "brightblack" :weight bold))))
+ '(avy-lead-face ((t (:background "brightblack" :foreground "red" :weight bold))))
+ '(avy-lead-face-0 ((t (:inherit avy-lead-face :background "brightblack" :foreground "red"))))
+ '(counsel-variable-documentation ((t (:inherit nil))))
+ '(evil-goggles-default-face ((t (:inherit region :background "black"))))
+ '(evil-snipe-first-match-face ((t (:background "brightblack" :foreground "red" :weight bold))))
+ '(evil-snipe-matches-face ((t (:background "brightblack" :foreground "red" :underline t :weight bold))))
+ '(flycheck-error ((t (:background "red" :foreground "white" :underline (:color "#ff6655" :style wave)))))
+ '(flycheck-warning ((t (:background "red" :foreground "white" :underline (:color "#ECBE7B" :style wave)))))
  '(font-lock-comment-face ((t (:foreground "#525252" :slant italic))))
  '(font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground "color-239"))))
+ '(helm-buffer-modified ((t (:inherit nil))))
+ '(helm-ff-dotted-directory ((t (:foreground "brightblue"))))
+ '(helm-ff-symlink ((t (:inherit nil))))
+ '(helm-source-header ((t (:background "brightblack" :foreground "#51afef" :weight bold :height 1.0))))
+ '(helm-swoop-target-line-face ((t (:foreground "#ECBE7B" :inverse-video t))))
+ '(helm-swoop-target-word-face ((t (:inherit bold :background "brightblack" :foreground "red"))))
+ '(hl-line ((t (:background "black"))))
+ '(ivy-separator ((t (:inherit nil))))
+ '(ivy-virtual ((t (:inherit nil :foreground "#ddd"))))
  '(linum ((t (:inherit default :foreground "#a9a1e1" :strike-through nil :underline nil :slant normal :weight normal)))))
 
 (provide '.emacs)

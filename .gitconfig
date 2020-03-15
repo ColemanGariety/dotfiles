@@ -1,0 +1,25 @@
+[alias]
+    st = status
+    di = diff
+    co = checkout
+    ci = commit
+    br = branch
+    wdiff = diff --word-diff-regex=$'[^\\x80-\\xbf][\\x80-\\xbf]*' --color-words
+[pager]
+    diff = type diff-highlight >/dev/null && (diff-highlight|less) || less
+    show = type diff-highlight >/dev/null && (diff-highlight|less) || less
+    log = type diff-highlight >/dev/null && (diff-highlight|less) || less
+[tig]
+    line-graphics = ascii
+[color]
+	ui = auto
+[core]
+	editor = vim
+[pull]
+	rebase = merges
+[push]
+	default = upstream
+[credential]
+	helper = store
+[include]
+        path = ~/.gitconfig.local
