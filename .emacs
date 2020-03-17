@@ -46,9 +46,11 @@
     (company-tide company-semantic company-capf company-files
                   (company-dabbrev-code company-gtags company-keywords)
                   company-oddmuse company-dabbrev)))
- '(company-idle-delay 0)
+ '(company-idle-delay 0.05)
  '(company-minimum-prefix-length 2)
  '(compilation-message-face (quote default))
+ '(counsel-rg-base-command
+   "rg -M 120 --glob !yarn.lock --with-filename --no-heading --line-number --color never %s")
  '(css-indent-offset 2)
  '(custom-safe-themes
    (quote
@@ -75,7 +77,7 @@
  '(linum-format " %d " t)
  '(package-selected-packages
    (quote
-    (evil-easymotion evil-textobj-column origami evil-textobj-syntax evil-textobj-line evil-snipe ivy-smex doom-todo-ivy ivy-posframe counsel-projectile counsel ivy-mode evil-args evil-matchit iedit git-gutter smartparens helm-rg hl-todo psc-ide easymotion helm-adaptive diredfl company-prescient move-text rainbow-delimiters helm-swoop doom-themes one-dark-theme doom-modeline auto-compile spaceline-config general tide json-mode evil-collection avy handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term go-autocomplete go-mode smex pophint evil-avy slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils no-littering use-package)))
+    (number-lock evil-swap-keys ivy-hydra evil-easymotion evil-textobj-column origami evil-textobj-syntax evil-textobj-line evil-snipe ivy-smex doom-todo-ivy ivy-posframe counsel-projectile counsel ivy-mode evil-args evil-matchit iedit git-gutter smartparens helm-rg hl-todo psc-ide easymotion helm-adaptive diredfl company-prescient move-text rainbow-delimiters helm-swoop doom-themes one-dark-theme doom-modeline auto-compile spaceline-config general tide json-mode evil-collection avy handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers svg-mode-line-themes helm-org-rifle helm-dictionary ac-helm company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line helm-hoogle wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term go-autocomplete go-mode smex pophint evil-avy slime evil-surround god-mode evil-tutor helm-cider cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc helm-projectile golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils no-littering use-package)))
  '(projectile-enable-caching t)
  '(show-paren-delay 0.0)
  '(showkey-log-mode nil)
@@ -255,18 +257,22 @@
   (setq evil-want-keybinding nil)
   :config
   (setq-default evil-cross-lines t)
-  (define-key evil-normal-state-map "\C-k" 'move-text-up)
-  (define-key evil-normal-state-map "\C-j" 'move-text-down)
+  (define-key evil-normal-state-map (kbd "C-k") 'move-text-up)
+  (define-key evil-normal-state-map (kbd "C-j") 'move-text-down)
   (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
   (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
   (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
   (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-  (define-key evil-normal-state-map "\C-n" 'evil-next-line)
-  (define-key evil-insert-state-map "\C-n" 'evil-next-line)
-  (define-key evil-visual-state-map "\C-n" 'evil-next-line)
-  (define-key evil-normal-state-map "\C-p" 'evil-previous-line)
-  (define-key evil-insert-state-map "\C-p" 'evil-previous-line)
-  (define-key evil-visual-state-map "\C-p" 'evil-previous-line)
+  (define-key evil-normal-state-map (kbd "C-n") 'evil-next-line)
+  (define-key evil-insert-state-map (kbd "C-n") 'evil-next-line)
+  (define-key evil-visual-state-map (kbd "C-n") 'evil-next-line)
+  (define-key evil-normal-state-map (kbd "C-p") 'evil-previous-line)
+  (define-key evil-insert-state-map (kbd "C-p") 'evil-previous-line)
+  (define-key evil-visual-state-map (kbd "C-p") 'evil-previous-line)
+  (define-key evil-normal-state-map (kbd "C-a") 'evil-beginning-of-line)
+  (define-key evil-visual-state-map (kbd "C-a") 'evil-beginning-of-line)
+  (define-key evil-normal-state-map (kbd "C-e") 'evil-end-of-line)
+  (define-key evil-visual-state-map (kbd "C-e") 'evil-end-of-line)
   (evil-mode))
 
 ;; (use-package evil-visual-mark-mode
@@ -372,14 +378,13 @@
 
 (use-package counsel
   :config
-  (setq counsel-grep-base-command "rg --no-heading --line-number --color never '%s' %s")
   (counsel-mode)
   (global-set-key (kbd "M-x") 'counsel-M-x)
   (global-set-key (kbd "C-x C-f") 'counsel-find-file)
   (global-set-key (kbd "C-x C-b") 'counsel-ibuffer)
   (global-set-key (kbd "M-y") 'counsel-yank-pop)
   (global-set-key (kbd "M-p") 'counsel-evil-registers)
-  (global-set-key (kbd "C-x C-k") 'counsel-buffer-or-recentf))
+  (global-set-key (kbd "C-x C-r") 'counsel-buffer-or-recentf))
 
 (use-package counsel-projectile
   :config
@@ -402,10 +407,20 @@
     (when ivy-mode
       (shrink-window (1+ ivy-height))))
   (add-hook 'minibuffer-setup-hook 'ivy-resize--minibuffer-setup-hook)
-  (define-key ivy-minibuffer-map (kbd "<ESC>") 'minibuffer-keyboard-quit))
+  (define-key ivy-minibuffer-map (kbd "<ESC>") 'minibuffer-keyboard-quit)
+  (define-key ivy-minibuffer-map (kbd "TAB") 'ivy-alt-done)
+  (define-key ivy-minibuffer-map (kbd "C-l") 'ivy-call)
+  (define-key counsel-ag-map (kbd "C-n") 'ivy-next-line-and-call)
+  (define-key counsel-ag-map (kbd "C-p") 'ivy-previous-line-and-call)
+  ;; (define-key counsel-find-file-map (kbd "C-n") 'ivy-next-line-and-call) ;; waste of memory
+  ;; (define-key counsel-find-file-map (kbd "C-p") 'ivy-previous-line-and-call) ;; waste of memory
+  (define-key counsel-find-file-map (kbd "C-l") 'counsel-up-directory))
+
+(use-package ivy-hydra)
 
 (use-package swiper
   :config
+  (setq counsel-grep-base-command "rg --no-heading --line-number --color never '%s' %s")
   (global-set-key (kbd "C-s") 'counsel-grep-or-swiper))
 
 ;; ;; Package isn't in MELPA
@@ -509,7 +524,7 @@
   (add-hook 'web-mode-hook #'setup-tide-mode))
 
 (defun setup-tide-mode ()
-  "Setup tide mode"
+  "Setup tide mode."
   (interactive)
   (tide-setup)
   (flycheck-mode +1)
