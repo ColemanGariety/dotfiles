@@ -5,10 +5,6 @@
     ci = commit
     br = branch
     wdiff = diff --word-diff-regex=$'[^\\x80-\\xbf][\\x80-\\xbf]*' --color-words
-[pager]
-    diff = type diff-highlight >/dev/null && (diff-highlight|less) || less
-    show = type diff-highlight >/dev/null && (diff-highlight|less) || less
-    log = type diff-highlight >/dev/null && (diff-highlight|less) || less
 [tig]
     line-graphics = ascii
 [color]
