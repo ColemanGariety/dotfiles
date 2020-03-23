@@ -36,7 +36,6 @@
 (global-font-lock-mode t)   ;; for all buffers
 (global-visual-line-mode t) ;; word-wrap
 (setq shift-select-mode nil)
-;; (global-hl-line-mode)
 (show-paren-mode t)         ;; show matching parentheses
 (setq echo-keystrokes 0.1)
 ;; (setq initial-scratch-message ";; ^    first non-whitespace
@@ -68,7 +67,7 @@
 (setq inhibit-startup-screen t)
 (setq scroll-conservatively most-positive-fixnum)
 ;; (global-display-line-numbers-mode)
-(global-hl-line-mode)
+;; (global-hl-line-mode)
 (menu-bar-mode -1)
 (tool-bar-mode 0)
 (setq visible-bell nil)
@@ -199,12 +198,6 @@
          (switch-buffer-alist (assq 'ivy-rich-candidate (plist-get plist :columns))))
     (when switch-buffer-alist
       (setcar switch-buffer-alist '+ivy-rich-buffer-name)))
-  (plist-put! ivy-rich-display-transformers-list
-              'counsel-describe-variable
-              '(:columns
-                ((counsel-describe-variable-transformer (:width 40)) ; the original transformer
-                 (+ivy-rich-describe-variable-transformer (:width 50))
-                 (ivy-rich-counsel-variable-docstring (:face font-lock-doc-face)))))
   (setq ivy-switch-buffer-faces-alist nil)
   (ivy-set-display-transformer 'internal-complete-buffer nil)
   (ivy-rich-mode +1))
