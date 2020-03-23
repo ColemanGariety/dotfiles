@@ -1,12 +1,15 @@
 ;;;; package --- Summary
 ;;; Commentary: no comment :)
 
-;;;;;;;;;;;;;;;;;;;;;;
-;; Boot Performance ;;
-;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;
+;; Performance ;;
+;;;;;;;;;;;;;;;;;
+
+(defvar read-process-output-max)
+(setq read-process-output-max (* 1024 1024)) ;; 1mb
 
 (defvar gc-cons-threshold-original)
-(setq gc-cons-threshold-original gc-cons-threshold)
+(setq gc-cons-threshold-original 100000000)
 (setq gc-cons-threshold most-positive-fixnum)
 
 (defvar file-name-handler-alist-original)
@@ -14,7 +17,7 @@
 (setq file-name-handler-alist nil)
 
 (run-with-idle-timer
- 5 nil
+ 3 nil
  (lambda ()
    (setq gc-cons-threshold gc-cons-threshold-original)
    (setq file-name-handler-alist file-name-handler-alist-original)
@@ -27,80 +30,6 @@
   "Byte-compile all your dotfiles."
   (interactive)
   (byte-recompile-directory user-emacs-directory 0))
-
-;;;;;;;;;;;;
-;; Nudity ;;
-;;;;;;;;;;;;
-
-(transient-mark-mode t)     ;; show region, drop mark
-(global-font-lock-mode t)   ;; for all buffers
-(global-visual-line-mode t) ;; word-wrap
-(setq shift-select-mode nil)
-(show-paren-mode t)         ;; show matching parentheses
-(setq echo-keystrokes 0.1)
-;; (setq initial-scratch-message ";; ^    first non-whitespace
-;; 'x   go to mark
-;; mx   set mark
-;; '.   last changed line
-;; zz   center cursor line
-;; C-o  previous location
-;; C-i  next location
-;; #    previous token under cursor
-;; *    next token under cursor
-;; cc   replace line
-;; C    change to end of line
-;; D    delete to end of line
-;; cib  change in block (or symbol)
-;; cil change in line
-;; cia change in argument
-;; I    insert at first non-whitespace"
-;; g d  jump to definition
-;; C-x C-e  iedit
-;; L    next argument
-;; H    previous argument
-;; C-x RET evil marks)
-(setq initial-scratch-message nil)
-(setq text-quoting-style 'grave)
-(setq load-prefer-newer t)
-(setq line-number-display-limit-width 2000000)
-(setq initial-buffer-choice t)
-(setq inhibit-startup-screen t)
-(setq scroll-conservatively most-positive-fixnum)
-;; (global-display-line-numbers-mode)
-;; (global-hl-line-mode)
-(menu-bar-mode -1)
-(tool-bar-mode 0)
-(setq visible-bell nil)
-(setq comment-auto-fill-only-comments t)
-(add-hook 'prog-mode-hook 'auto-fill-mode)
-(setq ring-bell-function 'ignore)
-(save-place-mode)
-(blink-cursor-mode 0)
-(setq visible-cursor nil)
-(set-face-inverse-video 'vertical-border nil)
-(setq scroll-error-top-bottom t) ;; Pgdn & Pgup work properly
-(setq large-file-warning-threshold 100000) ;; Large file warning
-(setq mode-require-final-newline t) ;; Newlines
-(delete-selection-mode) ;; Replace selection
-(fset 'yes-or-no-p 'y-or-n-p) ;; Changes all yes/no questions to y/n type
-(setq create-lockfiles nil) ;; Disable lockfiles in server mode
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(display-time)
-(setq-default indent-tabs-mode nil) ;; soft Tabs
-(prefer-coding-system 'utf-8)
-;; inhibit "when done with this frame..." message
-(add-hook 'after-make-frame-functions
-          (lambda (&optional frame)
-            (with-selected-frame (or frame (selected-frame))
-              (setq inhibit-message t)
-              (run-with-idle-timer 0 nil (lambda () (setq inhibit-message nil))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package management ;;
@@ -135,6 +64,93 @@
 (use-package paradox
   :config
   (paradox-enable))
+
+;;;;;;;;;;;;;
+;; General ;;
+;;;;;;;;;;;;;
+
+;; ;; Used to show some useful evil stuff one startup.
+;; ;; Now I just keep it here:
+;; (setq initial-scratch-message ";; ^    first non-whitespace
+;; 'x   go to mark
+;; mx   set mark
+;; '.   last changed line
+;; zz   center cursor line
+;; C-o  previous location
+;; C-i  next location
+;; #    previous token under cursor
+;; *    next token under cursor
+;; cc   replace line
+;; C    change to end of line
+;; D    delete to end of line
+;; cib  change in block (or symbol)
+;; cil change in line
+;; cia change in argument
+;; I    insert at first non-whitespace"
+;; g d  jump to definition
+;; C-x C-e  iedit
+;; L    next argument
+;; H    previous argument
+;; C-x RET evil marks)
+
+(transient-mark-mode t)     ;; show region, drop mark
+(global-font-lock-mode t)   ;; for all buffers
+(global-visual-line-mode t) ;; word-wrap
+(setq shift-select-mode nil)
+(show-paren-mode t)         ;; show matching parentheses
+(defvar show-paren-delay)
+(setq show-paren-delay 0.25) ;; nice delay :)
+(setq echo-keystrokes 0.1)
+(setq initial-scratch-message nil)
+(setq text-quoting-style 'grave)
+(setq load-prefer-newer t)
+(setq line-number-display-limit-width 2000000)
+(setq initial-buffer-choice t)
+(setq inhibit-startup-screen t)
+(setq scroll-conservatively most-positive-fixnum)
+(setq vc-follow-symlinks t)
+(menu-bar-mode -1)
+(tool-bar-mode 0)
+(fset 'yes-or-no-p 'y-or-n-p) ;; Changes all yes/no questions to y/n type
+(setq visible-bell nil)
+(setq comment-auto-fill-only-comments t)
+(setq frame-background-mode (quote dark))
+(add-hook 'prog-mode-hook 'auto-fill-mode)
+(defvar compilation-message-face)
+(setq compilation-message-face (quote default))
+(setq ring-bell-function 'ignore)
+(save-place-mode)
+(blink-cursor-mode 0)
+(setq visible-cursor nil)
+(set-face-inverse-video 'vertical-border nil)
+(setq scroll-error-top-bottom t) ;; Pgdn & Pgup work properly
+(setq large-file-warning-threshold 100000) ;; Large file warning
+(setq mode-require-final-newline t) ;; Newlines
+(delete-selection-mode) ;; Replace selection
+(setq create-lockfiles nil) ;; Disable lockfiles in server mode
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+(setq locale-coding-system 'utf-8)
+(defvar c-basic-offset)
+(setq c-basic-offset 4)
+(defvar css-indent-offset)
+(setq css-indent-offset 2)
+(defvar js-indent-level)
+(setq js-indent-level 2)
+(display-time) ;; in mode-line
+(setq-default indent-tabs-mode nil) ;; soft Tabs
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(add-hook 'after-make-frame-functions
+          (lambda (&optional frame)
+            (with-selected-frame (or frame (selected-frame))
+              ;; inhibit annoying "when done with this frame..." message
+              (setq inhibit-message t)
+              (run-with-idle-timer 0 nil (lambda () (setq inhibit-message nil))))))
 
 ;;;;;;;;;;
 ;; Evil ;;
@@ -221,10 +237,6 @@
 ;;     (lambda () (evil-visual-mark-mode)))
 ;;   (global-evil-visual-mark-mode))
 
-;; (use-package evil-goggles
-;;   :config
-;;   (evil-goggles-mode))
-
 ;; (use-package evil-string-inflection)
 
 ;; (use-package rotate-text
@@ -240,6 +252,7 @@
 (use-package evil-indent-plus)
 (use-package evil-embrace)
 (use-package exato)
+
 ;; (use-package targets
 ;;   :load-path "~/Git/targets.el/targets.el"
 ;;   :init
@@ -288,37 +301,9 @@
 ;;   (define-key evil-normal-state-map "H" 'evil-backward-arg)
 ;;   (define-key evil-motion-state-map "L" 'evil-forward-arg))
 
-;;;;;;;;;;;;;;;;
-;; Which key? ;;
-;;;;;;;;;;;;;;;;
-
-;; This is so awesome.
-(use-package which-key
-  :config
-  (which-key-mode))
-
-;;;;;;;;;;;;;;;;
-;; Auto-modes ;;
-;;;;;;;;;;;;;;;;
-
-(use-package web-mode)
-
-(add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\Vagrantfile\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\Gemfile\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
-(add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
-(add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
-(add-to-list 'auto-mode-alist '("\\.sld\\'" . scheme-mode))
-(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
-
-;; ;;;;;;;;;;;;;;;;;
-;; ;; Auto-compie ;;
-;; ;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;
+;; Auto-compie ;;
+;;;;;;;;;;;;;;;;;
 
 (use-package auto-compile
   :config
@@ -330,11 +315,55 @@
   (setq auto-compile-toggle-deletes-nonlib-dest t)
   (setq auto-compile-update-autoloads t))
 
+;;;;;;;;;;;;;;;;
+;; Which key? ;;
+;;;;;;;;;;;;;;;;
+
+;; This is so awesome.
+(use-package which-key
+  :config
+  (which-key-mode))
+
+;;:;;;;;;;
+;; JSON ;;
+;;;;;;;;;;
+
+(use-package json-mode
+  :init
+  (setq json-reformat:indent-width 2)
+  :config
+  (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode)))
+
+;;;;;;:;
+;; Go ;;
+;;;;;;;;
+
+(use-package go-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode)))
+
+;;;;;;;;;;;;;;;;
+;; PureScript ;;
+;;;;;;;;;;;;;;;;
+
+(use-package psc-ide)
+(use-package purescript-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode)))
+
+
+;;;;;;;;;;
+;; Rust ;;
+;;;;;;;;;;
+
+(use-package rust-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode)))
+
 ;;;;;;;;;;;;;;;;;;
 ;; Code Folding ;;
 ;;;;;;;;;;;;;;;;;;
 
-;; (add-hook 'web-mode-hook 'hs-minor-mode)
 (use-package origami
   :config
   (global-origami-mode)
@@ -345,6 +374,10 @@
 ;;;;;;;;;;;;;;;
 
 (use-package doom-modeline
+  :init
+  (setq doom-modeline-buffer-encoding nil)
+  (setq doom-modeline-github nil)
+  (setq doom-modeline-icon nil)
   :config
   (unless after-init-time
     ;; prevent flash of unstyles modeline at startup
@@ -352,9 +385,6 @@
   (size-indication-mode +1)
   (column-number-mode +1) ;; Column numbers in modeline
   (doom-modeline-mode))
-
-(use-package evil-anzu
-  :after evil)
 
 ;;;;;;;;;;;;;;;;;;;
 ;; Expand region ;;
@@ -400,7 +430,9 @@
 ;;   (define-key evil-visual-state-map kbd "SPC") 'evil-avy-goto-char-2)
 ;;   (define-key evil-motion-state-map (kbd "SPC") 'evil-avy-goto-char-2))
 
+(use-package evil-easymotion)
 (use-package general
+  :after evil-easymotion
   :ensure t
   :init
   (defvar general-override-states)
@@ -416,7 +448,6 @@
   (general-define-key
    :states '(normal visual motion)
    :keymaps 'override
-   "SPC" 'hydra-space/body
    ;; there can be no better config
    "f" 'evilem-motion-find-char
    "F" 'evilem-motion-find-char-backward
@@ -459,7 +490,7 @@
 (use-package company
   :init
   (setq company-minimum-prefix-length 2)
-  (setq company-tooltip-limit 14)
+  (setq company-tooltip-limit 20)
   (defvar company-dabbrev-downcase)
   (setq company-dabbrev-downcase nil)
   (defvar company-dabbrev-ignore-case)
@@ -468,9 +499,7 @@
   (setq company-dabbrev-code-other-buffers t)
   (setq company-tooltip-align-annotations t)
   (setq company-require-match 'never)
-  (setq company-idle-delay 0.05)
-  (defvar company-statistics-size)
-  (setq company-statistics-size 600)
+  (setq company-idle-delay 0.1)
   (setq company-backends '(company-capf))
   (setq company-frontends '(company-pseudo-tooltip-frontend
                             company-echo-metadata-frontend))
@@ -484,30 +513,19 @@
   :config
   (company-flx-mode +1))
 
-(use-package prescient)
-(use-package company-prescient
-  :hook (company-mode . company-prescient-mode)
-  :config
-  (prescient-persist-mode +1))
-
 (use-package company-statistics
   :config
-  (company-statistics-mode))
-
-(use-package company-dict
-  :defer t
-  :config
-  (setq company-dict-dir (concat user-emacs-directory "dict/"))
-  (add-to-list 'company-backends 'company-dict)
-  (define-key evil-insert-state-map (kbd "C-x C-k") 'company-dict))
+  (company-statistics-mode +1))
 
 ;;;;;;;;;
 ;; Ivy ;;
 ;;;;;;;;;
 
 (use-package counsel
+  :init
+  (setq counsel-rg-base-command "rg -i -M 120 --no-heading --line-number --color never %s")
+  (setq counsel-grep-base-command "rg -i -M 120 --no-heading --line-number --color never %s")
   :config
-  (setq counsel-grep-base-command "rg -i -M 120 --no-heading --line-number --color never '%s' %s")
   (global-set-key (kbd "M-x") 'counsel-M-x)
   (global-set-key (kbd "C-x C-f") 'counsel-find-file)
   (global-set-key (kbd "C-x RET") 'counsel-evil-marks)
@@ -517,7 +535,12 @@
   (global-set-key (kbd "C-x C-r") 'counsel-buffer-or-recentf)
   (counsel-mode))
 
+;; ;; not sure about this yet
 ;; (use-package ibuffer-vc)
+
+(use-package projectile
+  :init
+  (setq projectile-enable-caching t))
 
 (use-package counsel-projectile
   :init
@@ -559,6 +582,7 @@
   ;; (define-key counsel-find-file-map (kbd "C-p") 'ivy-previous-line-and-call) ;; waste of memory
   (define-key counsel-find-file-map (kbd "C-l") 'counsel-up-directory))
 
+;; fuzzy completion
 (use-package flx
   :init
   (setq ivy-flx-limit 10000)
@@ -569,11 +593,12 @@
           (counsel-projectile . ivy--regex-fuzzy)
           (t                  . ivy--regex-plus))))
 
-(use-package ivy-historian
-  :after ivy
-  :config
-  (historian-mode +1)
-  (ivy-historian-mode +1))
+;; we add this for sort-by-frequency
+(use-package smex)
+
+;; show # of candidates in isearch
+(use-package evil-anzu
+  :after evil)
 
 (use-package swiper
   :config
@@ -630,21 +655,9 @@
 ;; Color ;;
 ;;;;;;;;;;;
 
-;; (use-package color-theme-solarized
-;;   :config
-;;   (load-theme 'solarized t))
-
 (use-package doom-themes
   :config
   (load-theme 'doom-one t))
-
-
-;;;;;;;;;;;;;;;;
-;; PureScript ;;
-;;;;;;;;;;;;;;;;
-
-(use-package psc-ide)
-(use-package purescript-mode)
 
 ;;;;;;;;;;;;;;
 ;; Flycheck ;;
@@ -654,17 +667,28 @@
   :init
   (setq flycheck-check-syntax-automatically '(save))
   (setq flycheck-display-errors-delay 0.25)
+  (setq flycheck-temp-prefix ".flycheck")
   :config
   (global-flycheck-mode +1)
   ;; disable jshint since we prefer eslint checking
   ;; customize flycheck temp file prefix
   (setq-default flycheck-temp-prefix ".flycheck"))
 
-;;;;;;;;;;
-;; Tide ;;
-;;;;;;;;;;
+;;;;;;;;;;;;;;;;
+;; Javascript ;;
+;;;;;;;;;;;;;;;;
 
-(use-package web-mode)
+(use-package web-mode
+  :init
+  (setq web-mode-attr-indent-offset 2)
+  (setq web-mode-attr-value-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-markup-indent-offset 2)
+  :config
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode)))
 
 (use-package tide
   :config
@@ -688,18 +712,11 @@
 ;;   (setq prettier-js-args '("--bracket-spacing" "true"
 ;;                            "---single-quote" "true")))
 
-;;;;;;;;;;;;;;;;;
-;; Indentation ;;
-;;;;;;;;;;;;;;;;;
-
-;; (use-package aggressive-indent)
-
-;;;;;;;;;;;
-;; Magit ;;
-;;;;;;;;;;;
+;;;;;;;;;
+;; Git ;;
+;;;;;;;;;
 
 ;; (use-package magit)
-
 (use-package git-timemachine)
 
 ;;;;;;;;;;;
@@ -726,9 +743,9 @@
   :config
   (add-hook 'web-mode-hook #'rainbow-delimiters-mode))
 
-;;;;;;;;;;;;;;;;;;;;;
-;; Highlight Todos ;;
-;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Todos, fixmes, etc. ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package hl-todo
   :config
@@ -752,7 +769,7 @@
 ;; IRC ;;
 ;;;;;;;;;
 
-;; ;; I'm using hexchat
+;; ;; I'm using hexchat right now
 ;; (use-package circe
 ;;   :init
 ;;   (setq circe-network-options
@@ -772,35 +789,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ansi-term-color-vector
-   [unspecified "#2d2a2e" "#ff6188" "#a9dc76" "#ffd866" "#78dce8" "#ab9df2" "#ff6188" "#fcfcfa"])
- '(c-basic-offset 4)
- '(compilation-message-face (quote default))
- '(counsel-rg-base-command
-   "rg -M 120 --glob !yarn.lock --with-filename --no-heading --line-number --color never %s")
- '(css-indent-offset 2)
- '(doom-modeline-buffer-encoding nil)
- '(doom-modeline-github nil)
- '(doom-modeline-icon nil)
- '(flycheck-temp-prefix ".flycheck")
- '(focus-dimness nil)
- '(frame-background-mode (quote dark))
- '(indent-guide-char "│")
- '(js-indent-level 2)
- '(json-reformat:indent-width 2)
+   [unspecified "#2d2a2e" "#ff6188" "#a9dc76" "#ffd866" "#78dce8" "#ab9df2" "#ff6188" "#fcfcfa"] t)
  '(package-selected-packages
    (quote
-    (circe ivy-rich company-dict company-tng company-flx simpleclip elfeed highlight-indentation indent-guide vim-empty-lines-mode purescript-mode ibuffer-vc git-timemachine ibuffer-projectile general exato highlight-indent-guides rotate-text evil-embrace evil-indent-plus exacto ranger so-long evil-terminal-cursor-changer expand-region evil-exchange which-key paradox ivy-historian company-statistics selectrum ivy-prescient number-lock evil-swap-keys evil-easymotion evil-textobj-column origami evil-textobj-syntax evil-textobj-line evil-snipe ivy-smex doom-todo-ivy ivy-posframe counsel-projectile counsel ivy-mode evil-args evil-matchit iedit smartparens hl-todo psc-ide easymotion diredfl company-prescient move-text rainbow-delimiters doom-themes one-dark-theme doom-modeline auto-compile spaceline-config tide json-mode evil-collection avy handlebars-mode mustache-mode mustache yaml-mode jsx-mode babel-repl toml-mode slack bundler projectile-rails neotree tabbar ack auto-dim-other-buffers svg-mode-line-themes company apt-utils readline-complete bash-completion cargo ac-racer racer smart-mode-line wiki-summary ac-haskell-process buffer-move eshell-did-you-mean eshell-z multi-term go-autocomplete go-mode smex pophint evil-avy slime evil-surround god-mode evil-tutor cider ghc haskell-mode showkey magit evil web-mode wc-mode wc-goal-mode w3m sass-mode pandoc-mode pandoc golden-ratio flycheck flx-isearch fill-column-indicator ergoemacs-mode eh-gnus dired-hacks-utils no-littering use-package)))
- '(paradox-github-token t)
- '(projectile-enable-caching t)
- '(show-paren-delay 0.0)
- '(showkey-log-mode nil)
- '(vc-follow-symlinks t)
- '(web-mode-attr-indent-offset 2)
- '(web-mode-attr-value-indent-offset 2)
- '(web-mode-code-indent-offset 2)
- '(web-mode-markup-indent-offset 2)
- '(window-divider-default-places (quote right-only))
- '(window-divider-mode t))
+    (rust-mode web-mode which-key smex smartparens rainbow-delimiters purescript-mode psc-ide paradox origami no-littering move-text magit json-mode ivy-rich ivy-posframe iedit hl-todo highlight-indent-guides haskell-mode go-mode git-timemachine general exato evil-textobj-syntax evil-textobj-line evil-textobj-column evil-terminal-cursor-changer evil-matchit evil-indent-plus evil-exchange evil-embrace evil-easymotion evil-collection evil-args evil-anzu elfeed doom-themes doom-modeline diredfl dired-hacks-utils counsel-projectile company-statistics company-flx company-dict circe auto-compile))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -813,7 +805,6 @@
  '(counsel-variable-documentation ((t (:inherit nil))))
  '(doom-modeline-bar-inactive ((t nil)))
  '(doom-modeline-battery-normal ((t (:inherit mode-line :background "black" :weight normal))))
- '(evil-goggles-default-face ((t (:inherit region :background "black"))))
  '(flycheck-error ((t (:background "red" :foreground "white" :underline (:color "#ff6655" :style wave)))))
  '(flycheck-warning ((t (:background "red" :foreground "white" :underline (:color "#ECBE7B" :style wave)))))
  '(font-lock-comment-face ((t (:foreground "#525252" :slant italic))))
@@ -828,8 +819,7 @@
  '(line-number ((t (:inherit default :foreground "#073642" :strike-through nil :underline nil :slant normal :weight normal))))
  '(line-number-current-line ((t (:inherit (hl-line defaultblack) :foreground "#657b83" :strike-through nil :underline nil :slant normal :weight normal))))
  '(linum ((t (:inherit default :foreground "#a9a1e1" :strike-through nil :underline nil :slant normal :weight normal))))
- '(mode-line-inactive ((t (:background "black" :foreground "#525252" :box nil))))
- '(vim-empty-lines-face ((t (:inherit font-lock-comment-face)))))
+ '(mode-line-inactive ((t (:background "black" :foreground "#525252" :box nil)))))
 
 (provide '.emacs)
 ;;; .emacs ends here
