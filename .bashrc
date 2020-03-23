@@ -15,7 +15,7 @@ alias ...='cd ../../'
 alias ....='cd ../../../'
 alias untar='tar -zxvf '
 alias startx='startx -- -ardelay 200 -arinterval 30'
-alias emacs='emacsclient -a "" -t'
+alias emacs='emacsclient -nw -a "" -t'
 alias e='emacs'
 
 # exports
