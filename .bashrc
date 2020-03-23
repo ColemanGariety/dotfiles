@@ -17,6 +17,7 @@ alias untar='tar -zxvf '
 alias startx='startx -- -ardelay 200 -arinterval 30'
 alias emacs='emacsclient -nw -a "" -t'
 alias e='emacs'
+alias chromium-debug='chromium --remote-debugging-port=9222'
 
 # exports
 export GOPATH="/home/coleman/Git/go/"
