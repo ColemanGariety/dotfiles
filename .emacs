@@ -284,8 +284,6 @@
   :config
   (global-evil-surround-mode))
 
-(use-package move-text)
-
 (use-package evil-matchit
   :config
   (global-evil-matchit-mode))
@@ -300,6 +298,10 @@
 ;;   (define-key evil-motion-state-map "H" 'evil-backward-arg)
 ;;   (define-key evil-normal-state-map "H" 'evil-backward-arg)
 ;;   (define-key evil-motion-state-map "L" 'evil-forward-arg))
+
+(use-package vim-empty-lines-mode
+  :config
+  (global-vim-empty-lines-mode))
 
 ;;;;;;;;;;;;;;;;;
 ;; Auto-compie ;;
@@ -792,7 +794,8 @@
    [unspecified "#2d2a2e" "#ff6188" "#a9dc76" "#ffd866" "#78dce8" "#ab9df2" "#ff6188" "#fcfcfa"] t)
  '(package-selected-packages
    (quote
-    (rust-mode web-mode which-key smex smartparens rainbow-delimiters purescript-mode psc-ide paradox origami no-littering move-text magit json-mode ivy-rich ivy-posframe iedit hl-todo highlight-indent-guides haskell-mode go-mode git-timemachine general exato evil-textobj-syntax evil-textobj-line evil-textobj-column evil-terminal-cursor-changer evil-matchit evil-indent-plus evil-exchange evil-embrace evil-easymotion evil-collection evil-args evil-anzu elfeed doom-themes doom-modeline diredfl dired-hacks-utils counsel-projectile company-statistics company-flx company-dict circe auto-compile))))
+    (vim-empty-lines-mode vim-empty-lines-modes tide use-package bind-key rust-mode web-mode which-key smex smartparens rainbow-delimiters purescript-mode psc-ide paradox origami no-littering magit json-mode ivy-rich ivy-posframe iedit hl-todo highlight-indent-guides haskell-mode go-mode git-timemachine general exato evil-textobj-syntax evil-textobj-line evil-textobj-column evil-terminal-cursor-changer evil-matchit evil-indent-plus evil-exchange evil-embrace evil-easymotion evil-collection evil-args evil-anzu elfeed doom-themes doom-modeline diredfl dired-hacks-utils counsel-projectile company-statistics company-flx company-dict circe auto-compile)))
+ '(paradox-github-token t))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
