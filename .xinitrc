@@ -1,5 +1,4 @@
 setxkbmap -option 'altwin:swap_alt_win'
-nitrogen --restore
 xrdb ~/.Xresources
 # xsetroot -xcf /usr/share/icns/Adwaita/cursors/left_ptr 32
 xset m 3/2 0

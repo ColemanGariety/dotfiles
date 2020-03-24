@@ -2,16 +2,16 @@
 ;; Performance ;;
 ;;;;;;;;;;;;;;;;;
 
-(defvar read-process-output-max)
-(setq read-process-output-max 3145728) ;; 3mb (max lsp-mode packet size)
-
-;; despite such as this given here:
+;; in spite of this:
 ;; https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/
 ;; ...i've found that the only way to reliably prevent emacs from
 ;; skipping/jumping when scrolling is to set an ungodly high gc threshold.
 ;; yeah... high number
 (setq gc-cons-threshold  100000000
       gc-cons-percentage 0.6)
+
+;; not sure what this does but let's turn it off
+(setq site-run-file nil)
 
 ;; This is consulted on every `require', `load' and various path/io functions.
 ;; You get a minor speed up by nooping this.
@@ -32,19 +32,15 @@
 ;; font.
 (setq frame-inhibit-implied-resize t)
 
-;; Don't ping things that look like domain names.
-(defvar ffap-machine-p-known)
-(setq ffap-machine-p-known 'reject)
-
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
 ;;      reason. Disabling it completely could have many side-effects, so we
 ;;      defer it until later.
 (unless (display-graphic-p)
   (advice-add #'tty-run-terminal-initialization :override #'ignore)
   (add-hook 'window-setup-hook
-    (defun doom-init-tty-h ()
-      (advice-remove #'tty-run-terminal-initialization #'ignore)
-      (tty-run-terminal-initialization (selected-frame) nil t))))
+            (defun doom-init-tty-h ()
+              (advice-remove #'tty-run-terminal-initialization #'ignore)
+              (tty-run-terminal-initialization (selected-frame) nil t))))
 
 ;; byte compile func
 (defun er-byte-compile-init-dir ()
@@ -113,7 +109,7 @@
     (gcmh-mode +1)
     (with-eval-after-load 'gcmh
       (setq gcmh-idle-delay 10
-            gcmh-verbose t
+            gcmh-verbose nil
             gcmh-high-cons-threshold 100000000)
       (add-hook 'focus-out-hook #'gcmh-idle-garbage-collect))))
 
@@ -144,18 +140,21 @@
 ;; L    next argument
 ;; H    previous argument
 ;; C-x RET evil marks)
-
 ;; General
 
 (global-font-lock-mode +1)   ;; for all buffers
 (global-visual-line-mode +1) ;; word-wrap
 (show-paren-mode +1)         ;; show matching parentheses
 (display-time) ;; in mode-line
+(size-indication-mode +1)
+(column-number-mode +1) ;; Column numbers in modeline
 (delete-selection-mode +1) ;; Replace selection
 (fset 'yes-or-no-p 'y-or-n-p) ;; Changes all yes/no questions to y/n type
 (save-place-mode +1)
 (blink-cursor-mode 0)
 (window-divider-mode +1)
+(electric-pair-mode +1)
+(set-locale-environment "en_US.UTF-8")
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
 (set-face-inverse-video 'vertical-border nil)
@@ -188,6 +187,7 @@
       garbage-collection-messages     nil
       echo-keystrokes                 0.25
       text-quoting-style              'grave
+      user-full-name                  "Coleman Gariety"
       load-prefer-newer               t
       line-number-display-limit-width 2000000
       initial-buffer-choice           t
@@ -266,29 +266,30 @@
    "M-L" 'evil-window-vsplit
    "C-q" 'delete-window)
   (evil-mode +1))
-  ;; (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-  ;; (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-  ;; (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-  ;; (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-  ;; (define-key evil-normal-state-map (kbd "C-n") 'evil-next-line)
-  ;; (define-key evil-insert-state-map (kbd "C-n") 'evil-next-line)
-  ;; (define-key evil-visual-state-map (kbd "C-n") 'evil-next-line)
-  ;; (define-key evil-normal-state-map (kbd "C-p") 'evil-previous-line)
-  ;; (define-key evil-insert-state-map (kbd "C-p") 'evil-previous-line)
-  ;; (define-key evil-visual-state-map (kbd "C-p") 'evil-previous-line)
-  ;; (define-key evil-normal-state-map (kbd "C-a") 'evil-beginning-of-line)
-  ;; (define-key evil-visual-state-map (kbd "C-a") 'evil-beginning-of-line)
-  ;; (define-key evil-normal-state-map (kbd "C-e") 'evil-end-of-line)
-  ;; (define-key evil-visual-state-map (kbd "C-e") 'evil-end-of-line)
-  ;; (define-key global-map (kbd "M-k") 'evil-window-up)
-  ;; (define-key global-map (kbd "M-j") 'evil-window-down)
-  ;; (define-key global-map (kbd "M-h") 'evil-window-left)
-  ;; (define-key global-map (kbd "M-l") 'evil-window-right)
-  ;; (define-key global-map (kbd "M-K") 'evil-window-split)
-  ;; (define-key global-map (kbd "M-J") 'evil-window-split)
-  ;; (define-key global-map (kbd "M-H") 'evil-window-vsplit)
-  ;; (define-key global-map (kbd "M-L") 'evil-window-vsplit)
-  ;; (define-key global-map (kbd "C-q") 'delete-window)
+;; (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+
+;; (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+;; (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+;; (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+;; (define-key evil-normal-state-map (kbd "C-n") 'evil-next-line)
+;; (define-key evil-insert-state-map (kbd "C-n") 'evil-next-line)
+;; (define-key evil-visual-state-map (kbd "C-n") 'evil-next-line)
+;; (define-key evil-normal-state-map (kbd "C-p") 'evil-previous-line)
+;; (define-key evil-insert-state-map (kbd "C-p") 'evil-previous-line)
+;; (define-key evil-visual-state-map (kbd "C-p") 'evil-previous-line)
+;; (define-key evil-normal-state-map (kbd "C-a") 'evil-beginning-of-line)
+;; (define-key evil-visual-state-map (kbd "C-a") 'evil-beginning-of-line)
+;; (define-key evil-normal-state-map (kbd "C-e") 'evil-end-of-line)
+;; (define-key evil-visual-state-map (kbd "C-e") 'evil-end-of-line)
+;; (define-key global-map (kbd "M-k") 'evil-window-up)
+;; (define-key global-map (kbd "M-j") 'evil-window-down)
+;; (define-key global-map (kbd "M-h") 'evil-window-left)
+;; (define-key global-map (kbd "M-l") 'evil-window-right)
+;; (define-key global-map (kbd "M-K") 'evil-window-split)
+;; (define-key global-map (kbd "M-J") 'evil-window-split)
+;; (define-key global-map (kbd "M-H") 'evil-window-vsplit)
+;; (define-key global-map (kbd "M-L") 'evil-window-vsplit)
+;; (define-key global-map (kbd "C-q") 'delete-window)
 
 (unless (display-graphic-p)
   (use-package evil-terminal-cursor-changer
@@ -352,20 +353,21 @@
   :config
   (global-evil-surround-mode +1))
 
-(use-package evil-matchit
-  :config
-  (global-evil-matchit-mode +1))
+;; ;; Breaks stuff :(
+;; (use-package evil-matchit
+;;   :config
+;;   (global-evil-matchit-mode +1))
 
-(use-package evil-args
-  :config
-  (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
-  (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
-  (define-key evil-normal-state-map "L" 'evil-forward-arg)
-  (define-key evil-normal-state-map "H" 'evil-backward-arg)
-  (define-key evil-motion-state-map "L" 'evil-forward-arg)
-  (define-key evil-motion-state-map "H" 'evil-backward-arg)
-  (define-key evil-normal-state-map "H" 'evil-backward-arg)
-  (define-key evil-motion-state-map "L" 'evil-forward-arg))
+;; (use-package evil-args
+;;   :config
+;;   (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
+;;   (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
+;;   (define-key evil-normal-state-map "L" 'evil-forward-arg)
+;;   (define-key evil-normal-state-map "H" 'evil-backward-arg)
+;;   (define-key evil-motion-state-map "L" 'evil-forward-arg)
+;;   (define-key evil-motion-state-map "H" 'evil-backward-arg)
+;;   (define-key evil-normal-state-map "H" 'evil-backward-arg)
+;;   (define-key evil-motion-state-map "L" 'evil-forward-arg))
 
 ;; ;; this makes the dreaded
 ;; startup-screen-flash return :/
@@ -377,19 +379,18 @@
 ;; Auto-compie ;;
 ;;;;;;;;;;;;;;;;;
 
-
 (use-package auto-compile
   :init
   (setq auto-compile-display-buffer nil
-        auto-compile-mode-line-counter t))
-:config
+        auto-compile-mode-line-counter t)
+  :config
   (auto-compile-on-load-mode +1)
   (auto-compile-on-save-mode +1)
   (setq auto-compile-display-buffer               nil
         auto-compile-mode-line-counter            t
         auto-compile-source-recreate-deletes-dest t
         auto-compile-toggle-deletes-nonlib-dest   t
-        auto-compile-update-autoloads             t)
+        auto-compile-update-autoloads             t))
 
 ;;;;;;;;;;;;;;;
 ;; which-key ;;
@@ -408,22 +409,28 @@
   :init
   (setq json-reformat:indent-width 2))
 
-(use-package go-mode
-  :mode ("\\.go\\'" . go-mode))
+;; (use-package go-mode
+;;   :mode ("\\.go\\'" . go-mode))
 
 ;; (use-package psc-ide)
 (use-package purescript-mode
   :mode ("\\.psc\\'" . purescript-mode))
 
-(use-package rust-mode
-  :mode "\\.rs\\'")
+;; (use-package rust-mode
+;;   :mode "\\.rs\\'")
 
 (use-package typescript-mode
   :mode ("\\.ts\\'"  . typescript-mode))
 
 (use-package web-mode
-  :mode ("\\.tsx\\'"  . web-mode))
-
+  :mode (("\\.tsx\\'"  . web-mode)
+         ("\\.ts\\'"  . web-mode)
+         ("\\.jsx\\'"  . web-mode)
+         ("\\.js\\'"  . web-mode))
+  :init
+  (setq web-mode-code-indent-offset   2
+        web-mode-markup-indent-offset 2
+        web-mode-css-indent-offset    2))
 
 ;;;;;;;;;;;;;;;;;;
 ;; Code Folding ;;
@@ -447,8 +454,6 @@
     ;; prevent flash of unstyles modeline at startup
     (setq-default mode-line-format nil))
   :config
-  (size-indication-mode +1)
-  (column-number-mode +1) ;; Column numbers in modeline
   (doom-modeline-mode +1))
 
 ;;;;;;;;;;;;;;;;;;;
@@ -488,7 +493,6 @@
 ;;;;;;:;;;;;;;;;
 ;; Easymotion ;;
 ;;;;;;;;;;;;;;;;
-
 (use-package avy
   :init
   ;; See:
@@ -553,34 +557,36 @@
 ;; Completion  ;;
 ;;;;;;;;;;;;;;;;;
 
-;; (use-package company
-;;   :init
-;;   (defvar company-dabbrev-downcase)
-;;   (defvar company-dabbrev-ignore-case)
-;;   (defvar company-dabbrev-code-other-buffers)
-;;   (setq-local completion-ignore-case t)
-;;   (setq company-minimum-prefix-length      3
-;;         company-idle-delay                 0.0
-;;         company-tooltip-limit              10
-;;         company-tooltip-flip-when-above    t
-;;         company-tooltip-align-annotations  t
-;;         completion-ignore-case             nil
-;;         company-dabbrev-code-ignore-case   nil
-;;         company-dabbrev-downcase           nil
-;;         company-dabbrev-ignore-case        nil
-;;         company-dabbrev-code-other-buffers nil
-;;         company-require-match              'never
-;;         company-backends                   '(company-capf)
-;;         company-frontends                  '(company-pseudo-tooltip-frontend
-;;                                              company-echo-metadata-frontend
-;;                                              company-tng-frontend))
-;;   :config
-;;   ;; don't persist company when switching back to normal mode
-;;   (add-hook 'evil-normal-state-entry-hook #'company-abort)
-;;   (add-hook 'after-init-hook 'global-company-mode)
-;;   (general-define-key
-;;    :keymaps 'company-active-map
-;;    "TAB" 'company-complete-common-or-cycle))
+(use-package company
+  :init
+  (defvar company-dabbrev-downcase)
+  (defvar company-dabbrev-ignore-case)
+  (defvar company-dabbrev-code-other-buffers)
+  (setq-local completion-ignore-case t)
+  (setq company-minimum-prefix-length      2 ;; responsive > cpu cycles
+        company-idle-delay                 0.0 ;; same
+        company-tooltip-limit              10
+        company-tooltip-flip-when-above    t
+        company-tooltip-align-annotations  t
+        ;; ;; nonde of these work O_o
+        ;; completion-ignore-case             t
+        ;; company-dabbrev-code-ignore-case   t
+        ;; company-dabbrev-downcase           t
+        ;; company-dabbrev-ignore-case        t
+        ;; company-dabbrev-code-other-buffers t
+        company-require-match              'never
+        company-backends                   '(company-capf)
+        company-frontends                  '(company-pseudo-tooltip-frontend
+                                             company-echo-metadata-frontend
+                                             company-tng-frontend))
+  :config
+  ;; don't persist company when switching back to normal mode
+  (add-hook 'evil-normal-state-entry-hook #'company-abort)
+  (add-hook 'after-init-hook 'global-company-mode)
+  (general-define-key
+   :keymaps 'company-active-map
+   "<backtab>" 'company-select-previous ;; no back-cycle?
+   "TAB"       'company-complete-common-or-cycle))
 
 ;; (use-package company-flx
 ;;   :after company
@@ -591,19 +597,19 @@
 ;;   :config
 ;;   (company-statistics-mode +1))
 
-;; superioir performance
-(use-package auto-complete
-  :init
-  (setq ac-ignore-case        t
-        ac-delay              0.0
-        ac-auto-show-menu     t
-        ac-candidate-limit    10
-        ac-auto-start         3
-        ac-use-comphist       t
-        ac-comphist-threshold 0.5)
-  :config
-  (define-key ac-completing-map (kbd "<backtab>") 'ac-expand-previous)
-  (ac-config-default))
+;; ;; superioir performance
+;; (use-package auto-complete
+;;   :init
+;;   (setq ac-ignore-case        t
+;;         ac-delay              0.0
+;;         ac-auto-show-menu     t
+;;         ac-candidate-limit    10
+;;         ac-auto-start         0
+;;         ac-use-comphist       t
+;;         ac-comphist-threshold 0.5)
+;;   :config
+;;   (define-key ac-completing-map (kbd "<backtab>") 'ac-expand-previous)
+;;   (ac-config-default))
 
 ;;;;;;;;;
 ;; Ivy ;;
@@ -611,7 +617,7 @@
 
 (use-package counsel
   :init
-	(let ((base-command "rg -i -M 120 --no-heading --line-number --color never %s"))
+  (let ((base-command "rg -i -M 120 --no-heading --line-number --color never %s"))
     (setq counsel-rg-base-command   base-command
           counsel-grep-base-command base-command))
   :config
@@ -658,12 +664,12 @@
   (global-set-key (kbd "C-c v") 'ivy-push-view)
   (global-set-key (kbd "C-c V") 'ivy-pop-view)
   ;; auto-resize ivy completion menu
-  (defun ivy-resize--minibuffer-setup-hook ()
-    (add-hook 'post-command-hook #'ivy-resize--post-command-hook nil t))
-  (defun ivy-resize--post-command-hook ()
-    (when ivy-mode
-      (shrink-window (1+ ivy-height))))
-  (add-hook 'minibuffer-setup-hook 'ivy-resize--minibuffer-setup-hook)
+  ;; (defun ivy-resize--minibuffer-setup-hook ()
+  ;;   (add-hook 'post-command-hook #'ivy-resize--post-command-hook nil t))
+  ;; (defun ivy-resize--post-command-hook ()
+  ;;   (when ivy-mode
+  ;;     (shrink-window (1+ ivy-height))))
+  ;; (add-hook 'minibuffer-setup-hook 'ivy-resize--minibuffer-setup-hook)
   ;; (define-key counsel-find-file-map (kbd "C-n") 'ivy-next-line-and-call) ;; waste of memory
   ;; (define-key counsel-find-file-map (kbd "C-p") 'ivy-previous-line-and-call) ;; waste of memory
   (define-key ivy-minibuffer-map (kbd "<ESC>") 'minibuffer-keyboard-quit)
@@ -689,7 +695,6 @@
 ;;   (ivy-set-display-transformer 'internal-complete-buffer nil)
 ;;   (ivy-rich-mode +1))
 
-;; Ugh it breaks things
 ;; fuzzy
 (use-package flx
   :init
@@ -705,7 +710,7 @@
 ;; we add this for sort-by-frequency
 (use-package smex)
 
-;; show # of candidates in isearch
+;; ;; show # of candidates in isearch
 (use-package evil-anzu
   :after evil)
 
@@ -715,39 +720,39 @@
   :config
   (global-set-key (kbd "C-s") 'swiper-isearch))
 
-;; keys
-
 ;;;;;;;;;;;;;;;;
 ;; Copy/paste ;;
 ;;;;;;;;;;;;;;;;
 
-;; Idea from
-;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
-;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
-(when (eq system-type 'gnu/linux)
-  (unless window-system
-    (when (getenv "DISPLAY")
-      ;; Callback for when user cuts
-      (defun xsel-cut-function (text &optional push)
-	;; Insert text to temp-buffer, and "send" content to xsel stdin
-	(with-temp-buffer
-	  (insert text)
-	  ;; I prefer using the "clipboard" selection (the one the
-	  ;; typically is used by c-c/c-v) before the primary selection
-	  ;; (that uses mouse-select/middle-button-click)
-	  (call-process-region (point-min) (point-max) "xsel" nil 0 nil "--clipboard" "--input")))
-      ;; Call back for when user pastes
-      (defun xsel-paste-function()
-	;; Find out what is current selection by xsel. If it is different
-	;; from the top of the kill-ring (car kill-ring), then return
-	;; it. Else, nil is returned, so whatever is in the top of the
-	;; kill-ring will be used.
-	(let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
-	  (unless (string= (car kill-ring) xsel-output)
-	    xsel-output )))
-      ;; Attach callbacks to hooks
-      (setq interprogram-cut-function   'xsel-cut-function
-            interprogram-paste-function 'xsel-paste-function))))
+(case system-type
+  ('darwin (unless window-system
+             (setq interprogram-cut-function
+                   (lambda (text &optional push)
+                     (let* ((process-connection-type nil)
+                            (pbproxy (start-process "pbcopy"
+                                                    "pbcopy"
+                                                    "/usr/bin/pbcopy")))
+                       (process-send-string pbproxy text)
+                       (process-send-eof pbproxy))))))
+  ('gnu/linux (progn
+                (setq x-select-enable-clipboard t)
+                (defun xsel-cut-function (text &optional push)
+                  (with-temp-buffer
+                    (insert text)
+                    (call-process-region (point-min)
+                                         (point-max)
+                                         "xsel"
+                                         nil
+                                         0
+                                         nil
+                                         "--clipboard"
+                                         "--input")))
+                (defun xsel-paste-function()
+                  (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
+                    (unless (string= (car kill-ring) xsel-output)
+                      xsel-output)))
+                (setq interprogram-cut-function 'xsel-cut-function)
+                (setq interprogram-paste-function 'xsel-paste-function))))
 
 ;;;;;;;;;;;
 ;; Color ;;
@@ -775,42 +780,6 @@
   ;; customize flycheck temp file prefix
   (setq-default flycheck-temp-prefix ".flycheck"))
 
-;;;;;;;;;;;;;;;;
-;; Javascript ;;
-;;;;;;;;;;;;;;;;
-
-;; (use-package web-mode
-;;   :mode (("\\.js\\'"  . web-mode)
-;;          ("\\.ts\\'"  . web-mode)
-;;          ("\\.jsx\\'" . web-mode)
-;;          ("\\.tsx\\'" . web-mode))
-;;   :init
-;;   (setq web-mode-attr-indent-offset 2
-;;         web-mode-attr-value-indent-offset 2
-;;         web-mode-code-indent-offset 2
-;;         web-mode-markup-indent-offset 2))
-
-;; (defun setup-tide-mode ()
-;;   "Setup tide mode."
-;;   (interactive)
-;;   (tide-setup)
-;;   (flycheck-mode +1)
-;;   (eldoc-mode +1)
-;;   (company-mode +1))
-
-;; (use-package tide
-;;   :hook (web-mode . setup-tide-mode)
-;;   :config
-;;   (add-hook 'web-mode-hook
-;;             (lambda ()
-;;               (add-to-list 'write-file-functions
-;;                            'delete-trailing-whitespace))))
-
-;; (use-package prettier-js
-;;   :config
-;;   (setq prettier-js-args '("--bracket-spacing" "true"
-;;                            "---single-quote" "true")))
-
 ;;;;;;;;:
 ;; LSP ;;
 ;;;;;;;;;
@@ -821,39 +790,49 @@
          (web-mode        . lsp)
          (lsp-mode        . lsp-enable-which-key-integration))
   :init
-  (setq lsp-keymap-prefix "C-l"
-        ;; lsp-prefer-capf   nil
-        lsp-idle-delay    0.500))
+  (defvar read-process-output-max)
+  (setq read-process-output-max            3145728 ;; 3mb max packet size
+        lsp-keymap-prefix                  "C-l"
+        lsp-prefer-capf                    t
+        lsp-enable-symbol-highlighting     t
+        lsp-flycheck-live-reporting        nil ;; this is gonna give me a seizure
+        lsp-signature-auto-activate        nil
+        lsp-signature-render-documentation nil
+        lsp-enable-symbol-highlighting     nil
+        lsp-ui-doc-enable                  nil ;; too big
+        ;; max-mini-window-height             6
+        ;; lsp-eldoc-hook                     nil
+        lsp-idle-delay                     0.5))
 
 (use-package lsp-ui
-  :commands lsp-ui-mode
-  :init
-  (setq lsp-flycheck-live-reporting nil))
+  :requires lsp-mode)
+
+;; (use-package lsp-ivy
+;;   :requires lsp-mode)
 
 ;; ;; So slow!
 ;; (use-package company-lsp
 ;;   :commands company-lsp)
-  ;; :config
-  ;; (push 'company-lsp company-backends))
+;; :config
+;; (push 'company-lsp company-backends))
 
-(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-;; (use-package treemacs)
-;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+(use-package treemacs)
+(use-package lsp-treemacs)
 (use-package dap-mode)
 (use-package dap-chrome
   :ensure nil
-  :requires dap-mode
   :config
   (dap-register-debug-template
-   "gb-client"
-   (list :type "default"
+   "default"
+   (list :type "chrome"
          :cwd nil
          :mode "url"
          :request "launch"
          :webRoot nil
          :url "http://localhost:3000"
          :name "Chrome Browse URL"
-         :runtimeExecutable "/usr/bin/chromium")))
+         :runtimeExecutable "/usr/bin/google-chrome-stable")))
 ;; (use-package dap-node
 ;;   :ensure nil
 ;;   :requires dap-mode)
@@ -876,8 +855,36 @@
 ;; Git ;;
 ;;;;;;;;;
 
-;; (use-package magit)
-;; (use-package git-timemachine)
+(use-package magit)
+(use-package git-timemachine)
+
+;;;;;;;;;
+;; IRC ;;
+;;;;;;;;;
+
+(setq my-credentials-file "~/.private.el")
+
+(defun my-nickserv-password (server)
+  (with-temp-buffer
+    (insert-file-contents-literally my-credentials-file)
+    (plist-get (read (buffer-string)) :nickserv-password)))
+
+(use-package circe
+  :init
+  (setq circe-network-options
+        '(("Freenode"
+           :tls t
+           :nick "clmg"
+           :sasl-username "clmg"
+           :sasl-password my-nickserv-password))))
+
+(use-package circe-notifications
+  :config
+  ;; (eval-after-load "circe-notifications"
+  ;;   '(setq circe-notifications-watch-strings
+  ;;       '("people" "you" "like" "to" "hear" "from")))
+  (autoload 'enable-circe-notifications "circe-notifications" nil t)
+  (add-hook 'circe-server-connected-hook 'enable-circe-notifications))
 
 ;;;;;;;;;;;
 ;; iedit ;;
@@ -934,37 +941,3 @@
 ;;         (execute-kbd-macro
 ;;          (concat ":m" reg-or-lin "-" (number-to-string num) (kbd "RET") reactivate-region)))
 ;;     (move-line-or-region (- arg))))
-
-;;;;;;;;;;;;;;;
-;; Passwords ;;
-;;;;;;;;;;;;;;;
-
-(use-package pass)
-
-;;;;;;;;;
-;; IRC ;;
-;;;;;;;;;
-
-(setq my-credentials-file "~/.private.el")
-
-(defun my-nickserv-password (server)
-  (with-temp-buffer
-    (insert-file-contents-literally my-credentials-file)
-    (plist-get (read (buffer-string)) :nickserv-password)))
-
-(use-package circe
-  :init
-  (setq circe-network-options
-        '(("Freenode"
-           :tls t
-           :nick "clmg"
-           :sasl-username "clmg"
-           :sasl-password my-nickserv-password))))
-
-(use-package circe-notifications
-  :config
-  ;; (eval-after-load "circe-notifications"
-  ;;   '(setq circe-notifications-watch-strings
-  ;;       '("people" "you" "like" "to" "hear" "from")))
-  (autoload 'enable-circe-notifications "circe-notifications" nil t)
-  (add-hook 'circe-server-connected-hook 'enable-circe-notifications))
