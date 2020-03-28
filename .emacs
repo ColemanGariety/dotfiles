@@ -7,7 +7,7 @@
 ;; ...i've found that the only way to reliably prevent emacs from
 ;; skipping/jumping when scrolling is to set an ungodly high gc threshold.
 ;; yeah... high number
-(setq gc-cons-threshold  100000000
+(setq gc-cons-threshold  most-positive-fixnum
       gc-cons-percentage 0.6)
 
 ;; not sure what this does but let's turn it off
@@ -111,7 +111,7 @@
       (setq gcmh-idle-delay 10
             gcmh-verbose nil
             gcmh-high-cons-threshold 100000000)
-      (add-hook 'focus-out-hook #'gcmh-idle-garbage-collect))))
+      (add-function :after after-focus-change-function #'gcmh-idle-garbage-collect))))
 
 ;;;;;;;;;;;;;
 ;; General ;;
@@ -160,9 +160,9 @@
 (set-face-inverse-video 'vertical-border nil)
 (set-face-background 'vertical-border "black")
 (set-face-foreground 'vertical-border (face-background 'vertical-border))
-(add-hook 'prog-mode-hook 'auto-fill-mode)
 (setq-default fill-column 80)
 (setq comment-auto-fill-only-comments t)
+(add-hook 'prog-mode-hook 'auto-fill-mode)
 
 ;; UTF-8 as the default coding system
 (when (fboundp 'set-charset-priority)
@@ -180,17 +180,15 @@
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 (setq frame-background-mode (quote dark))
-(defvar show-paren-delay)
 (defvar apropos-do-all)
 (defvar compilation-message-face)
-(setq show-paren-delay                0.25 ;; nice delay :)
-      garbage-collection-messages     nil
-      echo-keystrokes                 0.25
+(setq garbage-collection-messages     nil
+      echo-keystrokes                 0.15
       text-quoting-style              'grave
       user-full-name                  "Coleman Gariety"
       load-prefer-newer               t
       line-number-display-limit-width 2000000
-      initial-buffer-choice           t
+      ;; initial-buffer-choice           t
       sentence-end-double-space       nil
       scroll-conservatively           most-positive-fixnum
       vc-follow-symlinks              t
@@ -229,6 +227,52 @@
               (setq inhibit-message t)
               (run-with-idle-timer 0 nil (lambda () (setq inhibit-message nil))))))
 
+;;;;;;;;;;;;;;;
+;; Dashboard ;;
+;;;;;;;;;;;;;;;
+
+(use-package all-the-icons)
+(use-package dashboard
+  :init
+  (setq initial-buffer-choice       (lambda ()
+                                      (get-buffer "*dashboard*"))
+        dashboard-center-content    t
+        dashboard-set-file-icons    t
+        dashboard-set-heading-icons t
+        dashboard-startup-banner    3
+        dashboard-page-separator    "\n\n"
+        dashboard-set-init-info     nil
+        dashboard-items             '((recents   . 5)
+                                      (projects  . 5)))
+  :config
+  (dashboard-setup-startup-hook))
+
+;;:;;;;;;;;;;;;:
+;; Move lines ;;
+;;;;;;;;;;;;;;;;
+
+;; (defun move-line-or-region (arg)
+;;   "ARG: See https://github.com/syl20bnr/spacemacs/issues/5365."
+;;   (interactive "P")
+;;   (if (or (not arg) (>= arg 0))
+;;       (let ((reg-or-lin (if (region-active-p) "'>" "."))
+;;             (reactivate-region (if (region-active-p) "gv=gv" ""))
+;;             (num (if arg arg 1)))
+;;         (execute-kbd-macro
+;;          (concat ":m" reg-or-lin "+" (number-to-string num) (kbd "RET") reactivate-region)))
+;;     (backward-move-line-or-region (- arg))))
+
+;; (defun backward-move-line-or-region (arg)
+;;   "ARG: See https://github.com/syl20bnr/spacemacs/issues/5365."
+;;   (interactive "P")
+;;   (if (or (not arg) (>= arg 0))
+;;       (let ((reg-or-lin (if (region-active-p) "'<" "."))
+;;             (reactivate-region (if (region-active-p) "gv=gv" ""))
+;;             (num (if arg (+ arg 1) 2)))
+;;         (execute-kbd-macro
+;;          (concat ":m" reg-or-lin "-" (number-to-string num) (kbd "RET") reactivate-region)))
+;;     (move-line-or-region (- arg))))
+
 ;;;;;;;;;;
 ;; Evil ;;
 ;;;;;;;;;;
@@ -250,6 +294,8 @@
    "<remap> <evil-previous-line>" 'evil-previous-visual-line)
   (general-define-key
    :keymaps '(normal insert visual)
+   ;; "C-k" 'backward-move-line-or-region ;; too easy
+   ;; "C-j" 'move-line-or-region          ;; to mess up
    "C-n" 'evil-next-line
    "C-p" 'evil-previous-line
    "C-a" 'evil-beginning-of-line
@@ -266,6 +312,8 @@
    "M-L" 'evil-window-vsplit
    "C-q" 'delete-window)
   (evil-mode +1))
+
+;; ;; old evil config
 ;; (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
 
 ;; (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
@@ -340,11 +388,6 @@
   :config
   (evil-exchange-install))
 
-;; ;; what's the point?
-;; (use-package evil-nerd-commenter
-;;   :config
-;;   (evilnc-default-hotkeys))
-
 (use-package evil-collection
   :config
   (evil-collection-init))
@@ -352,11 +395,6 @@
 (use-package evil-surround
   :config
   (global-evil-surround-mode +1))
-
-;; ;; Breaks stuff :(
-;; (use-package evil-matchit
-;;   :config
-;;   (global-evil-matchit-mode +1))
 
 ;; (use-package evil-args
 ;;   :config
@@ -369,11 +407,11 @@
 ;;   (define-key evil-normal-state-map "H" 'evil-backward-arg)
 ;;   (define-key evil-motion-state-map "L" 'evil-forward-arg))
 
-;; ;; this makes the dreaded
+;; this makes the dreaded
 ;; startup-screen-flash return :/
-;; (use-package vim-empty-lines-mode
-;;   :config
-;;   (global-vim-empty-lines-mode))
+(use-package vim-empty-lines-mode
+  :config
+  (global-vim-empty-lines-mode))
 
 ;;;;;;;;;;;;;;;;;
 ;; Auto-compie ;;
@@ -409,28 +447,42 @@
   :init
   (setq json-reformat:indent-width 2))
 
-;; (use-package go-mode
-;;   :mode ("\\.go\\'" . go-mode))
+(use-package yaml-mode
+  :mode ("\\.yml\\'" . yaml-mode))
+
+(use-package graphql-mode
+  :mode ("\\.graphql\\'" . graphql-mode))
 
 ;; (use-package psc-ide)
 (use-package purescript-mode
   :mode ("\\.psc\\'" . purescript-mode))
 
-;; (use-package rust-mode
-;;   :mode "\\.rs\\'")
+(use-package rust-mode
+  :mode "\\.rs\\'")
 
-(use-package typescript-mode
-  :mode ("\\.ts\\'"  . typescript-mode))
+(use-package haskell-mode
+  :mode "\\.hs\\'")
 
+;; javsacript + typescript
 (use-package web-mode
   :mode (("\\.tsx\\'"  . web-mode)
          ("\\.ts\\'"  . web-mode)
          ("\\.jsx\\'"  . web-mode)
          ("\\.js\\'"  . web-mode))
   :init
-  (setq web-mode-code-indent-offset   2
-        web-mode-markup-indent-offset 2
-        web-mode-css-indent-offset    2))
+  (setq web-mode-code-indent-offset                 2
+        web-mode-markup-indent-offset               2
+        web-mode-css-indent-offset                  2
+        web-mode-enable-html-entities-fontification t)
+  :config
+  (let ((types '("javascript" "jsx")))
+    (setq web-mode-comment-formats
+          (cl-remove-if (lambda (item) (member (car item) types))
+                        web-mode-comment-formats))
+    (dolist (type types)
+      (push (cons type "//") web-mode-comment-formats))))
+
+(use-package indium)
 
 ;;;;;;;;;;;;;;;;;;
 ;; Code Folding ;;
@@ -447,9 +499,10 @@
 
 (use-package doom-modeline
   :init
-  (setq doom-modeline-buffer-encoding nil
-        doom-modeline-github nil
-        doom-modeline-icon nil)
+  (setq doom-modeline-buffer-encoding   nil
+        doom-modeline-github            nil
+        doom-modeline-icon              nil
+        doom-modeline-project-detection 'project)
   (unless after-init-time
     ;; prevent flash of unstyles modeline at startup
     (setq-default mode-line-format nil))
@@ -465,12 +518,12 @@
   (global-set-key (kbd "C-u") 'er/expand-region))
 
 ;; ;; broken
-;; (use-package highlight-indent-guides
-;;   :config
-;;   (setq highlight-indent-guides-method 'character)
-;;   (setq highlight-indent-guides-auto-enabled nil)
-;;   (highlight-indent-guides-auto-set-faces)
-;;   (highlight-indent-guides-mode))
+(use-package highlight-indent-guides
+  :config
+  (setq highlight-indent-guides-method 'character)
+  (setq highlight-indent-guides-auto-enabled nil)
+  ;; (add-hook 'prog-mode-hook #'highlight-indent-guides-auto-set-faces)
+  (add-hook 'prog-mode-hook #'highlight-indent-guides-mode))
 
 ;; ;; can't use glyphs O_o ??
 ;; (use-package highlight-indentation
@@ -493,6 +546,7 @@
 ;;;;;;:;;;;;;;;;
 ;; Easymotion ;;
 ;;;;;;;;;;;;;;;;
+
 (use-package avy
   :init
   ;; See:
@@ -502,6 +556,7 @@
 
 (use-package evil-easymotion
   :after avy)
+
 (use-package general
   :after evil-easymotion
   :init
@@ -523,25 +578,6 @@
    "F" 'evilem-motion-find-char-backward
    "t" 'evilem-motion-find-char-to
    "T" 'evilem-motion-find-char-to-backward))
-
-;; (use-package evil-easymotion
-;;   :config
-;;   (define-key evil-normal-state-map (kbd "f") 'evilem-motion-find-char)
-;;   (define-key evil-normal-state-map (kbd "F") 'evilem-motion-find-char-backward)
-;;   (define-key evil-normal-state-map (kbd "t") 'evilem-motion-find-char-to)
-;;   (define-key evil-normal-state-map (kbd "T") 'evilem-motion-find-char-to-backward)
-;;   (define-key evil-visual-state-map (kbd "f") 'evilem-motion-find-char)
-;;   (define-key evil-visual-state-map (kbd "F") 'evilem-motion-find-char-backward)
-;;   (define-key evil-visual-state-map (kbd "t") 'evilem-motion-find-char-to)
-;;   (define-key evil-visual-state-map (kbd "T") 'evilem-motion-find-char-to-backward))
-
-;; ;; can't get it the way I want ...
-;; (use-package evil-snipe
-;;   :config
-;;   (define-key evil-normal-state-map "f" 'evil-snipe-f)
-;;   (define-key evil-motion-state-map "f" 'evil-snipe-f)
-;;   (define-key evil-normal-state-map "F" 'evil-snipe-F)
-;;   (define-key evil-motion-state-map "F" 'evil-snipe-F))
 
 ;;;;;;;;;;;
 ;; Dired ;;
@@ -593,24 +629,6 @@
 ;;   :config
 ;;   (company-flx-mode +1))
 
-;; (use-package company-statistics
-;;   :config
-;;   (company-statistics-mode +1))
-
-;; ;; superioir performance
-;; (use-package auto-complete
-;;   :init
-;;   (setq ac-ignore-case        t
-;;         ac-delay              0.0
-;;         ac-auto-show-menu     t
-;;         ac-candidate-limit    10
-;;         ac-auto-start         0
-;;         ac-use-comphist       t
-;;         ac-comphist-threshold 0.5)
-;;   :config
-;;   (define-key ac-completing-map (kbd "<backtab>") 'ac-expand-previous)
-;;   (ac-config-default))
-
 ;;;;;;;;;
 ;; Ivy ;;
 ;;;;;;;;;
@@ -630,8 +648,8 @@
   (global-set-key (kbd "C-x C-r") 'counsel-buffer-or-recentf)
   (counsel-mode +1))
 
-;; ;; not sure about this yet
-;; (use-package ibuffer-vc)
+(use-package request)
+(use-package counsel-web)
 
 (use-package projectile
   :init
@@ -642,9 +660,11 @@
   (setq counsel-projectile-sort-files t)
   :config
   (counsel-projectile-mode +1)
-  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-  (define-key projectile-mode-map (kbd "C-x C-j") 'counsel-projectile)
-  (define-key projectile-mode-map (kbd "C-x C-g") 'counsel-projectile-rg))
+  (general-define-key
+   :keymaps 'projectile-mode-map
+   "C-c p" 'projectile-command-map
+   "C-x C-j" 'counsel-projectile
+   "C-x C-g" 'counsel-projectile-rg))
 
 (use-package ivy
   :init
@@ -663,21 +683,27 @@
   (global-set-key (kbd "C-x b") 'ivy-switch-buffer)
   (global-set-key (kbd "C-c v") 'ivy-push-view)
   (global-set-key (kbd "C-c V") 'ivy-pop-view)
-  ;; auto-resize ivy completion menu
-  ;; (defun ivy-resize--minibuffer-setup-hook ()
-  ;;   (add-hook 'post-command-hook #'ivy-resize--post-command-hook nil t))
-  ;; (defun ivy-resize--post-command-hook ()
-  ;;   (when ivy-mode
-  ;;     (shrink-window (1+ ivy-height))))
-  ;; (add-hook 'minibuffer-setup-hook 'ivy-resize--minibuffer-setup-hook)
-  ;; (define-key counsel-find-file-map (kbd "C-n") 'ivy-next-line-and-call) ;; waste of memory
-  ;; (define-key counsel-find-file-map (kbd "C-p") 'ivy-previous-line-and-call) ;; waste of memory
-  (define-key ivy-minibuffer-map (kbd "<ESC>") 'minibuffer-keyboard-quit)
-  (define-key ivy-minibuffer-map (kbd "TAB") 'ivy-alt-done)
-  (define-key ivy-minibuffer-map (kbd "C-l") 'ivy-call)
-  (define-key counsel-ag-map (kbd "C-n") 'ivy-next-line-and-call)
-  (define-key counsel-ag-map (kbd "C-p") 'ivy-previous-line-and-call)
+  (defun ivy-resize--minibuffer-setup-hook ()
+    (add-hook 'post-command-hook #'ivy-resize--post-command-hook nil t))
+  (defun ivy-resize--post-command-hook ()
+    (when ivy-mode
+      (shrink-window (1+ ivy-height))))
+  (add-hook 'minibuffer-setup-hook 'ivy-resize--minibuffer-setup-hook)
+  (general-define-key
+   :keymaps 'ivy-minibuffer-map
+   "<ESC>" 'minibuffer-keyboard-quit
+   "TAB" 'ivy-alt-done
+   "C-l" 'ivy-calle)
+  (general-define-key
+   :keymaps '(counsel-imenu-map counsel-ag-map)
+   "C-n" 'ivy-next-line-and-call
+   "C-p" 'ivy-previous-line-and-call)
+  (general-define-key
+   :keymaps '(normal insert visual)
+   "M-r" 'counsel-imenu)
   (define-key counsel-find-file-map (kbd "C-l") 'counsel-up-directory))
+
+(use-package ivy-hydra)
 
 ;; (use-package ivy-rich
 ;;   :after ivy
@@ -695,17 +721,17 @@
 ;;   (ivy-set-display-transformer 'internal-complete-buffer nil)
 ;;   (ivy-rich-mode +1))
 
-;; fuzzy
-(use-package flx
-  :init
-  (setq ivy-flx-limit 1000)
-  :config
-  ;; fuzzy matching in ivy
-  (setq ivy-initial-inputs-alist nil)
-  (setq ivy-re-builders-alist
-        '((counsel-find-file  . ivy--regex-fuzzy)
-          (counsel-projectile . ivy--regex-fuzzy)
-          (t                  . ivy--regex-plus))))
+;; ;; doesn't match spaces for dashes why ???
+;; (use-package flx
+;;   :init
+;;   (setq ivy-flx-limit 1000)
+;;   :config
+;;   ;; fuzzy matching in ivy
+;;   (setq ivy-initial-inputs-alist nil)
+;;   (setq ivy-re-builders-alist
+;;         '((counsel-find-file  . ivy--regex-fuzzy)
+;;           (counsel-projectile . ivy--regex-fuzzy)
+;;           (t                  . ivy--regex-plus))))
 
 ;; we add this for sort-by-frequency
 (use-package smex)
@@ -718,7 +744,8 @@
   :init
   (setq swiper-action-recenter t)
   :config
-  (global-set-key (kbd "C-s") 'swiper-isearch))
+  (global-set-key (kbd "C-s") 'swiper-isearch)
+  (global-set-key (kbd "C-x C-a") 'swiper-all))
 
 ;;;;;;;;;;;;;;;;
 ;; Copy/paste ;;
@@ -735,7 +762,7 @@
                        (process-send-string pbproxy text)
                        (process-send-eof pbproxy))))))
   ('gnu/linux (progn
-                (setq x-select-enable-clipboard t)
+                (setq select-enable-clipboard t)
                 (defun xsel-cut-function (text &optional push)
                   (with-temp-buffer
                     (insert text)
@@ -749,6 +776,7 @@
                                          "--input")))
                 (defun xsel-paste-function()
                   (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
+
                     (unless (string= (car kill-ring) xsel-output)
                       xsel-output)))
                 (setq interprogram-cut-function 'xsel-cut-function)
@@ -770,7 +798,6 @@
   :delight " ✓"
   :init
   (setq flycheck-check-syntax-automatically '(save))
-  ;; (setq flycheck-display-errors-delay 0.25)
   (setq flycheck-temp-prefix ".flycheck")
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc
                                              javascript-jshint))
@@ -786,23 +813,32 @@
 
 (use-package lsp-mode
   :commands lsp
-  :hook ((typescript-mode . lsp)
-         (web-mode        . lsp)
-         (lsp-mode        . lsp-enable-which-key-integration))
+  :hook ((rust-mode . lsp)
+         (web-mode  . lsp)
+         (lsp-mode  . lsp-enable-which-key-integration))
   :init
   (defvar read-process-output-max)
   (setq read-process-output-max            3145728 ;; 3mb max packet size
+        lsp-auto-guess-root                t
+        lsp-keep-workspace-alive           nil
         lsp-keymap-prefix                  "C-l"
-        lsp-prefer-capf                    t
-        lsp-enable-symbol-highlighting     t
-        lsp-flycheck-live-reporting        nil ;; this is gonna give me a seizure
+        lsp-prefer-capf                    nil
+        lsp-enable-completion-at-point     nil
+        lsp-enable-folding                 nil
+        lsp-enable-file-watchers           nil
+        lsp-enable-text-document-color     nil
+        lsp-enable-semantic-highlighting   nil
+        lsp-enable-indentation             nil
+        lsp-enable-on-type-formatting      nil
+        lsp-flycheck-live-reporting        nil ;; was causing seizures
         lsp-signature-auto-activate        nil
         lsp-signature-render-documentation nil
-        lsp-enable-symbol-highlighting     nil
         lsp-ui-doc-enable                  nil ;; too big
-        ;; max-mini-window-height             6
-        ;; lsp-eldoc-hook                     nil
-        lsp-idle-delay                     0.5))
+        lsp-ui-sideline-ignore-duplicate   t
+        lsp-enable-symbol-highlighting     t
+        lsp-idle-delay                     0.5)
+  :config
+  (setq-default company-lsp-cache-candidates 'auto))
 
 (use-package lsp-ui
   :requires lsp-mode)
@@ -811,10 +847,10 @@
 ;;   :requires lsp-mode)
 
 ;; ;; So slow!
-;; (use-package company-lsp
-;;   :commands company-lsp)
-;; :config
-;; (push 'company-lsp company-backends))
+(use-package company-lsp
+  :commands company-lsp
+  :config
+  (push 'company-lsp company-backends))
 
 ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 (use-package treemacs)
@@ -855,7 +891,10 @@
 ;; Git ;;
 ;;;;;;;;;
 
-(use-package magit)
+(use-package gitattributes-mode)
+(use-package gitconfig-mode)
+(use-package gitignore-mode)
+;; (use-package magit)
 (use-package git-timemachine)
 
 ;;;;;;;;;
@@ -886,13 +925,29 @@
   (autoload 'enable-circe-notifications "circe-notifications" nil t)
   (add-hook 'circe-server-connected-hook 'enable-circe-notifications))
 
-;;;;;;;;;;;
-;; iedit ;;
-;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;; Hardcore ;;
+;;;;;;;;;;;;;;
 
-;; (use-package iedit
-;;   :config
-;;   (global-set-key (kbd "C-x C-e") 'iedit-mode))
+(use-package jammer
+  :hook (prog-mode . jammer-mode)
+  :init
+  (setq jammer-repeat-type                'linear
+        jammer-repeat-allowed-repetitions 7))
+
+;;;;;;;;;;;;;;;;;;;
+;; ido-yes-or-no ;;
+;;;;;;;;;;;;;;;;;;;
+
+(use-package ido-yes-or-no
+  :config
+  (ido-yes-or-no-mode))
+
+;;;;;;;;;
+;; Org ;;
+;;;;;;;;;
+
+(use-package org-brain)
 
 ;;;;;;;;;;;;;;;;;;
 ;; Smart Parens ;;
@@ -915,29 +970,3 @@
 ;;   (setq elfeed-feeds
 ;;         '("https://oremacs.com/atom.xml"
 ;;           "https://medium.com/feed/@gcanti")))
-
-;;:;;;;;;;;;;;;:
-;; Move lines ;;
-;;;;;;;;;;;;;;;;
-
-;; (defun move-line-or-region (arg)
-;;   "ARG: See https://github.com/syl20bnr/spacemacs/issues/5365."
-;;   (interactive "P")
-;;   (if (or (not arg) (>= arg 0))
-;;       (let ((reg-or-lin (if (region-active-p) "'>" "."))
-;;             (reactivate-region (if (region-active-p) "gv=gv" ""))
-;;             (num (if arg arg 1)))
-;;         (execute-kbd-macro
-;;          (concat ":m" reg-or-lin "+" (number-to-string num) (kbd "RET") reactivate-region)))
-;;     (backward-move-line-or-region (- arg))))
-
-;; (defun backward-move-line-or-region (arg)
-;;   "ARG: See https://github.com/syl20bnr/spacemacs/issues/5365."
-;;   (interactive "P")
-;;   (if (or (not arg) (>= arg 0))
-;;       (let ((reg-or-lin (if (region-active-p) "'<" "."))
-;;             (reactivate-region (if (region-active-p) "gv=gv" ""))
-;;             (num (if arg (+ arg 1) 2)))
-;;         (execute-kbd-macro
-;;          (concat ":m" reg-or-lin "-" (number-to-string num) (kbd "RET") reactivate-region)))
-;;     (move-line-or-region (- arg))))

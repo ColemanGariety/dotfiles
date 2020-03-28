@@ -17,8 +17,8 @@ URxvt.transparent: false
 URxvt.scrollBar: false
 URxvt.cursorBlink: 0
 URxvt.letterSpace: -1
-URxvt.font: xft:Consolas:style=normal:size=12:antialias=true:hinting=slight
-URxvt.boldFont: xft:Consolas:style=bold:size=12:antialias=true:hinting=slight
+URxvt.font: xft:"Operator Mono Lig Medium":style=normal:size=12:antialias=true:hinting=slight
+URxvt.boldFont: xft:"Operator Mono Lig Medium":style=bold:size=12:antialias=true:hinting=slight
 URxvt.geometry: 115x35
 URxvt.meta8: false
 
