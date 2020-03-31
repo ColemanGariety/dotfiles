@@ -163,6 +163,10 @@
 (setq-default fill-column 80)
 (setq comment-auto-fill-only-comments t)
 (add-hook 'prog-mode-hook 'auto-fill-mode)
+(use-package uniquify
+  :ensure nil
+  :init
+  (setq uniquify-buffer-name-style 'forward))
 
 ;; UTF-8 as the default coding system
 (when (fboundp 'set-charset-priority)
@@ -410,8 +414,7 @@
 ;; this makes the dreaded
 ;; startup-screen-flash return :/
 (use-package vim-empty-lines-mode
-  :config
-  (global-vim-empty-lines-mode))
+  :hook (prog-mode . vim-empty-lines-mode))
 
 ;;;;;;;;;;;;;;;;;
 ;; Auto-compie ;;
@@ -552,7 +555,7 @@
   ;; See:
   ;; https://github.com/PythonNut/quark-emacs/blob/dev/modules/config-avy-easymotion.el
   (setq avy-keys  (eval-when-compile (string-to-list "jfkdlsaurieowncpqmxzb"))
-        avy-style 'de-bruijn))
+        avy-style 'at))
 
 (use-package evil-easymotion
   :after avy)
@@ -577,7 +580,13 @@
    "f" 'evilem-motion-find-char
    "F" 'evilem-motion-find-char-backward
    "t" 'evilem-motion-find-char-to
-   "T" 'evilem-motion-find-char-to-backward))
+   "T" 'evilem-motion-find-char-to-backward
+   "C-j" 'evilem-motion-next-line
+   "C-k" 'evilem-motion-previous-line)
+  (general-define-key
+   :states 'insert
+   :keymaps 'override
+   "C-k" 'kill-line))
 
 ;;;;;;;;;;;
 ;; Dired ;;
@@ -693,7 +702,7 @@
    :keymaps 'ivy-minibuffer-map
    "<ESC>" 'minibuffer-keyboard-quit
    "TAB" 'ivy-alt-done
-   "C-l" 'ivy-calle)
+   "C-l" 'ivy-call)
   (general-define-key
    :keymaps '(counsel-imenu-map counsel-ag-map)
    "C-n" 'ivy-next-line-and-call
@@ -701,7 +710,9 @@
   (general-define-key
    :keymaps '(normal insert visual)
    "M-r" 'counsel-imenu)
-  (define-key counsel-find-file-map (kbd "C-l") 'counsel-up-directory))
+  (general-define-key
+   :keymaps 'counsel-find-file-map
+   "C-l" 'counsel-up-directory))
 
 (use-package ivy-hydra)
 
@@ -818,27 +829,30 @@
          (lsp-mode  . lsp-enable-which-key-integration))
   :init
   (defvar read-process-output-max)
-  (setq read-process-output-max            3145728 ;; 3mb max packet size
-        lsp-auto-guess-root                t
-        lsp-keep-workspace-alive           nil
-        lsp-keymap-prefix                  "C-l"
-        lsp-prefer-capf                    nil
-        lsp-enable-completion-at-point     nil
-        lsp-enable-folding                 nil
-        lsp-enable-file-watchers           nil
-        lsp-enable-text-document-color     nil
-        lsp-enable-semantic-highlighting   nil
-        lsp-enable-indentation             nil
-        lsp-enable-on-type-formatting      nil
-        lsp-flycheck-live-reporting        nil ;; was causing seizures
-        lsp-signature-auto-activate        nil
-        lsp-signature-render-documentation nil
-        lsp-ui-doc-enable                  nil ;; too big
-        lsp-ui-sideline-ignore-duplicate   t
-        lsp-enable-symbol-highlighting     t
-        lsp-idle-delay                     0.5)
-  :config
-  (setq-default company-lsp-cache-candidates 'auto))
+  (setq read-process-output-max               3145728 ;; 3mb max packet size
+        lsp-auto-guess-root                   nil
+        lsp-keep-workspace-alive              nil
+        lsp-keymap-prefix                     "C-l"
+        lsp-prefer-capf                       nil
+        lsp-enable-completion-at-point        nil
+        lsp-enable-folding                    nil
+        lsp-enable-file-watchers              nil
+        lsp-enable-text-document-color        nil
+        lsp-enable-semantic-highlighting      nil
+        lsp-enable-indentation                nil
+        lsp-enable-on-type-formatting         nil
+        lsp-flycheck-live-reporting           nil ;; was causing seizures
+        lsp-signature-auto-activate           nil
+        lsp-signature-render-documentation    nil
+        lsp-ui-doc-enable                     nil ;; too big
+        lsp-ui-sideline-ignore-duplicate      t
+        lsp-enable-symbol-highlighting        t
+        lsp-idle-delay                       0.5
+        lsp-clients-typescript-log-verbosity "debug"
+        lsp-clients-typescript-plugins
+        (vector
+         (list :name "@vsintellicode/typescript-intellicode-plugin"
+               :location "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
 
 (use-package lsp-ui
   :requires lsp-mode)
@@ -929,19 +943,11 @@
 ;; Hardcore ;;
 ;;;;;;;;;;;;;;
 
-(use-package jammer
-  :hook (prog-mode . jammer-mode)
-  :init
-  (setq jammer-repeat-type                'linear
-        jammer-repeat-allowed-repetitions 7))
-
-;;;;;;;;;;;;;;;;;;;
-;; ido-yes-or-no ;;
-;;;;;;;;;;;;;;;;;;;
-
-(use-package ido-yes-or-no
-  :config
-  (ido-yes-or-no-mode))
+;; (use-package jammer
+;;   :hook (prog-mode . jammer-mode)
+;;   :init
+;;   (setq jammer-repeat-type                'linear
+;;         jammer-repeat-allowed-repetitions 7))
 
 ;;;;;;;;;
 ;; Org ;;

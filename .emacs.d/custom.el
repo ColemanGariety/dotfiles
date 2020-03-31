@@ -18,7 +18,7 @@
  '(auto-compile-use-mode-line 'mode-line-modified)
  '(doom-modeline-mode t)
  '(package-selected-packages
-   '(org-brain indium ido-yes-or-no jammer jammer-mode annoying-arrows-mode counsel-web highlight-indent-guides ivy-hydra psc-ide vim-empty-lines-mode flycheck company-lsp graphql-mode yaml-mode dashboard gitignore-mode gitconfig-mode gitattributes-mode dap-chrome treemacs-evil company lsp-origami flx circe-notifications exec-path-from-shell evil-string-inflection dap-mode lsp-treemacs lsp-ivy lsp-ui lsp-mode gcmh highlight-numbers use-package bind-key rust-mode web-mode which-key smex smartparens purescript-mode paradox origami no-littering magit json-mode iedit hl-todo haskell-mode git-timemachine general exato evil-textobj-syntax evil-textobj-line evil-textobj-column evil-terminal-cursor-changer evil-indent-plus evil-exchange evil-embrace evil-easymotion evil-collection evil-args evil-anzu elfeed doom-themes doom-modeline diredfl dired-hacks-utils counsel-projectile circe auto-compile))
+   '(org-brain indium counsel-web highlight-indent-guides ivy-hydra psc-ide vim-empty-lines-mode flycheck company-lsp graphql-mode yaml-mode dashboard gitignore-mode gitconfig-mode gitattributes-mode dap-chrome treemacs-evil company lsp-origami flx circe-notifications exec-path-from-shell evil-string-inflection dap-mode lsp-treemacs lsp-ivy lsp-ui lsp-mode gcmh highlight-numbers use-package bind-key rust-mode web-mode which-key smex smartparens purescript-mode paradox origami no-littering magit json-mode iedit hl-todo haskell-mode git-timemachine general exato evil-textobj-syntax evil-textobj-line evil-textobj-column evil-terminal-cursor-changer evil-indent-plus evil-exchange evil-embrace evil-easymotion evil-collection evil-args evil-anzu elfeed doom-themes doom-modeline diredfl dired-hacks-utils counsel-projectile circe auto-compile))
  '(paradox-github-token t))
 
 (custom-set-faces
@@ -57,7 +57,8 @@
  '(line-number ((t (:inherit default :foreground "#073642" :strike-through nil :underline nil :slant normal :weight normal))))
  '(line-number-current-line ((t (:inherit (hl-line defaultblack) :foreground "#657b83" :strike-through nil :underline nil :slant normal :weight normal))))
  '(linum ((t (:inherit default :foreground "#a9a1e1" :strike-through nil :underline nil :slant normal :weight normal))))
- '(lsp-face-highlight-read ((t nil)))
+ '(lsp-face-highlight-read ((t (:background "color-25" :foreground "#dfdfdf" :weight bold))))
+ '(lsp-face-highlight-textual ((t (:inherit highlight :background "color-25" :foreground "#dfdfdf" :weight bold))))
  '(lsp-ui-doc-background ((t (:inherit tooltip))))
  '(lsp-ui-peek-filename ((t (:inherit mode-line-buffer-id :background "black"))))
  '(lsp-ui-peek-footer ((t (:inherit lsp-ui-peek-header :background "black"))))
@@ -65,7 +66,7 @@
  '(lsp-ui-peek-list ((t (:background "black"))))
  '(lsp-ui-peek-peek ((t (:background "black"))))
  '(lsp-ui-peek-selection ((t (:background "black" :foreground "cyan" :weight bold))))
- '(mode-line ((t (:foreground "#bfbfbf" :box nil))))
+ '(mode-line ((t (:background "black" :foreground "#bfbfbf" :box nil))))
  '(mode-line-inactive ((t (:background "black" :foreground "#525252" :box nil))))
  '(popup-scroll-bar-background-face ((t (:background "black"))))
  '(popup-scroll-bar-foreground-face ((t (:background "brightyellow"))))
