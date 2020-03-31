@@ -163,10 +163,6 @@
 (setq-default fill-column 80)
 (setq comment-auto-fill-only-comments t)
 (add-hook 'prog-mode-hook 'auto-fill-mode)
-(use-package uniquify
-  :ensure nil
-  :init
-  (setq uniquify-buffer-name-style 'forward))
 
 ;; UTF-8 as the default coding system
 (when (fboundp 'set-charset-priority)
@@ -848,11 +844,11 @@
         lsp-ui-sideline-ignore-duplicate      t
         lsp-enable-symbol-highlighting        t
         lsp-idle-delay                       0.5
-        lsp-clients-typescript-log-verbosity "debug"
-        lsp-clients-typescript-plugins
-        (vector
-         (list :name "@vsintellicode/typescript-intellicode-plugin"
-               :location "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
+        lsp-clients-typescript-log-verbosity "debug"))
+        ;; lsp-clients-typescript-plugins
+        ;; (vector
+        ;;  (list :name "@vsintellicode/typescript-intellicode-plugin"
+        ;;        :location "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
 
 (use-package lsp-ui
   :requires lsp-mode)
