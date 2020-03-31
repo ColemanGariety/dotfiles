@@ -17,6 +17,7 @@ connman
 connman-gtk
 dia
 dstat
+dunst
 elixir
 emacs27-git
 eslint
