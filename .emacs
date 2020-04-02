@@ -10,8 +10,7 @@
 (setq gc-cons-threshold  most-positive-fixnum
       gc-cons-percentage 0.6)
 
-;; not sure what this does but let's turn it off
-(setq site-run-file nil)
+(setq load-prefer-newer t)
 
 ;; This is consulted on every `require', `load' and various path/io functions.
 ;; You get a minor speed up by nooping this.
@@ -42,15 +41,22 @@
               (advice-remove #'tty-run-terminal-initialization #'ignore)
               (tty-run-terminal-initialization (selected-frame) nil t))))
 
-;; byte compile func
-(defun er-byte-compile-init-dir ()
-  "Byte-compile all your dotfiles."
-  (interactive)
-  (byte-recompile-directory user-emacs-directory 0))
+;; ;; Use a hook so the message doesn't get clobbered by other messages.
+;; (add-hook 'emacs-startup-hook
+;;           (lambda ()
+;;             (message "Emacs ready in %s with %d garbage collections."
+;;                      (format "%.2f seconds"
+;;                              (float-time
+;;                               (time-subtract after-init-time before-init-time)))
+;;                      gcs-done)))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; Inhibit stuff ;;
 ;;;;;;;;;;;;;;;;;;;
+
+(remove-hook 'find-file-hook 'vc-find-file-hook)
+
+(setq inhibit-default-init t)
 
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode nil))
@@ -61,9 +67,16 @@
       inhibit-startup-echo-area-message user-login-name
       inhibit-default-init              t
       initial-major-mode                'fundamental-mode
+      default-major-mode                'fundamental-mode
       initial-scratch-message           nil)
 (fset #'display-startup-echo-area-message #'ignore)
 (add-hook 'emacs-startup-hook (lambda () (message "")))
+
+;; ;; trying to stop it from loading with doom-modeline
+;; (setq package-load-list '(all
+;;                           (all-the-icons nil)))
+
+;; (unload-feature 'tramp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package management ;;
@@ -96,22 +109,9 @@
       use-package-always-ensure t)
 
 (use-package paradox
+  :commands (paradox-list-packages)
   :config
   (paradox-enable))
-
-;;;;;;;;;;;;;;;;;;;
-;; GC Magic Hack ;;
-;;;;;;;;;;;;;;;;;;;
-
-(use-package gcmh
-  :config
-  (when (not noninteractive)
-    (gcmh-mode +1)
-    (with-eval-after-load 'gcmh
-      (setq gcmh-idle-delay 10
-            gcmh-verbose nil
-            gcmh-high-cons-threshold 100000000)
-      (add-function :after after-focus-change-function #'gcmh-idle-garbage-collect))))
 
 ;;;;;;;;;;;;;
 ;; General ;;
@@ -142,7 +142,7 @@
 ;; C-x RET evil marks)
 ;; General
 
-(global-font-lock-mode +1)   ;; for all buffers
+;; (global-font-lock-mode +1)   ;; for all buffers
 (global-visual-line-mode +1) ;; word-wrap
 (show-paren-mode +1)         ;; show matching parentheses
 (display-time) ;; in mode-line
@@ -154,7 +154,7 @@
 (blink-cursor-mode 0)
 (window-divider-mode +1)
 (electric-pair-mode +1)
-(set-locale-environment "en_US.UTF-8")
+;; (set-locale-environment "en_US.UTF-8")
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
 (set-face-inverse-video 'vertical-border nil)
@@ -164,16 +164,18 @@
 (setq comment-auto-fill-only-comments t)
 (add-hook 'prog-mode-hook 'auto-fill-mode)
 
-;; UTF-8 as the default coding system
-(when (fboundp 'set-charset-priority)
-  (set-charset-priority 'unicode))
-(prefer-coding-system 'utf-8)
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
+;; ;; UTF-8 as the default coding system
+;; (when (fboundp 'set-charset-priority)
+;;   (set-charset-priority 'unicode))
+;; (prefer-coding-system 'utf-8)
+;; (setq locale-coding-system 'utf-8)
+;; (set-terminal-coding-system 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+;; (set-selection-coding-system 'utf-8)
 
-;; Sane defaults
+;;;;;;;;;;;;;;;;;;;
+;; Sane defaults ;;
+;;;;;;;;;;;;;;;;;;;
 
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
@@ -182,27 +184,24 @@
 (setq frame-background-mode (quote dark))
 (defvar apropos-do-all)
 (defvar compilation-message-face)
-(setq garbage-collection-messages     nil
-      echo-keystrokes                 0.15
-      text-quoting-style              'grave
+(setq echo-keystrokes                 0.15
       user-full-name                  "Coleman Gariety"
-      load-prefer-newer               t
-      line-number-display-limit-width 2000000
+      ;; line-number-display-limit-width 2000000
       ;; initial-buffer-choice           t
       sentence-end-double-space       nil
       scroll-conservatively           most-positive-fixnum
-      vc-follow-symlinks              t
-      vc-make-backup-files            t
+      ;; vc-follow-symlinks              t
+      ;; vc-make-backup-files            t
       delete-by-moving-to-trash       t
-      compilation-message-face        (quote default)
-      visible-bell                    nil
-      visible-cursor                  nil
+      visible-bell                    t
+      visible-cursor                  t
       ring-bell-function              'ignore
       scroll-error-top-bottom         t ;; Pgdn & Pgup work properly
       large-file-warning-threshold    (* 1024 1024) ;; 1mb
       mode-require-final-newline      t ;; Newlines
       create-lockfiles                nil ;; no lockfiles in server mode
       apropos-do-all                  t
+      auto-window-vscroll             nil
       auto-mode-case-fold             nil)
 
 ;; Indentation
@@ -231,7 +230,7 @@
 ;; Dashboard ;;
 ;;;;;;;;;;;;;;;
 
-(use-package all-the-icons)
+;; can't defer
 (use-package dashboard
   :init
   (setq initial-buffer-choice       (lambda ()
@@ -250,6 +249,8 @@
 ;;:;;;;;;;;;;;;:
 ;; Move lines ;;
 ;;;;;;;;;;;;;;;;
+
+;; ;; can't find a good key for these
 
 ;; (defun move-line-or-region (arg)
 ;;   "ARG: See https://github.com/syl20bnr/spacemacs/issues/5365."
@@ -273,10 +274,28 @@
 ;;          (concat ":m" reg-or-lin "-" (number-to-string num) (kbd "RET") reactivate-region)))
 ;;     (move-line-or-region (- arg))))
 
+;;;;;;;;;;;;;;;
+;; Mode line ;;
+;;;;;;;;;;;;;;;
+
+;; ;; can't defer
+;; (use-package doom-modeline
+;;   :init
+;;   (setq doom-modeline-buffer-encoding   nil
+;;         doom-modeline-github            nil
+;;         doom-modeline-icon              nil
+;;         doom-modeline-project-detection 'project)
+;;   (unless after-init-time
+;;     ;; prevent flash of unstyles modeline at startup
+;;     (setq-default mode-line-format nil))
+;;   :config
+;;   (doom-modeline-mode +1))
+
 ;;;;;;;;;;
 ;; Evil ;;
 ;;;;;;;;;;
 
+;; can't defer
 (use-package evil
   :preface
   (setq evil-want-keybinding                 nil
@@ -339,9 +358,10 @@
 ;; (define-key global-map (kbd "M-L") 'evil-window-vsplit)
 ;; (define-key global-map (kbd "C-q") 'delete-window)
 
+;; can't defer
+;; TODO replace with my own version
 (unless (display-graphic-p)
   (use-package evil-terminal-cursor-changer
-    :after evil
     :init
     (setq evil-normal-state-cursor 'box
           evil-motion-state-cursor 'box
@@ -351,9 +371,10 @@
     :config
     (etcc-on)))
 
-(use-package evil-string-inflection
-  :config
-  (define-key evil-normal-state-map "g~" 'evil-operator-string-inflection))
+;; (use-package evil-string-inflection
+;;   :defer 1
+;;   :config
+;;   (define-key evil-normal-state-map "g~" 'evil-operator-string-inflection))
 
 ;; ;; couldn't get it to work I think
 ;; (use-package rotate-text
@@ -363,12 +384,12 @@
 ;;   (autoload 'rotate-text-backward "rotate-text" nil t)
 ;;   (push '("true" "false") rotate-text-words))
 
-(use-package evil-textobj-column)
-(use-package evil-textobj-line)
-(use-package evil-textobj-syntax)
-(use-package evil-indent-plus)
-(use-package evil-embrace)
-(use-package exato)
+;; (use-package evil-textobj-column :defer 2)
+;; (use-package evil-textobj-line :defer 2)
+;; (use-package evil-textobj-syntax :defer 2)
+;; (use-package evil-indent-plus :defer 2)
+;; (use-package evil-embrace :defer 2)
+;; (use-package exato :defer 2)
 
 ;; ;; just don't know how to work it
 ;; (use-package targets
@@ -384,9 +405,10 @@
 ;;                  :around-key nil
 ;;                  :remote-key nil))
 
-(use-package evil-exchange
-  :config
-  (evil-exchange-install))
+;; (use-package evil-exchange
+;;   :defer 1
+;;   :config
+;;   (evil-exchange-install))
 
 (use-package evil-collection
   :config
@@ -395,6 +417,14 @@
 (use-package evil-surround
   :config
   (global-evil-surround-mode +1))
+
+(use-package evil-mc
+  :config
+  (global-evil-mc-mode +1))
+
+;; show # of candidates in isearch
+(use-package evil-anzu
+  :after evil)
 
 ;; (use-package evil-args
 ;;   :config
@@ -407,12 +437,11 @@
 ;;   (define-key evil-normal-state-map "H" 'evil-backward-arg)
 ;;   (define-key evil-motion-state-map "L" 'evil-forward-arg))
 
-;; this makes the dreaded
-;; startup-screen-flash return :/
-(use-package vim-empty-lines-mode
-  :hook (prog-mode . vim-empty-lines-mode))
+;; ;; Performance is REALLY bad
+;; (use-package vim-empty-lines-mode
+;;   :hook (prog-mode . vim-empty-lines-mode))
 
-;;;;;;;;;;;;;;;;;
+;; ;;;;;;;;;;;;;;;;;
 ;; Auto-compie ;;
 ;;;;;;;;;;;;;;;;;
 
@@ -434,6 +463,7 @@
 ;;;;;;;;;;;;;;;
 
 (use-package which-key
+  :defer 2
   :config
   (which-key-mode +1))
 
@@ -441,27 +471,27 @@
 ;; Misc. Languages ;;
 ;;;;;;;;;;;;;;;:;;;;;
 
+(use-package gitattributes-mode
+  :mode ("\\.gitattributes\\'" . gitattributes-mode))
+(use-package gitconfig-mode
+  :mode ("\\.gitconfig\\'" . gitconfig-mode))
+(use-package gitignore-mode
+  :mode ("\\.gitignore\\'" . gitignore-mode))
 (use-package json-mode
   :mode ("\\.json\\'" . json-mode)
   :init
   (setq json-reformat:indent-width 2))
-
 (use-package yaml-mode
   :mode ("\\.yml\\'" . yaml-mode))
-
 (use-package graphql-mode
   :mode ("\\.graphql\\'" . graphql-mode))
-
 ;; (use-package psc-ide)
 (use-package purescript-mode
   :mode ("\\.psc\\'" . purescript-mode))
-
 (use-package rust-mode
   :mode "\\.rs\\'")
-
 (use-package haskell-mode
   :mode "\\.hs\\'")
-
 ;; javsacript + typescript
 (use-package web-mode
   :mode (("\\.tsx\\'"  . web-mode)
@@ -480,49 +510,35 @@
                         web-mode-comment-formats))
     (dolist (type types)
       (push (cons type "//") web-mode-comment-formats))))
-
-(use-package indium)
+(use-package indium
+  :hook (web-mode . indium-connect))
 
 ;;;;;;;;;;;;;;;;;;
 ;; Code Folding ;;
 ;;;;;;;;;;;;;;;;;;
 
 (use-package origami
+  :bind ("M-o" . origami-toggle-node)
   :config
   (global-origami-mode +1)
   (global-set-key (kbd "M-o") 'origami-toggle-node))
-
-;;;;;;;;;;;;;;;
-;; Mode line ;;
-;;;;;;;;;;;;;;;
-
-(use-package doom-modeline
-  :init
-  (setq doom-modeline-buffer-encoding   nil
-        doom-modeline-github            nil
-        doom-modeline-icon              nil
-        doom-modeline-project-detection 'project)
-  (unless after-init-time
-    ;; prevent flash of unstyles modeline at startup
-    (setq-default mode-line-format nil))
-  :config
-  (doom-modeline-mode +1))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; Expand region ;;
 ;;;;;;;;;;;;;;;;;;;
 
-(use-package expand-region
-  :config
-  (global-set-key (kbd "C-u") 'er/expand-region))
+;; (use-package expand-region
+;;   :defer 2
+;;   :config
+;;   (global-set-key (kbd "C-u") 'er/expand-region))
 
 ;; ;; broken
-(use-package highlight-indent-guides
-  :config
-  (setq highlight-indent-guides-method 'character)
-  (setq highlight-indent-guides-auto-enabled nil)
-  ;; (add-hook 'prog-mode-hook #'highlight-indent-guides-auto-set-faces)
-  (add-hook 'prog-mode-hook #'highlight-indent-guides-mode))
+;; (use-package highlight-indent-guides
+;;   :config
+;;   (setq highlight-indent-guides-method 'character)
+;;   (setq highlight-indent-guides-auto-enabled nil)
+;;   ;; (add-hook 'prog-mode-hook #'highlight-indent-guides-auto-set-faces)
+;;   (add-hook 'prog-mode-hook #'highlight-indent-guides-mode))
 
 ;; ;; can't use glyphs O_o ??
 ;; (use-package highlight-indentation
@@ -548,10 +564,10 @@
 
 (use-package avy
   :init
-  ;; See:
+  ;; NOTE See:
   ;; https://github.com/PythonNut/quark-emacs/blob/dev/modules/config-avy-easymotion.el
   (setq avy-keys  (eval-when-compile (string-to-list "jfkdlsaurieowncpqmxzb"))
-        avy-style 'at))
+        avy-style 'de-bruijn))
 
 (use-package evil-easymotion
   :after avy)
@@ -588,9 +604,10 @@
 ;; Dired ;;
 ;;;;;;;;;;;
 
-(use-package diredfl
-  :config
-  (diredfl-global-mode +1))
+;; (use-package diredfl
+;;   :defer 1
+;;   :config
+;;   (diredfl-global-mode +1))
 
 ;; (use-package dired-subtree)
 
@@ -604,8 +621,8 @@
   (defvar company-dabbrev-ignore-case)
   (defvar company-dabbrev-code-other-buffers)
   (setq-local completion-ignore-case t)
-  (setq company-minimum-prefix-length      2 ;; responsive > cpu cycles
-        company-idle-delay                 0.0 ;; same
+  (setq company-minimum-prefix-length      4 ;; responsive > cpu cycles
+        company-idle-delay                 0
         company-tooltip-limit              10
         company-tooltip-flip-when-above    t
         company-tooltip-align-annotations  t
@@ -653,14 +670,17 @@
   (global-set-key (kbd "C-x C-r") 'counsel-buffer-or-recentf)
   (counsel-mode +1))
 
-(use-package request)
-(use-package counsel-web)
+(use-package request :defer t)
+(use-package counsel-web
+  :commands (counsel-web-search))
 
 (use-package projectile
+  :defer 1
   :init
   (setq projectile-enable-caching t))
 
 (use-package counsel-projectile
+  :after projectile
   :init
   (setq counsel-projectile-sort-files t)
   :config
@@ -680,7 +700,7 @@
         ivy-on-del-error-function        #'ignore
         ivy-use-virtual-buffers          t
         ivy-use-selectable-prompt        t
-        ivy-count-format                 "(%d/%d) ")
+        ivy-count-format                 "[%d/%d] ")
   (setf (alist-get 't ivy-format-functions-alist)
         #'ivy-format-function-line)
   :config
@@ -698,19 +718,16 @@
    :keymaps 'ivy-minibuffer-map
    "<ESC>" 'minibuffer-keyboard-quit
    "TAB" 'ivy-alt-done
-   "C-l" 'ivy-call)
+   "C-l" 'ivy-call
+   "C-b" 'counsel-up-directory)
   (general-define-key
    :keymaps '(counsel-imenu-map counsel-ag-map)
    "C-n" 'ivy-next-line-and-call
    "C-p" 'ivy-previous-line-and-call)
   (general-define-key
    :keymaps '(normal insert visual)
-   "M-r" 'counsel-imenu)
-  (general-define-key
-   :keymaps 'counsel-find-file-map
-   "C-l" 'counsel-up-directory))
+   "M-r" 'counsel-imenu))
 
-(use-package ivy-hydra)
 
 ;; (use-package ivy-rich
 ;;   :after ivy
@@ -741,13 +758,10 @@
 ;;           (t                  . ivy--regex-plus))))
 
 ;; we add this for sort-by-frequency
-(use-package smex)
-
-;; ;; show # of candidates in isearch
-(use-package evil-anzu
-  :after evil)
+(use-package smex :defer 1)
 
 (use-package swiper
+  :defer 1
   :init
   (setq swiper-action-recenter t)
   :config
@@ -758,41 +772,43 @@
 ;; Copy/paste ;;
 ;;;;;;;;;;;;;;;;
 
+(require 'cl)
 (case system-type
-  ('darwin (unless window-system
-             (setq interprogram-cut-function
-                   (lambda (text &optional push)
-                     (let* ((process-connection-type nil)
-                            (pbproxy (start-process "pbcopy"
-                                                    "pbcopy"
-                                                    "/usr/bin/pbcopy")))
-                       (process-send-string pbproxy text)
-                       (process-send-eof pbproxy))))))
-  ('gnu/linux (progn
-                (setq select-enable-clipboard t)
-                (defun xsel-cut-function (text &optional push)
-                  (with-temp-buffer
-                    (insert text)
-                    (call-process-region (point-min)
-                                         (point-max)
-                                         "xsel"
-                                         nil
-                                         0
-                                         nil
-                                         "--clipboard"
-                                         "--input")))
-                (defun xsel-paste-function()
-                  (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
+    ('darwin (unless window-system
+               (setq interprogram-cut-function
+                     (lambda (text &optional push)
+                       (let* ((process-connection-type nil)
+                              (pbproxy (start-process "pbcopy"
+                                                      "pbcopy"
+                                                      "/usr/bin/pbcopy")))
+                         (process-send-string pbproxy text)
+                         (process-send-eof pbproxy))))))
+    ('gnu/linux (progn
+                  (setq select-enable-clipboard t)
+                  (defun xsel-cut-function (text &optional push)
+                    (with-temp-buffer
+                      (insert text)
+                      (call-process-region (point-min)
+                                           (point-max)
+                                           "xsel"
+                                           nil
+                                           0
+                                           nil
+                                           "--clipboard"
+                                           "--input")))
+                  (defun xsel-paste-function()
+                    (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
 
-                    (unless (string= (car kill-ring) xsel-output)
-                      xsel-output)))
-                (setq interprogram-cut-function 'xsel-cut-function)
-                (setq interprogram-paste-function 'xsel-paste-function))))
+                      (unless (string= (car kill-ring) xsel-output)
+                        xsel-output)))
+                  (setq interprogram-cut-function 'xsel-cut-function)
+                  (setq interprogram-paste-function 'xsel-paste-function))))
 
 ;;;;;;;;;;;
 ;; Color ;;
 ;;;;;;;;;;;
 
+;; can't defer
 (use-package doom-themes
   :config
   (load-theme 'doom-one t))
@@ -802,9 +818,12 @@
 ;;;;;;;;;;;;;;
 
 (use-package flycheck
+  :defer t
   :delight " ✓"
   :init
   (setq flycheck-check-syntax-automatically '(save))
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc
+                                             javascript-jshint))
   (setq flycheck-temp-prefix ".flycheck")
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc
                                              javascript-jshint))
@@ -814,6 +833,7 @@
   ;; customize flycheck temp file prefix
   (setq-default flycheck-temp-prefix ".flycheck"))
 
+
 ;;;;;;;;:
 ;; LSP ;;
 ;;;;;;;;;
@@ -821,8 +841,8 @@
 (use-package lsp-mode
   :commands lsp
   :hook ((rust-mode . lsp)
-         (web-mode  . lsp)
-         (lsp-mode  . lsp-enable-which-key-integration))
+          (web-mode  . lsp)
+          (lsp-mode  . lsp-enable-which-key-integration))
   :init
   (defvar read-process-output-max)
   (setq read-process-output-max               3145728 ;; 3mb max packet size
@@ -851,34 +871,37 @@
         ;;        :location "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
 
 (use-package lsp-ui
-  :requires lsp-mode)
+  :after lsp-mode)
 
 ;; (use-package lsp-ivy
 ;;   :requires lsp-mode)
 
 ;; ;; So slow!
 (use-package company-lsp
-  :commands company-lsp
+  :after lsp-mode
   :config
   (push 'company-lsp company-backends))
 
 ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-(use-package treemacs)
-(use-package lsp-treemacs)
-(use-package dap-mode)
-(use-package dap-chrome
-  :ensure nil
-  :config
-  (dap-register-debug-template
-   "default"
-   (list :type "chrome"
-         :cwd nil
-         :mode "url"
-         :request "launch"
-         :webRoot nil
-         :url "http://localhost:3000"
-         :name "Chrome Browse URL"
-         :runtimeExecutable "/usr/bin/google-chrome-stable")))
+;; (use-package treemacs
+;;   :after lsp-mode)
+;; (use-package lsp-treemacs
+;;   :after lsp-mode)
+;; (use-package dap-mode)
+;; (use-package dap-chrome
+;;   :ensure nil
+;;   :config
+;;   (dap-register-debug-template
+;;    "default"
+;;    (list :type "chrome"
+;;          :cwd nil
+;;          :mode "url"
+;;          :request "launch"
+;;          :webRoot nil
+;;          :url "http://localhost:3000"
+;;          :name "Chrome Browse URL"
+;;          :runtimeExecutable "/usr/bin/google-chrome-stable")))
+
 ;; (use-package dap-node
 ;;   :ensure nil
 ;;   :requires dap-mode)
@@ -891,35 +914,43 @@
 ;;   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package hl-todo
+  :defer 2
+  :init
+  (setq hl-todo-keyword-faces
+        '(("TODO"   warning bold italic)
+          ("HACK"   warning bold italic)
+          ("FIXME"  warning bold italic)
+          ("NOTE"   warning bold italic)
+          ("GOTCHA" warning bold italic)))
   :config
   (global-hl-todo-mode +1))
 
 (use-package highlight-numbers
+  :defer 1
   :hook (prog-mode . highlight-numbers-mode))
 
 ;;;;;;;;;
 ;; Git ;;
 ;;;;;;;;;
 
-(use-package gitattributes-mode)
-(use-package gitconfig-mode)
-(use-package gitignore-mode)
 ;; (use-package magit)
-(use-package git-timemachine)
+(use-package git-timemachine
+  :commands (git-timemachine))
 
 ;;;;;;;;;
 ;; IRC ;;
 ;;;;;;;;;
 
-(setq my-credentials-file "~/.private.el")
-
-(defun my-nickserv-password (server)
-  (with-temp-buffer
-    (insert-file-contents-literally my-credentials-file)
-    (plist-get (read (buffer-string)) :nickserv-password)))
-
 (use-package circe
-  :init
+  :commands (circe)
+  :config
+  (setq my-credentials-file "~/.private.el")
+
+  (defun my-nickserv-password (server)
+    (with-temp-buffer
+      (insert-file-contents-literally my-credentials-file)
+      (plist-get (read (buffer-string)) :nickserv-password)))
+
   (setq circe-network-options
         '(("Freenode"
            :tls t
@@ -928,6 +959,7 @@
            :sasl-password my-nickserv-password))))
 
 (use-package circe-notifications
+  :after circe
   :config
   ;; (eval-after-load "circe-notifications"
   ;;   '(setq circe-notifications-watch-strings
@@ -949,7 +981,7 @@
 ;; Org ;;
 ;;;;;;;;;
 
-(use-package org-brain)
+;; (use-package org-brain)
 
 ;;;;;;;;;;;;;;;;;;
 ;; Smart Parens ;;
@@ -972,3 +1004,18 @@
 ;;   (setq elfeed-feeds
 ;;         '("https://oremacs.com/atom.xml"
 ;;           "https://medium.com/feed/@gcanti")))
+
+;;;;;;;;;;;;;;;;;;;
+;; GC Magic Hack ;;
+;;;;;;;;;;;;;;;;;;;
+
+(use-package gcmh
+  :config
+  (when (not noninteractive)
+    (add-hook 'pre-command-hook (gcmh-mode +1))
+    (with-eval-after-load 'gcmh
+      (setq gcmh-idle-delay 10
+            gcmh-verbose nil
+            gcmh-high-cons-threshold 16777216
+            gc-cons-percentage 0.1)
+      (add-function :after after-focus-change-function #'gcmh-idle-garbage-collect))))

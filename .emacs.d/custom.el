@@ -1,26 +1,11 @@
-;;;; package --- Summary
-;;; Commentary: Custom
-
-;;;;;;;;;;;;
-;; Custom ;;
-;;;;;;;;;;;;
-
-;;;; Code:
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-term-color-vector
-   [unspecified "#2d2a2e" "#ff6188" "#a9dc76" "#ffd866" "#78dce8" "#ab9df2" "#ff6188" "#fcfcfa"] t)
- '(anzu-cons-mode-line-p nil)
- '(auto-compile-mode-line-counter t)
- '(auto-compile-use-mode-line 'mode-line-modified)
- '(doom-modeline-mode t)
  '(package-selected-packages
-   '(org-brain indium counsel-web highlight-indent-guides ivy-hydra psc-ide vim-empty-lines-mode flycheck company-lsp graphql-mode yaml-mode dashboard gitignore-mode gitconfig-mode gitattributes-mode dap-chrome treemacs-evil company lsp-origami flx circe-notifications exec-path-from-shell evil-string-inflection dap-mode lsp-treemacs lsp-ivy lsp-ui lsp-mode gcmh highlight-numbers use-package bind-key rust-mode web-mode which-key smex smartparens purescript-mode paradox origami no-littering magit json-mode iedit hl-todo haskell-mode git-timemachine general exato evil-textobj-syntax evil-textobj-line evil-textobj-column evil-terminal-cursor-changer evil-indent-plus evil-exchange evil-embrace evil-easymotion evil-collection evil-args evil-anzu elfeed doom-themes doom-modeline diredfl dired-hacks-utils counsel-projectile circe auto-compile))
+   '(indium auto-compile doom-modeline gcmh circe-notifications circe git-timemachine highlight-numbers hl-todo lsp-treemacs treemacs company-lsp lsp-ui lsp-mode flycheck doom-themes smex counsel-projectile projectile counsel-web request counsel company diredfl general evil-easymotion avy origami web-mode haskell-mode rust-mode purescript-mode graphql-mode yaml-mode json-mode gitignore-mode gitconfig-mode gitattributes-mode which-key evil-anzu evil-mc evil-surround evil-collection evil-terminal-cursor-changer evil dashboard paradox use-package no-littering))
  '(paradox-github-token t))
-
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -50,6 +35,7 @@
  '(highlight-indent-guides-character-face ((t (:foreground "black"))))
  '(highlight-indent-guides-even-face ((t (:foreground "black"))))
  '(highlight-indent-guides-odd-face ((t (:foreground "brightgreen"))))
+ '(highlight-numbers-number ((t (:inherit font-lock-constant-face :foreground "cyan"))))
  '(hl-line ((t (:background "black"))))
  '(indent-guide-face ((t (:inherit hl-line :background "brightblack" :foreground "black"))))
  '(ivy-separator ((t (:inherit nil))))
@@ -73,3 +59,5 @@
  '(rust-unsafe-face ((t (:inherit font-lock-error-face :foreground "brightred"))))
  '(show-paren-match ((t (:background "black" :foreground "#ff6655"))))
  '(window-divider ((t (:inherit nil :background "black" :foreground "black")))))
+
+
