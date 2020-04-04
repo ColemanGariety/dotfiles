@@ -5,12 +5,13 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'vim-scripts/surround.vim'
 Plug 'scrooloose/nerdcommenter'
-Plug 'altercation/vim-colors-solarized'
 Plug 'easymotion/vim-easymotion'
-Plug 'Shougo/denite.nvim'
 Plug 'roxma/nvim-yarp'
+Plug 'leafgarland/typescript-vim'
+Plug 'liuchengxu/vim-clap'
 Plug 'roxma/vim-hug-neovim-rpc'
-" Plug 'Shougo/unite.vim'
+Plug 'joshdick/onedark.vim'
+" Plug 'altercation/vim-colors-solarized'
 " Plug 'morhetz/gruvbox'
 " Plug 'vim-airline/vim-airline'
 " Plug 'ddrscott/vim-side-search'
@@ -143,7 +144,8 @@ set ffs=unix,dos,mac
 
 " Colors
 set background=dark
-colorscheme solarized
+colorscheme onedark
+" colorscheme solarized
 " colorscheme gruvbox
 
 " Line numbers
@@ -218,7 +220,11 @@ map <leader>cd :cd %:p:h<cr>:pwd<cr>
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 " <Leader>f{char} to move to {char}
-map  <Leader>f <Plug>(easymotion-s2)
+map F <Plug>(easymotion-F)
+map f <Plug>(easymotion-f)
+map T <Plug>(easymotion-T)
+map t <Plug>(easymotion-t)
+let g:EasyMotion_off_screen_search = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
@@ -232,74 +238,3 @@ nmap <C-k> mz:m-2<cr>`z
 vmap <C-j> :m'>+<cr>`<my`>mzgv`yo`z
 
 vmap <C-k> :m'<-2<cr>`>my`<mzgv`yo`z
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Denite
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" === Denite shorcuts === "
-"   ;         - Browser currently open buffers
-"   <leader>t - Browse list of files in current directory
-"   <leader>g - Search current directory for occurences of given term and close window if no results
-"   <leader>j - Search current directory for occurences of word under cursor
-nmap ; :Denite buffer<CR>
-nmap <leader>t :DeniteProjectDir file/rec<CR>
-nnoremap <leader>g :<C-u>Denite grep:. -no-empty<CR>
-nnoremap <leader>j :<C-u>DeniteCursorWord grep:.<CR>
-
-" Define mappings while in 'filter' mode
-"   <C-o>         - Switch to normal mode inside of search results
-"   <Esc>         - Exit denite window in any mode
-"   <CR>          - Open currently selected file in any mode
-"   <C-t>         - Open currently selected file in a new tab
-"   <C-v>         - Open currently selected file a vertical split
-"   <C-h>         - Open currently selected file in a horizontal split
-autocmd FileType denite-filter call s:denite_filter_my_settings()
-function! s:denite_filter_my_settings() abort
-  imap <silent><buffer> <C-o>
-  \ <Plug>(denite_filter_quit)
-  inoremap <silent><buffer><expr> <Esc>
-  \ denite#do_map('quit')
-  nnoremap <silent><buffer><expr> <Esc>
-  \ denite#do_map('quit')
-  inoremap <silent><buffer><expr> <CR>
-  \ denite#do_map('do_action')
-  inoremap <silent><buffer><expr> <C-t>
-  \ denite#do_map('do_action', 'tabopen')
-  inoremap <silent><buffer><expr> <C-v>
-  \ denite#do_map('do_action', 'vsplit')
-  inoremap <silent><buffer><expr> <C-h>
-  \ denite#do_map('do_action', 'split')
-endfunction
-
-" Define mappings while in denite window
-"   <CR>        - Opens currently selected file
-"   q or <Esc>  - Quit Denite window
-"   d           - Delete currenly selected file
-"   p           - Preview currently selected file
-"   <C-o> or i  - Switch to insert mode inside of filter prompt
-"   <C-t>       - Open currently selected file in a new tab
-"   <C-v>       - Open currently selected file a vertical split
-"   <C-h>       - Open currently selected file in a horizontal split
-autocmd FileType denite call s:denite_my_settings()
-function! s:denite_my_settings() abort
-  nnoremap <silent><buffer><expr> <CR>
-  \ denite#do_map('do_action')
-  nnoremap <silent><buffer><expr> q
-  \ denite#do_map('quit')
-  nnoremap <silent><buffer><expr> <Esc>
-  \ denite#do_map('quit')
-  nnoremap <silent><buffer><expr> d
-  \ denite#do_map('do_action', 'delete')
-  nnoremap <silent><buffer><expr> p
-  \ denite#do_map('do_action', 'preview')
-  nnoremap <silent><buffer><expr> i
-  \ denite#do_map('open_filter_buffer')
-  nnoremap <silent><buffer><expr> <C-o>
-  \ denite#do_map('open_filter_buffer')
-  nnoremap <silent><buffer><expr> <C-t>
-  \ denite#do_map('do_action', 'tabopen')
-  nnoremap <silent><buffer><expr> <C-v>
-  \ denite#do_map('do_action', 'vsplit')
-  nnoremap <silent><buffer><expr> <C-h>
-  \ denite#do_map('do_action', 'split')
-endfunction

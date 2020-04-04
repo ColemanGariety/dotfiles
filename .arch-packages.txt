@@ -45,12 +45,9 @@ intel-ucode
 iputils
 ipw2100-fw
 ipw2200-fw
-irssi
 jfsutils
-jq
 kitty
 konsole
-kronometer
 lftp
 libmagick6
 libreoffice-fresh
@@ -64,7 +61,6 @@ maim
 man-pages
 nano
 ncdu
-ncurses5-compat-libs
 ndisc6
 netctl
 ngrok
@@ -123,7 +119,6 @@ wvdial
 xarchiver
 xf86-video-amdgpu
 xf86-video-vesa
-xfce4-terminal
 xorg-docs
 xorg-fonts-100dpi
 xorg-fonts-75dpi

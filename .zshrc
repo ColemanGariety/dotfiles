@@ -103,6 +103,7 @@ source /usr/share/nvm/init-nvm.sh
 # Prompt #
 ##########
 
+ZLE_RPROMPT_INDENT=0
 source ~/.zsh/gitstatus.prompt.zsh
 PROMPT='%~ $ '               # left prompt: directory followed by %/# (normal/root)
 RPROMPT='$GITSTATUS_PROMPT %t'

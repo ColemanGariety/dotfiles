@@ -278,18 +278,18 @@
 ;; Mode line ;;
 ;;;;;;;;;;;;;;;
 
-;; ;; can't defer
-;; (use-package doom-modeline
-;;   :init
-;;   (setq doom-modeline-buffer-encoding   nil
-;;         doom-modeline-github            nil
-;;         doom-modeline-icon              nil
-;;         doom-modeline-project-detection 'project)
-;;   (unless after-init-time
-;;     ;; prevent flash of unstyles modeline at startup
-;;     (setq-default mode-line-format nil))
-;;   :config
-;;   (doom-modeline-mode +1))
+;; can't defer
+(use-package doom-modeline
+  :init
+  (setq doom-modeline-buffer-encoding   nil
+        doom-modeline-github            nil
+        doom-modeline-icon              nil
+        doom-modeline-project-detection 'project)
+  (unless after-init-time
+    ;; prevent flash of unstyles modeline at startup
+    (setq-default mode-line-format nil))
+  :config
+  (doom-modeline-mode +1))
 
 ;;;;;;;;;;
 ;; Evil ;;
@@ -492,17 +492,49 @@
   :mode "\\.rs\\'")
 (use-package haskell-mode
   :mode "\\.hs\\'")
-;; javsacript + typescript
+(use-package typescript-mode
+  ;; :mode (("\\.tsx\\'" . typescript-mode)
+  ;;        ("\\.ts\\'" . typescript-mode))
+  :init
+  (setq typescript-indent-level 2))
+
+;; (use-package rjsx-mode
+;;   :mode ("\\.jsx?\\'" "\\.mjs\\'"))
+
 (use-package web-mode
   :mode (("\\.tsx\\'"  . web-mode)
          ("\\.ts\\'"  . web-mode)
          ("\\.jsx\\'"  . web-mode)
          ("\\.js\\'"  . web-mode))
   :init
-  (setq web-mode-code-indent-offset                 2
-        web-mode-markup-indent-offset               2
-        web-mode-css-indent-offset                  2
-        web-mode-enable-html-entities-fontification t)
+  (setq web-mode-code-indent-offset                   2
+        web-mode-markup-indent-offset                 2
+        web-mode-css-indent-offset                    2
+        web-mode-enable-html-entities-fontification   nil
+        web-mode-enable-block-face                    nil
+        web-mode-enable-comment-annotation            nil
+        web-mode-enable-comment-interpolation         nil
+        web-mode-enable-control-block-indentation     nil
+        web-mode-enable-css-colorization              nil
+        web-mode-enable-current-column-highlight      nil
+        web-mode-enable-current-element-highlight     nil
+        web-mode-enable-element-content-fontification nil
+        web-mode-enable-heredoc-fontification         nil
+        web-mode-enable-inlays                        nil
+        web-mode-enable-optional-tags                 nil
+        web-mode-enable-part-face                     nil
+        web-mode-enable-sexp-functions                nil
+        web-mode-enable-sql-detection                 nil
+        web-mode-enable-string-interpolation          nil
+        web-mode-enable-whitespace-fontification      nil
+        web-mode-enable-auto-expanding                nil
+        web-mode-enable-auto-indentation              nil
+        web-mode-enable-auto-closing                  nil
+        web-mode-enable-auto-opening                  nil
+        web-mode-enable-auto-pairing                  nil
+        web-mode-enable-auto-quoting                  nil
+        web-mode-fontification-off                    nil
+        web-mode-whitespaces-off                      t)
   :config
   (let ((types '("javascript" "jsx")))
     (setq web-mode-comment-formats
@@ -510,8 +542,47 @@
                         web-mode-comment-formats))
     (dolist (type types)
       (push (cons type "//") web-mode-comment-formats))))
+
+;; Assign typescript-mode to .tsx files
+;; (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+
+;; (use-package mmm-mode
+;;   :config
+;;   (setq mmm-global-mode t)
+;;   (setq mmm-submode-decoration-level 0)
+;;   ;; Add submodule for graphql blocks
+;;   (mmm-add-classes
+;;    '((mmm-graphql-mode
+;;       :submode graphql-mode
+;;       :front "gr?a?p?h?ql`"
+;;       :back "`;")))
+
+;;   (mmm-add-mode-ext-class 'typescript-mode nil 'mmm-graphql-mode)
+
+;;   ;; Add JSX submodule, because typescript-mode is not that great at it
+;;   (mmm-add-classes
+;;    '((mmm-jsx-mode
+;;       ;; :front "\\(return\s\\|n\s\\|(\n\s*\\)<"
+;;       ;; :back ">\n?\s*)"
+;;       :front "<>"
+;;       :back "</>"
+;;       ;; :front-offset -1
+;;       ;; :back-offset 1
+;;       :submode web-mode)))
+
+;;   (mmm-add-mode-ext-class 'typescript-mode nil 'mmm-jsx-mode)
+
+;;   (defun mmm-reapply ()
+;;     (mmm-mode)
+;;     (mmm-mode))
+
+;;   (add-hook 'after-save-hook
+;;             (lambda ()
+;;               (when (string-match-p "\\.tsx?" buffer-file-name)
+;;                 (mmm-reapply)))))
+
 (use-package indium
-  :hook (web-mode . indium-connect))
+  :commands (indium-connect))
 
 ;;;;;;;;;;;;;;;;;;
 ;; Code Folding ;;
@@ -621,7 +692,7 @@
   (defvar company-dabbrev-ignore-case)
   (defvar company-dabbrev-code-other-buffers)
   (setq-local completion-ignore-case t)
-  (setq company-minimum-prefix-length      4 ;; responsive > cpu cycles
+  (setq company-minimum-prefix-length      3 ;; responsive > cpu cycles
         company-idle-delay                 0
         company-tooltip-limit              10
         company-tooltip-flip-when-above    t
@@ -840,9 +911,10 @@
 
 (use-package lsp-mode
   :commands lsp
-  :hook ((rust-mode . lsp)
-          (web-mode  . lsp)
-          (lsp-mode  . lsp-enable-which-key-integration))
+  :hook ((rust-mode       . lsp)
+         (typescript-mode . lsp)
+          (web-mode       . lsp)
+          (lsp-mode       . lsp-enable-which-key-integration))
   :init
   (defvar read-process-output-max)
   (setq read-process-output-max               3145728 ;; 3mb max packet size
@@ -919,7 +991,7 @@
   (setq hl-todo-keyword-faces
         '(("TODO"   warning bold italic)
           ("HACK"   warning bold italic)
-          ("FIXME"  warning bold italic)
+          ("FIXME"  error bold italic)
           ("NOTE"   warning bold italic)
           ("GOTCHA" warning bold italic)))
   :config
