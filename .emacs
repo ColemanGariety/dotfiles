@@ -186,12 +186,13 @@
 (defvar compilation-message-face)
 (setq echo-keystrokes                 0.15
       user-full-name                  "Coleman Gariety"
-      ;; line-number-display-limit-width 2000000
       ;; initial-buffer-choice           t
       sentence-end-double-space       nil
       scroll-conservatively           most-positive-fixnum
-      ;; vc-follow-symlinks              t
-      ;; vc-make-backup-files            t
+      vc-follow-symlinks              t
+      ls-lisp-use-insert-directory-program nil
+      ls-lisp-dirs-first              t
+      vc-make-backup-files            t
       delete-by-moving-to-trash       t
       visible-bell                    t
       visible-cursor                  t
@@ -225,6 +226,10 @@
             (with-selected-frame (or frame (selected-frame))
               (setq inhibit-message t)
               (run-with-idle-timer 0 nil (lambda () (setq inhibit-message nil))))))
+
+(use-package dired
+  :ensure nil
+  :hook (dired-mode . hl-line-mode))
 
 ;;;;;;;;;;;;;;;
 ;; Dashboard ;;
