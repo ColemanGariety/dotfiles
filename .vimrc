@@ -6,11 +6,11 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-scripts/surround.vim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'easymotion/vim-easymotion'
-Plug 'roxma/nvim-yarp'
+" Plug 'roxma/nvim-yarp'
 Plug 'leafgarland/typescript-vim'
-Plug 'liuchengxu/vim-clap'
-Plug 'roxma/vim-hug-neovim-rpc'
-Plug 'joshdick/onedark.vim'
+" Plug 'liuchengxu/vim-clap'
+" Plug 'roxma/vim-hug-neovim-rpc'
+" Plug 'joshdick/onedark.vim'
 " Plug 'altercation/vim-colors-solarized'
 " Plug 'morhetz/gruvbox'
 " Plug 'vim-airline/vim-airline'
@@ -24,6 +24,10 @@ call plug#end()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set nocompatible
+
+set hidden
+
 " Use the system clipboard (Linux)
 set clipboard=unnamedplus
 
@@ -41,8 +45,9 @@ set autoread
 " like <leader>w saves the current file
 let mapleader = ","
 
-" Fast saving
-nmap <leader>w :w!<cr>
+" Quickly edit/reload the vimrc file
+nmap <silent> <leader>ev :e ~/.vimrc<CR>
+nmap <silent> <leader>sv :so ~/.vimrc<CR>
 
 " :W sudo saves the file
 " (useful for handling the permission-denied error)
@@ -52,7 +57,7 @@ command W w !sudo tee % > /dev/null
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
-set so=7
+set so=4
 
 " NERDtree
 " map <C-n> :NERDTreeToggle<CR>
@@ -111,18 +116,26 @@ set novisualbell
 set t_vb=
 set tm=500
 
+" terminal title
+set title
+
+" more performant regexp
+set regexpengine=1
+
 " C-b and C-f scroll instead of page
 nnoremap <C-b> <C-u>
 nnoremap <C-f> <C-d>
 
+set lazyredraw
+
 " Ranger
-nnoremap <C-l> :Ranger<CR>
+" nnoremap <C-l> :Ranger<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Grep, Command-T
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use ag over grep
-set grepprg=ag\ --nogroup\ --nocolor
+set grepprg=rg\ --nogroup\ --nocolor
 
 nnoremap <c-P> :CommandT<CR>
 nnoremap <c-O> :CommandTBuffer<CR>
@@ -144,7 +157,7 @@ set ffs=unix,dos,mac
 
 " Colors
 set background=dark
-colorscheme onedark
+" colorscheme onedark
 " colorscheme solarized
 " colorscheme gruvbox
 
@@ -168,11 +181,11 @@ set noswapfile
 " Be smart when using tabs ;)
 set smarttab
 
-" 1 tab == 4 spaces
+" 1 tab == 2 spaces
 set shiftwidth=2
 set tabstop=2
-:set autoindent
-:set smartindent
+set autoindent
+set smartindent
 
 " Linebreak on 500 characters
 set lbr
@@ -220,6 +233,7 @@ map <leader>cd :cd %:p:h<cr>:pwd<cr>
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 " <Leader>f{char} to move to {char}
+" let g:EasyMotion_do_shade = 0
 map F <Plug>(easymotion-F)
 map f <Plug>(easymotion-f)
 map T <Plug>(easymotion-T)

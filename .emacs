@@ -72,10 +72,6 @@
 (fset #'display-startup-echo-area-message #'ignore)
 (add-hook 'emacs-startup-hook (lambda () (message "")))
 
-;; ;; trying to stop it from loading with doom-modeline
-;; (setq package-load-list '(all
-;;                           (all-the-icons nil)))
-
 ;; (unload-feature 'tramp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -110,6 +106,8 @@
 
 (use-package paradox
   :commands (paradox-list-packages)
+  :init
+  (setq paradox-github-token t)
   :config
   (paradox-enable))
 
@@ -377,7 +375,6 @@
     (etcc-on)))
 
 ;; (use-package evil-string-inflection
-;;   :defer 1
 ;;   :config
 ;;   (define-key evil-normal-state-map "g~" 'evil-operator-string-inflection))
 
@@ -389,12 +386,12 @@
 ;;   (autoload 'rotate-text-backward "rotate-text" nil t)
 ;;   (push '("true" "false") rotate-text-words))
 
-;; (use-package evil-textobj-column :defer 2)
-;; (use-package evil-textobj-line :defer 2)
-;; (use-package evil-textobj-syntax :defer 2)
-;; (use-package evil-indent-plus :defer 2)
-;; (use-package evil-embrace :defer 2)
-;; (use-package exato :defer 2)
+;; (use-package evil-textobj-column)
+;; (use-package evil-textobj-line)
+;; (use-package evil-textobj-syntax)
+;; (use-package evil-indent-plus)
+;; (use-package evil-embrace)
+;; (use-package exato)
 
 ;; ;; just don't know how to work it
 ;; (use-package targets
@@ -468,7 +465,6 @@
 ;;;;;;;;;;;;;;;
 
 (use-package which-key
-  :defer 2
   :config
   (which-key-mode +1))
 
@@ -498,55 +494,74 @@
 (use-package haskell-mode
   :mode "\\.hs\\'")
 (use-package typescript-mode
-  ;; :mode (("\\.tsx\\'" . typescript-mode)
-  ;;        ("\\.ts\\'" . typescript-mode))
+  :mode (("\\.tsx\\'" . typescript-mode)
+         ("\\.ts\\'" . typescript-mode))
   :init
   (setq typescript-indent-level 2))
 
 ;; (use-package rjsx-mode
 ;;   :mode ("\\.jsx?\\'" "\\.mjs\\'"))
 
-(use-package web-mode
-  :mode (("\\.tsx\\'"  . web-mode)
-         ("\\.ts\\'"  . web-mode)
-         ("\\.jsx\\'"  . web-mode)
-         ("\\.js\\'"  . web-mode))
-  :init
-  (setq web-mode-code-indent-offset                   2
-        web-mode-markup-indent-offset                 2
-        web-mode-css-indent-offset                    2
-        web-mode-enable-html-entities-fontification   nil
-        web-mode-enable-block-face                    nil
-        web-mode-enable-comment-annotation            nil
-        web-mode-enable-comment-interpolation         nil
-        web-mode-enable-control-block-indentation     nil
-        web-mode-enable-css-colorization              nil
-        web-mode-enable-current-column-highlight      nil
-        web-mode-enable-current-element-highlight     nil
-        web-mode-enable-element-content-fontification nil
-        web-mode-enable-heredoc-fontification         nil
-        web-mode-enable-inlays                        nil
-        web-mode-enable-optional-tags                 nil
-        web-mode-enable-part-face                     nil
-        web-mode-enable-sexp-functions                nil
-        web-mode-enable-sql-detection                 nil
-        web-mode-enable-string-interpolation          nil
-        web-mode-enable-whitespace-fontification      nil
-        web-mode-enable-auto-expanding                nil
-        web-mode-enable-auto-indentation              nil
-        web-mode-enable-auto-closing                  nil
-        web-mode-enable-auto-opening                  nil
-        web-mode-enable-auto-pairing                  nil
-        web-mode-enable-auto-quoting                  nil
-        web-mode-fontification-off                    nil
-        web-mode-whitespaces-off                      t)
+;; (use-package web-mode
+;;   :mode (("\\.tsx\\'"  . web-mode)
+;;          ("\\.ts\\'"  . web-mode)
+;;          ("\\.jsx\\'"  . web-mode)
+;;          ("\\.js\\'"  . web-mode))
+;;   :init
+;;   (setq web-mode-code-indent-offset                   2
+;;         web-mode-markup-indent-offset                 2
+;;         web-mode-css-indent-offset                    2
+;;         web-mode-enable-html-entities-fontification   nil
+;;         web-mode-enable-block-face                    nil
+;;         web-mode-enable-comment-annotation            nil
+;;         web-mode-enable-comment-interpolation         nil
+;;         web-mode-enable-control-block-indentation     nil
+;;         web-mode-enable-css-colorization              nil
+;;         web-mode-enable-current-column-highlight      nil
+;;         web-mode-enable-current-element-highlight     nil
+;;         web-mode-enable-element-content-fontification nil
+;;         web-mode-enable-heredoc-fontification         nil
+;;         web-mode-enable-inlays                        nil
+;;         web-mode-enable-optional-tags                 nil
+;;         web-mode-enable-part-face                     nil
+;;         web-mode-enable-sexp-functions                nil
+;;         web-mode-enable-sql-detection                 nil
+;;         web-mode-enable-string-interpolation          nil
+;;         web-mode-enable-whitespace-fontification      nil
+;;         web-mode-enable-auto-expanding                nil
+;;         web-mode-enable-auto-indentation              nil
+;;         web-mode-enable-auto-closing                  nil
+;;         web-mode-enable-auto-opening                  nil
+;;         web-mode-enable-auto-pairing                  nil
+;;         web-mode-enable-auto-quoting                  nil
+;;         web-mode-fontification-off                    nil
+;;         web-mode-whitespaces-off                      t)
+;;   :config
+;;   ;; (defun eslint-fix-file ()
+;;   ;;   (interactive)
+;;   ;;   (message "eslint --fixing the file" (buffer-file-name))
+;;   ;;   (shell-command (concat "eslint --fix " (buffer-file-name))))
+
+;;   ;; (defun eslint-fix-file-and-revert ()
+;;   ;;   (interactive)
+;;   ;;   (eslint-fix-file)
+;;   ;;   (revert-buffer t t))
+;;   ;; (add-hook 'web-mode-hook (lambda ()
+;;   ;;                            (add-hook 'after-save-hook #'eslint-fix-file-and-revert)))
+;;   (let ((types '("javascript" "jsx")))
+;;     (setq web-mode-comment-formats
+;;           (cl-remove-if (lambda (item) (member (car item) types))
+;;                         web-mode-comment-formats))
+;;     (dolist (type types)
+;;       (push (cons type "//") web-mode-comment-formats))))
+
+(use-package prettier-js
+  :after typescript-mode
   :config
-  (let ((types '("javascript" "jsx")))
-    (setq web-mode-comment-formats
-          (cl-remove-if (lambda (item) (member (car item) types))
-                        web-mode-comment-formats))
-    (dolist (type types)
-      (push (cons type "//") web-mode-comment-formats))))
+  (add-hook 'typescript-mode-hook 'prettier-js-mode)
+  (setq prettier-js-args '("--single-quote"   "true"
+                           "--trailing-comma" "all"
+                           "--prose-wrap"     "never")))
 
 ;; Assign typescript-mode to .tsx files
 ;; (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
@@ -604,7 +619,6 @@
 ;;;;;;;;;;;;;;;;;;;
 
 ;; (use-package expand-region
-;;   :defer 2
 ;;   :config
 ;;   (global-set-key (kbd "C-u") 'er/expand-region))
 
@@ -640,10 +654,9 @@
 
 (use-package avy
   :init
-  ;; NOTE See:
-  ;; https://github.com/PythonNut/quark-emacs/blob/dev/modules/config-avy-easymotion.el
-  (setq avy-keys  (eval-when-compile (string-to-list "jfkdlsaurieowncpqmxzb"))
-        avy-style 'de-bruijn))
+  (setq avy-keys       (eval-when-compile (string-to-list "jfkdls;anviroe"))
+        avy-style      'de-bruijn
+        avy-background t))
 
 (use-package evil-easymotion
   :after avy)
@@ -681,7 +694,6 @@
 ;;;;;;;;;;;
 
 ;; (use-package diredfl
-;;   :defer 1
 ;;   :config
 ;;   (diredfl-global-mode +1))
 
@@ -698,16 +710,16 @@
   (defvar company-dabbrev-code-other-buffers)
   (setq-local completion-ignore-case t)
   (setq company-minimum-prefix-length      3 ;; responsive > cpu cycles
-        company-idle-delay                 0
+        company-idle-delay                 show-paren-delay
         company-tooltip-limit              10
         company-tooltip-flip-when-above    t
         company-tooltip-align-annotations  t
-        ;; ;; nonde of these work O_o
-        ;; completion-ignore-case             t
-        ;; company-dabbrev-code-ignore-case   t
-        ;; company-dabbrev-downcase           t
-        ;; company-dabbrev-ignore-case        t
-        ;; company-dabbrev-code-other-buffers t
+        ;; nonde of these work O_o
+        completion-ignore-case             t
+        company-dabbrev-code-ignore-case   t
+        company-dabbrev-downcase           t
+        company-dabbrev-ignore-case        t
+        company-dabbrev-code-other-buffers t
         company-require-match              'never
         company-backends                   '(company-capf)
         company-frontends                  '(company-pseudo-tooltip-frontend
@@ -746,12 +758,11 @@
   (global-set-key (kbd "C-x C-r") 'counsel-buffer-or-recentf)
   (counsel-mode +1))
 
-(use-package request :defer t)
+(use-package request)
 (use-package counsel-web
   :commands (counsel-web-search))
 
 (use-package projectile
-  :defer 1
   :init
   (setq projectile-enable-caching t))
 
@@ -764,7 +775,7 @@
   (general-define-key
    :keymaps 'projectile-mode-map
    "C-c p" 'projectile-command-map
-   "C-x C-j" 'counsel-projectile
+   "C-x C-j" 'counsel-projectile-find-file
    "C-x C-g" 'counsel-projectile-rg))
 
 (use-package ivy
@@ -804,13 +815,13 @@
    :keymaps '(normal insert visual)
    "M-r" 'counsel-imenu))
 
-
 ;; (use-package ivy-rich
 ;;   :after ivy
 ;;   :init
-;;   (setq ivy-rich-path-style 'abbrev)
-;;   (setq ivy-rich-parse-remote-buffer nil)
-;;   (setq ivy-switch-buffer-faces-alist nil)
+;;   (setq ivy-rich-path-style 'abbrev
+;;         ivy-rich-parse-remote-buffer nil
+;;         ivy-switch-buffer-faces-alist nil)
+;;   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
 ;;   :config
 ;;   ;; Highlight buffers differently based on whether they're in the same project
 ;;   ;; as the current project or not.
@@ -834,21 +845,20 @@
 ;;           (t                  . ivy--regex-plus))))
 
 ;; we add this for sort-by-frequency
-(use-package smex :defer 1)
+(use-package smex)
 
 (use-package swiper
-  :defer 1
   :init
   (setq swiper-action-recenter t)
   :config
-  (global-set-key (kbd "C-s") 'swiper-isearch)
+  (global-set-key (kbd "C-s") 'swiper)
   (global-set-key (kbd "C-x C-a") 'swiper-all))
 
 ;;;;;;;;;;;;;;;;
 ;; Copy/paste ;;
 ;;;;;;;;;;;;;;;;
 
-(require 'cl)
+(require 'cl-lib)
 (case system-type
     ('darwin (unless window-system
                (setq interprogram-cut-function
@@ -894,7 +904,6 @@
 ;;;;;;;;;;;;;;
 
 (use-package flycheck
-  :defer t
   :delight " ✓"
   :init
   (setq flycheck-check-syntax-automatically '(save))
@@ -926,8 +935,8 @@
         lsp-auto-guess-root                   nil
         lsp-keep-workspace-alive              nil
         lsp-keymap-prefix                     "C-l"
-        lsp-prefer-capf                       nil
-        lsp-enable-completion-at-point        nil
+        lsp-prefer-capf                       t
+        lsp-enable-completion-at-point        t
         lsp-enable-folding                    nil
         lsp-enable-file-watchers              nil
         lsp-enable-text-document-color        nil
@@ -940,7 +949,7 @@
         lsp-ui-doc-enable                     nil ;; too big
         lsp-ui-sideline-ignore-duplicate      t
         lsp-enable-symbol-highlighting        t
-        lsp-idle-delay                       0.5
+        lsp-idle-delay                        show-paren-delay
         lsp-clients-typescript-log-verbosity "debug"))
         ;; lsp-clients-typescript-plugins
         ;; (vector
@@ -954,10 +963,10 @@
 ;;   :requires lsp-mode)
 
 ;; ;; So slow!
-(use-package company-lsp
-  :after lsp-mode
-  :config
-  (push 'company-lsp company-backends))
+;; (use-package company-lsp
+;;   :after lsp-mode
+;;   :config
+;;   (push 'company-lsp company-backends))
 
 ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 ;; (use-package treemacs
@@ -991,7 +1000,6 @@
 ;;   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package hl-todo
-  :defer 2
   :init
   (setq hl-todo-keyword-faces
         '(("TODO"   warning bold italic)
@@ -1003,16 +1011,20 @@
   (global-hl-todo-mode +1))
 
 (use-package highlight-numbers
-  :defer 1
   :hook (prog-mode . highlight-numbers-mode))
 
 ;;;;;;;;;
 ;; Git ;;
 ;;;;;;;;;
 
-;; (use-package magit)
-(use-package git-timemachine
-  :commands (git-timemachine))
+(use-package magit
+  :commands (magit))
+(use-package magit-todos
+  :after magit)
+(use-package evil-magit
+  :after magit)
+;; (use-package git-timemachine
+;;   :commands (git-timemachine))
 
 ;;;;;;;;;
 ;; IRC ;;
@@ -1020,6 +1032,8 @@
 
 (use-package circe
   :commands (circe)
+  :init
+  (setq irc-debug-log t)
   :config
   (setq my-credentials-file "~/.private.el")
 

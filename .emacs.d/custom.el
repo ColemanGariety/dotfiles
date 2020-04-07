@@ -3,8 +3,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(avy-background t)
  '(package-selected-packages
-   '(polymode mmm-mode typescript-mode rjsx-mode indium auto-compile doom-modeline gcmh circe-notifications circe git-timemachine highlight-numbers hl-todo lsp-treemacs treemacs company-lsp lsp-ui lsp-mode flycheck doom-themes smex counsel-projectile projectile counsel-web request counsel company diredfl general evil-easymotion avy origami web-mode haskell-mode rust-mode purescript-mode graphql-mode yaml-mode json-mode gitignore-mode gitconfig-mode gitattributes-mode which-key evil-anzu evil-mc evil-surround evil-collection evil-terminal-cursor-changer evil dashboard paradox use-package no-littering))
+   '(exato ivy-rich prettier-js evil-magit magit-todos magit typescript-mode indium auto-compile doom-modeline gcmh circe-notifications circe git-timemachine highlight-numbers hl-todo lsp-treemacs treemacs lsp-ui lsp-mode flycheck doom-themes smex counsel-projectile projectile counsel-web request counsel company diredfl general evil-easymotion avy origami web-mode haskell-mode rust-mode purescript-mode graphql-mode yaml-mode json-mode gitignore-mode gitconfig-mode gitattributes-mode which-key evil-anzu evil-mc evil-surround evil-collection evil-terminal-cursor-changer evil dashboard paradox use-package no-littering))
  '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -14,9 +15,10 @@
  '(ac-candidate-face ((t (:inherit popup-face :background "black" :foreground "#073642"))))
  '(ac-completion-face ((t (:foreground "color-239" :underline nil))))
  '(ac-selection-face ((t (:inherit popup-menu-selection-face :background "black" :foreground "#2aa198"))))
+ '(avy-background-face ((t (:foreground "#525252"))))
  '(avy-lead-face ((t (:background "inherit" :foreground "red" :weight bold))))
  '(avy-lead-face-0 ((t (:inherit avy-lead-face :background "inherit" :foreground "#FF6666"))))
- '(avy-lead-face-1 ((t (:inherit avy-lead-face :background "brightblack" :foreground "color-239"))))
+ '(avy-lead-face-1 ((t (:inherit avy-lead-face :background "brightblack" :foreground "black"))))
  '(avy-lead-face-2 ((t (:inherit avy-lead-face :background "inherit" :foreground "#FF9999"))))
  '(company-scrollbar-bg ((t (:inherit tooltip :background "black"))))
  '(company-scrollbar-fg ((t (:background "cyan"))))
@@ -26,7 +28,7 @@
  '(doom-modeline-bar-inactive ((t nil)))
  '(doom-modeline-battery-normal ((t (:inherit mode-line :background "black" :weight normal))))
  '(doom-modeline-debug-visual ((t (:background "#073642"))))
- '(flycheck-error ((t (:background "red" :foreground "white" :underline (:color "#ff6655" :style wave)))))
+ '(flycheck-error ((t (:background "black" :underline nil))))
  '(flycheck-info ((t (:underline t))))
  '(flycheck-warning ((t (:background "red" :foreground "white" :underline (:color "#ECBE7B" :style wave)))))
  '(font-lock-comment-face ((t (:foreground "#525252" :slant italic))))
@@ -35,7 +37,7 @@
  '(highlight-indent-guides-character-face ((t (:foreground "black"))))
  '(highlight-indent-guides-even-face ((t (:foreground "black"))))
  '(highlight-indent-guides-odd-face ((t (:foreground "brightgreen"))))
- '(highlight-numbers-number ((t (:inherit font-lock-constant-face :foreground "cyan"))))
+ '(highlight-numbers-number ((t (:inherit font-lock-constant-face :foreground "yellow"))))
  '(hl-line ((t (:background "black"))))
  '(indent-guide-face ((t (:inherit hl-line :background "brightblack" :foreground "black"))))
  '(ivy-separator ((t (:inherit nil))))
