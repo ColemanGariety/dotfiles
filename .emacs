@@ -195,7 +195,7 @@
       visible-bell                    t
       visible-cursor                  t
       ring-bell-function              'ignore
-      scroll-error-top-bottom         t ;; Pgdn & Pgup work properly
+      ;; scroll-error-top-bottom         t ;; change Pgdn & Pgup function ?
       large-file-warning-threshold    (* 1024 1024) ;; 1mb
       mode-require-final-newline      t ;; Newlines
       create-lockfiles                nil ;; no lockfiles in server mode
@@ -249,6 +249,14 @@
   :config
   (dashboard-setup-startup-hook))
 
+;;;;;;;;;;;;;;;;;;;;;
+;; Centered cursor ;;
+;;;;;;;;;;;;;;;;;;;;;
+
+(use-package centered-cursor-mode
+  :config
+  (global-centered-cursor-mode))
+
 ;;:;;;;;;;;;;;;:
 ;; Move lines ;;
 ;;;;;;;;;;;;;;;;
@@ -284,12 +292,13 @@
 ;; can't defer
 (use-package doom-modeline
   :init
-  (setq doom-modeline-buffer-encoding   nil
-        doom-modeline-github            nil
-        doom-modeline-icon              nil
-        doom-modeline-project-detection 'project)
+  (setq doom-modeline-buffer-encoding        nil
+        doom-modeline-github                 nil
+        doom-modeline-icon                   nil
+        doom-modeline-project-detection      'project
+        doom-modeline-buffer-file-name-style 'file-name)
   (unless after-init-time
-    ;; prevent flash of unstyles modeline at startup
+    ;; prevent flash of unstyled modeline at startup
     (setq-default mode-line-format nil))
   :config
   (doom-modeline-mode +1))
@@ -693,11 +702,9 @@
 ;; Dired ;;
 ;;;;;;;;;;;
 
-;; (use-package diredfl
-;;   :config
-;;   (diredfl-global-mode +1))
-
-;; (use-package dired-subtree)
+(use-package diredfl
+  :config
+  (diredfl-global-mode +1))
 
 ;;;;;;;;;;;;;;;;;
 ;; Completion  ;;

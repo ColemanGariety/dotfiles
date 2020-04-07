@@ -4,8 +4,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(avy-background t)
+ '(ccm-recenter-at-end-of-file nil)
  '(package-selected-packages
-   '(exato ivy-rich prettier-js evil-magit magit-todos magit typescript-mode indium auto-compile doom-modeline gcmh circe-notifications circe git-timemachine highlight-numbers hl-todo lsp-treemacs treemacs lsp-ui lsp-mode flycheck doom-themes smex counsel-projectile projectile counsel-web request counsel company diredfl general evil-easymotion avy origami web-mode haskell-mode rust-mode purescript-mode graphql-mode yaml-mode json-mode gitignore-mode gitconfig-mode gitattributes-mode which-key evil-anzu evil-mc evil-surround evil-collection evil-terminal-cursor-changer evil dashboard paradox use-package no-littering))
+   '(centered-cursor-mode prettier-js evil-magit magit-todos magit typescript-mode indium auto-compile doom-modeline gcmh circe-notifications circe git-timemachine highlight-numbers hl-todo lsp-treemacs treemacs lsp-ui lsp-mode flycheck doom-themes smex counsel-projectile projectile counsel-web request counsel company diredfl general evil-easymotion avy origami web-mode haskell-mode rust-mode purescript-mode graphql-mode yaml-mode json-mode gitignore-mode gitconfig-mode gitattributes-mode which-key evil-anzu evil-mc evil-surround evil-collection evil-terminal-cursor-changer evil dashboard paradox use-package no-littering))
  '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
