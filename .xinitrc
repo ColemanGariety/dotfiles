@@ -1,4 +1,4 @@
-setxkbmap -option 'altwin:swap_alt_win'
+setxkbmap -option 'altwin:swap_alt_win,compose:ralt'
 xrdb ~/.Xresources
 # xsetroot -xcf /usr/share/icns/Adwaita/cursors/left_ptr 32
 xset m 3/2 0
@@ -11,6 +11,7 @@ feh --bg-fill /home/coleman/Images/joyful_and_peaceful_rest_meditation.jpg &
 xscreensaver -no-splash &
 emacs --daemon &
 typescript-language-server --stdio &
+purescript-language-server --stdio &
 ~/.bin/gitstatus-prompt-watcher &
 # redshift -l 45.5155:122.6793 -t 6500K:3000K &
 sxhkd &

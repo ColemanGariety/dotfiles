@@ -5,6 +5,13 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+#############
+# Auto-pair #
+#############
+
+source ~/.zsh/zsh-autopair/autopair.zsh
+autopair-init
+
 ###############
 # Completions #
 ###############
@@ -26,12 +33,18 @@ zstyle ':completion:*:rm:*'             file-patterns   '*:all-files'
 zstyle ':completion::complete:*'        use-cache       on
 zstyle ':completion::complete:*'        cache-path      ${XDG_CACHE_HOME:-$HOME/.cache}/zcompcache-$ZSH_VERSION
 
+# https://unix.stackexchange.com/questions/12288/zsh-insert-completion-on-first-tab-even-if-ambiguous
+setopt menu_complete
+
 zmodload zsh/complist
 bindkey -M menuselect '^[[Z' reverse-menu-complete # completion menu backtab
 
 # Make it possible to use completion specifications and functions written for bash.
 autoload -Uz bashcompinit
 bashcompinit
+
+# plugin
+fpath=(~/.zsh/zsh-completions/src $fpath)
 
 ###########
 # History #
@@ -79,25 +92,23 @@ __git_files () {
     _wanted files expl 'local files' _files     
 }
 
-###########
-# Exports #
-###########
+#####################
+# Colored man pages #
+#####################
 
-export GOPATH="/home/coleman/Git/go/"
-export DYNAMO_ENDPOINT="http://localhost:8000"
-export GITSTATUS_LOG_LEVEL=DEBUG
-export EDITOR=e
-export BROWSER=chromium
-
-PATH=$PATH:$HOME/.cargo/bin
-PATH=$PATH:$HOME/.yarn/bin
-PATH=$HOME/.bin:$PATH
+source ~/.zsh/zsh-colored-man-pages/colored-man-pages.plugin.zsh
 
 #######
 # NVM #
 #######
 
 source /usr/share/nvm/init-nvm.sh
+
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+ZSH_AUTOSUGGEST_MANUAL_REBIND="true"
+ZSH_AUTOSUGGEST_USE_ASYNC="true"
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#555,bg=#002b36"
+ZSH_AUTOSUGGEST_STRATEGY="completion"
 
 ##########
 # Prompt #
@@ -111,3 +122,9 @@ RPROMPT='$GITSTATUS_PROMPT %t'
 function precmd() {
     sleep 0;
 }
+
+#######################
+# Syntax Highlighting #
+#######################
+
+source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

@@ -6,7 +6,7 @@
  '(avy-background t)
  '(ccm-recenter-at-end-of-file nil)
  '(package-selected-packages
-   '(centered-cursor-mode prettier-js evil-magit magit-todos magit typescript-mode indium auto-compile doom-modeline gcmh circe-notifications circe git-timemachine highlight-numbers hl-todo lsp-treemacs treemacs lsp-ui lsp-mode flycheck doom-themes smex counsel-projectile projectile counsel-web request counsel company diredfl general evil-easymotion avy origami web-mode haskell-mode rust-mode purescript-mode graphql-mode yaml-mode json-mode gitignore-mode gitconfig-mode gitattributes-mode which-key evil-anzu evil-mc evil-surround evil-collection evil-terminal-cursor-changer evil dashboard paradox use-package no-littering))
+   '(lsp-haskell exec-path-from-shell highlight-indent-guides centered-cursor-mode prettier-js evil-magit magit-todos magit typescript-mode indium auto-compile doom-modeline gcmh circe-notifications circe git-timemachine highlight-numbers hl-todo lsp-treemacs treemacs lsp-ui lsp-mode flycheck doom-themes smex counsel-projectile projectile counsel-web request counsel company diredfl general evil-easymotion avy origami web-mode haskell-mode rust-mode purescript-mode graphql-mode yaml-mode json-mode gitignore-mode gitconfig-mode gitattributes-mode which-key evil-anzu evil-mc evil-surround evil-collection evil-terminal-cursor-changer evil dashboard paradox use-package no-littering))
  '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -29,7 +29,7 @@
  '(doom-modeline-bar-inactive ((t nil)))
  '(doom-modeline-battery-normal ((t (:inherit mode-line :background "black" :weight normal))))
  '(doom-modeline-debug-visual ((t (:background "#073642"))))
- '(flycheck-error ((t (:background "black" :underline nil))))
+ '(flycheck-error ((t (:underline t))))
  '(flycheck-info ((t (:underline t))))
  '(flycheck-warning ((t (:background "red" :foreground "white" :underline (:color "#ECBE7B" :style wave)))))
  '(font-lock-comment-face ((t (:foreground "#525252" :slant italic))))

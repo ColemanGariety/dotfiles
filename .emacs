@@ -142,6 +142,7 @@
 
 ;; (global-font-lock-mode +1)   ;; for all buffers
 (global-visual-line-mode +1) ;; word-wrap
+(setq show-paren-delay 0.25)
 (show-paren-mode +1)         ;; show matching parentheses
 (display-time) ;; in mode-line
 (size-indication-mode +1)
@@ -182,7 +183,7 @@
 (setq frame-background-mode (quote dark))
 (defvar apropos-do-all)
 (defvar compilation-message-face)
-(setq echo-keystrokes                 0.15
+(setq echo-keystrokes                 show-paren-delay
       user-full-name                  "Coleman Gariety"
       ;; initial-buffer-choice           t
       sentence-end-double-space       nil
@@ -253,9 +254,17 @@
 ;; Centered cursor ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
-(use-package centered-cursor-mode
-  :config
-  (global-centered-cursor-mode))
+;; (use-package centered-cursor-mode
+;;   :config
+;;   (defun ccm-remap-evil-keys ()
+;;     (when (and centered-cursor-mode evil-mode)
+;;       ;; up is down, evil doesn't follow the convention
+;;       (local-set-key [remap evil-scroll-page-up] 'ccm-scroll-down)
+;;       (local-set-key [remap evil-scroll-page-down] 'ccm-scroll-up)))
+
+;;   (add-hook 'evil-mode-hook 'ccm-remap-evil-keys)
+;;   (add-hook 'centered-cursor-mode-hook 'ccm-remap-evil-keys)
+;;   (global-centered-cursor-mode))
 
 ;;:;;;;;;;;;;;;:
 ;; Move lines ;;
@@ -564,6 +573,10 @@
 ;;     (dolist (type types)
 ;;       (push (cons type "//") web-mode-comment-formats))))
 
+(use-package exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize))
+
 (use-package prettier-js
   :after typescript-mode
   :config
@@ -865,7 +878,7 @@
 ;; Copy/paste ;;
 ;;;;;;;;;;;;;;;;
 
-(require 'cl-lib)
+(require 'cl)
 (case system-type
     ('darwin (unless window-system
                (setq interprogram-cut-function
@@ -959,9 +972,13 @@
         lsp-idle-delay                        show-paren-delay
         lsp-clients-typescript-log-verbosity "debug"))
         ;; lsp-clients-typescript-plugins
+        max-mini-window-height                1
         ;; (vector
         ;;  (list :name "@vsintellicode/typescript-intellicode-plugin"
         ;;        :location "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
+
+(use-package lsp-haskell
+  :after lsp-mode)
 
 (use-package lsp-ui
   :after lsp-mode)
@@ -1114,6 +1131,6 @@
     (with-eval-after-load 'gcmh
       (setq gcmh-idle-delay 10
             gcmh-verbose nil
-            gcmh-high-cons-threshold 16777216
+            gcmh-high-cons-threshold most-positive-fixnum
             gc-cons-percentage 0.1)
       (add-function :after after-focus-change-function #'gcmh-idle-garbage-collect))))
