@@ -6,7 +6,7 @@
  '(avy-background t)
  '(ccm-recenter-at-end-of-file nil)
  '(package-selected-packages
-   '(benchmark-init html-mode dhall-mode psc-ide lsp-haskell exec-path-from-shell highlight-indent-guides centered-cursor-mode prettier-js evil-magit magit-todos magit typescript-mode indium auto-compile doom-modeline gcmh git-timemachine highlight-numbers hl-todo lsp-treemacs treemacs lsp-ui lsp-mode flycheck doom-themes smex counsel-projectile projectile counsel-web request counsel company diredfl general evil-easymotion avy origami web-mode haskell-mode rust-mode purescript-mode graphql-mode yaml-mode json-mode gitignore-mode gitconfig-mode gitattributes-mode which-key evil-anzu evil-mc evil-surround evil-collection evil-terminal-cursor-changer evil dashboard paradox use-package no-littering))
+   '(jammer benchmark-init html-mode dhall-mode psc-ide lsp-haskell exec-path-from-shell highlight-indent-guides centered-cursor-mode prettier-js evil-magit magit-todos magit typescript-mode indium auto-compile doom-modeline gcmh git-timemachine highlight-numbers hl-todo lsp-treemacs treemacs lsp-ui lsp-mode flycheck doom-themes smex counsel-projectile projectile counsel-web request counsel company diredfl general evil-easymotion avy origami web-mode haskell-mode rust-mode purescript-mode graphql-mode yaml-mode json-mode gitignore-mode gitconfig-mode gitattributes-mode which-key evil-anzu evil-mc evil-surround evil-collection evil-terminal-cursor-changer evil dashboard paradox use-package no-littering))
  '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

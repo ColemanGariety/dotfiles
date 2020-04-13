@@ -299,7 +299,6 @@
 ;; Mode line ;;
 ;;;;;;;;;;;;;;;
 
-;; can't defer
 (use-package doom-modeline
   :init
   (setq doom-modeline-buffer-encoding        nil
@@ -317,7 +316,6 @@
 ;; Evil ;;
 ;;;;;;;;;;
 
-;; can't defer
 (use-package evil
   :preface
   (setq evil-want-keybinding                 nil
@@ -380,7 +378,6 @@
 ;; (define-key global-map (kbd "M-L") 'evil-window-vsplit)
 ;; (define-key global-map (kbd "C-q") 'delete-window)
 
-;; can't defer
 ;; TODO replace with my own version
 (unless (display-graphic-p)
   (use-package evil-terminal-cursor-changer
@@ -1080,11 +1077,11 @@
 ;; Hardcore ;;
 ;;;;;;;;;;;;;;
 
-;; (use-package jammer
-;;   :hook (prog-mode . jammer-mode)
-;;   :init
-;;   (setq jammer-repeat-type                'linear
-;;         jammer-repeat-allowed-repetitions 7))
+(use-package jammer
+  :hook (prog-mode . jammer-mode)
+  :init
+  (setq jammer-repeat-type                'linear
+        jammer-repeat-allowed-repetitions 7))
 
 ;;;;;;;;;
 ;; Org ;;

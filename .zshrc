@@ -1,3 +1,9 @@
+############
+# neofetch #
+############
+
+neofetch
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -113,8 +119,10 @@ ZSH_AUTOSUGGEST_STRATEGY="completion"
 
 ZLE_RPROMPT_INDENT=0
 source ~/.zsh/gitstatus.prompt.zsh
-PROMPT='%~ $ '               # left prompt: directory followed by %/# (normal/root)
-RPROMPT='$GITSTATUS_PROMPT %{%F{blue}%}%t'
+PROMPT='%~ $ '               # left prompt: directory followed by %/#
+# (normal/root)
+RPROMPT='$GITSTATUS_PROMPT'
+# RPROMPT='$GITSTATUS_PROMPT %{%F{blue}%}%t'
 
 function precmd() {
     sleep 0;
