@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Icon[en_US]=emacs
+Name[en_US]=emacs
+Name=emacs
+Icon=gnome-panel-launcher
+Exec=kitty -e emacsclient -nw -a "" -t

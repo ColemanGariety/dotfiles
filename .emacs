@@ -34,16 +34,6 @@
 ;; https://www.masteringemacs.org/article/improving-performance-emacs-display-engine
 (setq redisplay-dont-pause t)
 
-;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
-;;      reason. Disabling it completely could have many side-effects, so we
-;;      defer it until later.
-(unless (display-graphic-p)
-  (advice-add #'tty-run-terminal-initialization :override #'ignore)
-  (add-hook 'window-setup-hook
-            (lambda ()
-              (advice-remove #'tty-run-terminal-initialization #'ignore)
-              (tty-run-terminal-initialization (selected-frame) nil t))))
-
 ;; ;; Use a hook so the message doesn't get clobbered by other messages.
 ;; (add-hook 'emacs-startup-hook
 ;;           (lambda ()
@@ -162,7 +152,7 @@
 (electric-pair-mode +1)
 (global-display-line-numbers-mode +1)
 ;; NOTE: so that I can easily resize my terminal window to the fill column width
-(add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+;; (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
 ;; (global-display-fill-column-indicator-mode +1)
 (set-locale-environment "en_US.UTF-8")
 (setq custom-file "~/.emacs.d/custom.el")

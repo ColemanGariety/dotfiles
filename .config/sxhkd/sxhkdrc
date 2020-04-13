@@ -4,5 +4,8 @@ alt + Return
 super + space
 	rofi -show run -font "consolas 20"
 
+super + Escape
+  ~/.bin/screenshot
+
 super + Return
-	killall xinit
+	killall karmen
