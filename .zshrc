@@ -20,28 +20,21 @@ autopair-init
 autoload -Uz compinit
 compinit -d ${XDG_CACHE_HOME:-~/.cache}/.zcompdump-$ZSH_VERSION
 
+# zstyle ':completion:*' tag-order all-expansions
 # Arrow key menu for completions
-zstyle ':completion:*' menu select
-zstyle ':completion:*'                  matcher-list    'm:{a-zA-Z}={A-Za-z}' 'l:|=* r:|=*'
-zstyle ':completion:*:descriptions'     format          '[%d]'
-zstyle ':completion:*'                  completer       _complete
-zstyle ':completion:*:*:-subscript-:*'  tag-order       indexes parameters
-zstyle ':completion:*'                  squeeze-slashes true
-zstyle '*'                              single-ignored  show
-zstyle ':completion:*:(rm|kill|diff):*' ignore-line     other
-zstyle ':completion:*:rm:*'             file-patterns   '*:all-files'
+zstyle ':completion:*:*:*:*:*' menu yes select
 zstyle ':completion::complete:*'        use-cache       on
 zstyle ':completion::complete:*'        cache-path      ${XDG_CACHE_HOME:-$HOME/.cache}/zcompcache-$ZSH_VERSION
 
-# https://unix.stackexchange.com/questions/12288/zsh-insert-completion-on-first-tab-even-if-ambiguous
-setopt menu_complete
-
-zmodload zsh/complist
-bindkey -M menuselect '^[[Z' reverse-menu-complete # completion menu backtab
+backward-kill-dir () {
+    local WORDCHARS=${WORDCHARS/\/}
+    zle backward-kill-word
+}
+bindkey '^[[Z' reverse-menu-complete # completion menu backtab
 
 # Make it possible to use completion specifications and functions written for bash.
-autoload -Uz bashcompinit
-bashcompinit
+# autoload -Uz bashcompinit
+# bashcompinit
 
 # plugin
 fpath=(~/.zsh/zsh-completions/src $fpath)
@@ -104,9 +97,13 @@ source ~/.zsh/zsh-colored-man-pages/colored-man-pages.plugin.zsh
 
 source /usr/share/nvm/init-nvm.sh
 
+###################
+# Autosuggestions #
+###################
+
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-ZSH_AUTOSUGGEST_MANUAL_REBIND="true"
-ZSH_AUTOSUGGEST_USE_ASYNC="true"
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#555,bg=#002b36"
 ZSH_AUTOSUGGEST_STRATEGY="completion"
 
@@ -117,7 +114,7 @@ ZSH_AUTOSUGGEST_STRATEGY="completion"
 ZLE_RPROMPT_INDENT=0
 source ~/.zsh/gitstatus.prompt.zsh
 PROMPT='%~ $ '               # left prompt: directory followed by %/# (normal/root)
-RPROMPT='$GITSTATUS_PROMPT %t'
+RPROMPT='$GITSTATUS_PROMPT %{%F{blue}%}%t'
 
 function precmd() {
     sleep 0;
@@ -128,3 +125,4 @@ function precmd() {
 #######################
 
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+ZSH_HIGHLIGHT_STYLES[path]='fg=gray'

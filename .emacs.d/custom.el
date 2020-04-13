@@ -6,7 +6,7 @@
  '(avy-background t)
  '(ccm-recenter-at-end-of-file nil)
  '(package-selected-packages
-   '(lsp-haskell exec-path-from-shell highlight-indent-guides centered-cursor-mode prettier-js evil-magit magit-todos magit typescript-mode indium auto-compile doom-modeline gcmh circe-notifications circe git-timemachine highlight-numbers hl-todo lsp-treemacs treemacs lsp-ui lsp-mode flycheck doom-themes smex counsel-projectile projectile counsel-web request counsel company diredfl general evil-easymotion avy origami web-mode haskell-mode rust-mode purescript-mode graphql-mode yaml-mode json-mode gitignore-mode gitconfig-mode gitattributes-mode which-key evil-anzu evil-mc evil-surround evil-collection evil-terminal-cursor-changer evil dashboard paradox use-package no-littering))
+   '(benchmark-init html-mode dhall-mode psc-ide lsp-haskell exec-path-from-shell highlight-indent-guides centered-cursor-mode prettier-js evil-magit magit-todos magit typescript-mode indium auto-compile doom-modeline gcmh git-timemachine highlight-numbers hl-todo lsp-treemacs treemacs lsp-ui lsp-mode flycheck doom-themes smex counsel-projectile projectile counsel-web request counsel company diredfl general evil-easymotion avy origami web-mode haskell-mode rust-mode purescript-mode graphql-mode yaml-mode json-mode gitignore-mode gitconfig-mode gitattributes-mode which-key evil-anzu evil-mc evil-surround evil-collection evil-terminal-cursor-changer evil dashboard paradox use-package no-littering))
  '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -29,6 +29,7 @@
  '(doom-modeline-bar-inactive ((t nil)))
  '(doom-modeline-battery-normal ((t (:inherit mode-line :background "black" :weight normal))))
  '(doom-modeline-debug-visual ((t (:background "#073642"))))
+ '(fill-column-indicator ((t (:inherit shadow :stipple nil :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal))))
  '(flycheck-error ((t (:underline t))))
  '(flycheck-info ((t (:underline t))))
  '(flycheck-warning ((t (:background "red" :foreground "white" :underline (:color "#ECBE7B" :style wave)))))
@@ -43,8 +44,8 @@
  '(indent-guide-face ((t (:inherit hl-line :background "brightblack" :foreground "black"))))
  '(ivy-separator ((t (:inherit nil))))
  '(ivy-virtual ((t (:inherit nil :foreground "#ddd"))))
- '(line-number ((t (:inherit default :foreground "#073642" :strike-through nil :underline nil :slant normal :weight normal))))
- '(line-number-current-line ((t (:inherit (hl-line defaultblack) :foreground "#657b83" :strike-through nil :underline nil :slant normal :weight normal))))
+ '(line-number ((t (:inherit default :foreground "yellow" :strike-through nil :underline nil :slant normal :weight normal))))
+ '(line-number-current-line ((t (:background "brightblack" :foreground "yellow" :strike-through nil :underline nil :slant normal :weight normal))))
  '(linum ((t (:inherit default :foreground "#a9a1e1" :strike-through nil :underline nil :slant normal :weight normal))))
  '(lsp-face-highlight-read ((t (:background "color-25" :foreground "#dfdfdf" :weight bold))))
  '(lsp-face-highlight-textual ((t (:inherit highlight :background "color-25" :foreground "#dfdfdf" :weight bold))))

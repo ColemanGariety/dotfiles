@@ -31,13 +31,16 @@
 ;; font.
 (setq frame-inhibit-implied-resize t)
 
+;; https://www.masteringemacs.org/article/improving-performance-emacs-display-engine
+(setq redisplay-dont-pause t)
+
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
 ;;      reason. Disabling it completely could have many side-effects, so we
 ;;      defer it until later.
 (unless (display-graphic-p)
   (advice-add #'tty-run-terminal-initialization :override #'ignore)
   (add-hook 'window-setup-hook
-            (defun doom-init-tty-h ()
+            (lambda ()
               (advice-remove #'tty-run-terminal-initialization #'ignore)
               (tty-run-terminal-initialization (selected-frame) nil t))))
 
@@ -57,6 +60,11 @@
 (remove-hook 'find-file-hook 'vc-find-file-hook)
 
 (setq inhibit-default-init t)
+(setq inhibit-compacting-font-caches t)
+(setq inhibit-bidi-mirroring t)
+(setq inhibit-free-realized-faces t)
+(setq inhibit-menubar-update t)
+(setq inhibit-x-resources t)
 
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode nil))
@@ -65,7 +73,6 @@
 (setq inhibit-startup-screen            t
       menu-bar-mode                     nil
       inhibit-startup-echo-area-message user-login-name
-      inhibit-default-init              t
       initial-major-mode                'fundamental-mode
       default-major-mode                'fundamental-mode
       initial-scratch-message           nil)
@@ -153,7 +160,11 @@
 (blink-cursor-mode 0)
 (window-divider-mode +1)
 (electric-pair-mode +1)
-;; (set-locale-environment "en_US.UTF-8")
+(global-display-line-numbers-mode +1)
+;; NOTE: so that I can easily resize my terminal window to the fill column width
+(add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+;; (global-display-fill-column-indicator-mode +1)
+(set-locale-environment "en_US.UTF-8")
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
 (set-face-inverse-video 'vertical-border nil)
@@ -492,25 +503,48 @@
 
 (use-package gitattributes-mode
   :mode ("\\.gitattributes\\'" . gitattributes-mode))
+
 (use-package gitconfig-mode
   :mode ("\\.gitconfig\\'" . gitconfig-mode))
+
 (use-package gitignore-mode
   :mode ("\\.gitignore\\'" . gitignore-mode))
+
 (use-package json-mode
   :mode ("\\.json\\'" . json-mode)
   :init
   (setq json-reformat:indent-width 2))
+
 (use-package yaml-mode
   :mode ("\\.yml\\'" . yaml-mode))
+
+(add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
+
+(use-package dhall-mode
+  :mode ("\\.dhall\\'" . dhall-mode))
+
 (use-package graphql-mode
   :mode ("\\.graphql\\'" . graphql-mode))
-;; (use-package psc-ide)
+
 (use-package purescript-mode
   :mode ("\\.psc\\'" . purescript-mode))
+
+(use-package psc-ide
+  :config
+  (add-hook 'purescript-mode-hook
+            (lambda ()
+              (push 'company-psc-ide-backend company-backends)
+              (psc-ide-mode)
+              (company-mode)
+              (flycheck-mode)
+              (turn-on-purescript-indentation))))
+
 (use-package rust-mode
   :mode "\\.rs\\'")
+
 (use-package haskell-mode
   :mode "\\.hs\\'")
+
 (use-package typescript-mode
   :mode (("\\.tsx\\'" . typescript-mode)
          ("\\.ts\\'" . typescript-mode))
@@ -704,8 +738,8 @@
    "F" 'evilem-motion-find-char-backward
    "t" 'evilem-motion-find-char-to
    "T" 'evilem-motion-find-char-to-backward
-   "C-j" 'evilem-motion-next-line
-   "C-k" 'evilem-motion-previous-line)
+   "C-c C-j" 'evilem-motion-next-line
+   "C-c C-k" 'evilem-motion-previous-line)
   (general-define-key
    :states 'insert
    :keymaps 'override
@@ -971,11 +1005,13 @@
         lsp-enable-symbol-highlighting        t
         lsp-idle-delay                        show-paren-delay
         lsp-clients-typescript-log-verbosity "debug"))
-        ;; lsp-clients-typescript-plugins
-        max-mini-window-height                1
-        ;; (vector
-        ;;  (list :name "@vsintellicode/typescript-intellicode-plugin"
-        ;;        :location "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
+
+;; ;; Intellicode
+;; lsp-clients-typescript-plugins
+;; max-mini-window-height                1
+;; (vector
+;;  (list :name "@vsintellicode/typescript-intellicode-plugin"
+;;        :location "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
 
 (use-package lsp-haskell
   :after lsp-mode)
@@ -1049,38 +1085,6 @@
   :after magit)
 ;; (use-package git-timemachine
 ;;   :commands (git-timemachine))
-
-;;;;;;;;;
-;; IRC ;;
-;;;;;;;;;
-
-(use-package circe
-  :commands (circe)
-  :init
-  (setq irc-debug-log t)
-  :config
-  (setq my-credentials-file "~/.private.el")
-
-  (defun my-nickserv-password (server)
-    (with-temp-buffer
-      (insert-file-contents-literally my-credentials-file)
-      (plist-get (read (buffer-string)) :nickserv-password)))
-
-  (setq circe-network-options
-        '(("Freenode"
-           :tls t
-           :nick "clmg"
-           :sasl-username "clmg"
-           :sasl-password my-nickserv-password))))
-
-(use-package circe-notifications
-  :after circe
-  :config
-  ;; (eval-after-load "circe-notifications"
-  ;;   '(setq circe-notifications-watch-strings
-  ;;       '("people" "you" "like" "to" "hear" "from")))
-  (autoload 'enable-circe-notifications "circe-notifications" nil t)
-  (add-hook 'circe-server-connected-hook 'enable-circe-notifications))
 
 ;;;;;;;;;;;;;;
 ;; Hardcore ;;
