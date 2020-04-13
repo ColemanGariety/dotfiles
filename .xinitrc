@@ -16,3 +16,4 @@ dunst &
 sxhkd &
 # exec bspwm -c ~/.config/bspwm/bspwmrc
 exec karmen
+# exec wind

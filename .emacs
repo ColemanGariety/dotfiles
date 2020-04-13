@@ -173,6 +173,18 @@
 ;; (set-keyboard-coding-system 'utf-8)
 ;; (set-selection-coding-system 'utf-8)
 
+(setq-default frame-title-format '("%b"))
+
+(use-package xterm-frobs
+  :load-path "~/Git/emacs-xterm"
+  :config
+  (autoload 'xterm-frobs "xterm-frobs" nil t)
+  (add-hook 'buffer-list-update-hook
+            (lambda ()
+              (let ((title (buffer-name)))
+                (unless (string-match-p (regexp-quote "Minibuf") title)
+                  (xterm-set-all-titles (concat title " - Emacs")))))))
+
 ;;;;;;;;;;;;;;;;;;;
 ;; Sane defaults ;;
 ;;;;;;;;;;;;;;;;;;;

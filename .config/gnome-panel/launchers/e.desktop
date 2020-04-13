@@ -9,3 +9,4 @@ Name[en_US]=emacs
 Name=emacs
 Icon=gnome-panel-launcher
 Exec=kitty -e emacsclient -nw -a "" -t
+Icon[C]=emacs

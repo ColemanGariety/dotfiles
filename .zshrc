@@ -4,13 +4,6 @@
 
 neofetch
 
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
 #############
 # Auto-pair #
 #############
@@ -23,8 +16,15 @@ autopair-init
 ###############
 
 # Completions
-autoload -Uz compinit
-compinit -d ${XDG_CACHE_HOME:-~/.cache}/.zcompdump-$ZSH_VERSION
+# see: https://medium.com/@dannysmith/little-thing-2-speeding-up-zsh-f1860390f92
+autoload -Uz compinit 
+if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
+	compinit;
+else
+	compinit -C;
+fi;
+
+# compinit -d ${XDG_CACHE_HOME:-~/.cache}/.zcompdump-$ZSH_VERSION
 
 # zstyle ':completion:*' tag-order all-expansions
 # Arrow key menu for completions
@@ -101,7 +101,29 @@ source ~/.zsh/zsh-colored-man-pages/colored-man-pages.plugin.zsh
 # NVM #
 #######
 
-source /usr/share/nvm/init-nvm.sh
+# lazy load
+# see: http://broken-by.me/lazy-load-nvm/
+
+nvm() {
+    unset -f nvm
+    export NVM_DIR=~/.nvm
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+    nvm "$@"
+}
+ 
+node() {
+    unset -f node
+    export NVM_DIR=~/.nvm
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+    node "$@"
+}
+ 
+npm() {
+    unset -f npm
+    export NVM_DIR=~/.nvm
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+    npm "$@"
+}
 
 ###################
 # Autosuggestions #
@@ -125,7 +147,8 @@ RPROMPT='$GITSTATUS_PROMPT'
 # RPROMPT='$GITSTATUS_PROMPT %{%F{blue}%}%t'
 
 function precmd() {
-    sleep 0;
+    # set window title
+    print -Pn "\e]0;%~\a"
 }
 
 #######################
