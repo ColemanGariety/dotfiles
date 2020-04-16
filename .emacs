@@ -32,16 +32,8 @@
 (setq frame-inhibit-implied-resize t)
 
 ;; https://www.masteringemacs.org/article/improving-performance-emacs-display-engine
-(setq redisplay-dont-pause t)
-
-;; ;; Use a hook so the message doesn't get clobbered by other messages.
-;; (add-hook 'emacs-startup-hook
-;;           (lambda ()
-;;             (message "Emacs ready in %s with %d garbage collections."
-;;                      (format "%.2f seconds"
-;;                              (float-time
-;;                               (time-subtract after-init-time before-init-time)))
-;;                      gcs-done)))
+;; OBSOLETE
+;; (setq redisplay-dont-pause t)
 
 ;;;;;;;;;;;;;;;;;;;
 ;; Inhibit stuff ;;
@@ -55,6 +47,7 @@
 (setq inhibit-free-realized-faces t)
 (setq inhibit-menubar-update t)
 (setq inhibit-x-resources t)
+(setq inhibit-face-set-after-default t)
 
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode nil))
@@ -70,6 +63,54 @@
 (add-hook 'emacs-startup-hook (lambda () (message "")))
 
 ;; (unload-feature 'tramp)
+
+;(defadvice save-buffers-kill-terminal (before update-mod-flag activate)
+	;(shell-command "emacswindow")
+                                        ;(shell-command "tmux detach"))
+
+(defvar my/terminal-initted nil)
+
+;; HACK: this function does a lot of unnecessary work, and it runs every time a
+;; frame is made so let's modify it a bit
+(defun my/tty-create-frame-with-faces (orig-fun &rest args)
+  (let* ((parameters (car args))
+				(frame (make-terminal-frame parameters))
+        ;; success
+        )
+		;; (unwind-protect
+			(with-selected-frame
+          frame
+          (unless my/terminal-initted
+            (tty-handle-reverse-video frame (frame-parameters frame))
+            (set-locale-environment nil frame)
+            (xterm-register-default-colors xterm-standard-colors)
+            (setq my/terminal-initted t))
+          ;; (setq success t)
+          )
+      ;; (unless success
+      ;;   (delete-frame frame)))
+    frame))
+
+;; HACK: load this once instead of with every new frame
+(load (concat term-file-prefix "xterm"))
+
+;; ;; just a util
+;; (defun print-elements-of-list (list)
+;;   "Print each element of LIST on a line of its own."
+;;   (while list
+;;     (print (car list))
+;;     (setq list (cdr list))))
+
+;; HACK: initialize xterm colors manually for speed
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (with-selected-frame (or frame (selected-frame))
+              (frame-set-background-mode frame t)
+              (face-set-after-frame-default frame)
+              (setq inhibit-message t)
+              (run-with-idle-timer 0 nil (lambda () (setq inhibit-message nil))))))
+
+(advice-add 'tty-create-frame-with-faces :around 'my/tty-create-frame-with-faces)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package management ;;
@@ -101,12 +142,13 @@
 (setq use-package-verbose t
       use-package-always-ensure t)
 
-(use-package paradox
-  :commands (paradox-list-packages)
-  :init
-  (setq paradox-github-token t)
-  :config
-  (paradox-enable))
+;; (use-package paradox
+;;   :commands (paradox-list-packages)
+;; 	:defer 5
+;;   :init
+;;   (setq paradox-github-token t)
+;;   :config
+;; 	(paradox-enable))
 
 ;;;;;;;;;;;;;
 ;; General ;;
@@ -127,15 +169,9 @@
 ;; C    change to end of line
 ;; D    delete to end of line
 ;; cib  change in block (or symbol)
-;; cil change in line
-;; cia change in argument
 ;; I    insert at first non-whitespace"
 ;; g d  jump to definition
-;; C-x C-e  iedit
-;; L    next argument
-;; H    previous argument
 ;; C-x RET evil marks)
-;; General
 
 ;; (global-font-lock-mode +1)   ;; for all buffers
 (global-visual-line-mode +1) ;; word-wrap
@@ -154,7 +190,12 @@
 ;; NOTE: so that I can easily resize my terminal window to the fill column width
 ;; (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
 ;; (global-display-fill-column-indicator-mode +1)
+
+;; HACK: this runs on frame creation for some reason. don't, please.
+(advice-add #'evil-set-jump :override #'ignore)
+
 (set-locale-environment "en_US.UTF-8")
+(advice-add #'set-locale-environment :override #'ignore)
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
 (set-face-inverse-video 'vertical-border nil)
@@ -198,7 +239,7 @@
 (defvar compilation-message-face)
 (setq echo-keystrokes                 show-paren-delay
       user-full-name                  "Coleman Gariety"
-      ;; initial-buffer-choice           t
+      initial-buffer-choice           t
       sentence-end-double-space       nil
       scroll-conservatively           most-positive-fixnum
       vc-follow-symlinks              t
@@ -233,21 +274,36 @@
       c-basic-offset    2)
 
 ;; Inhibit annoying "when done with this frame..." message
-(add-hook 'after-make-frame-functions
-          (lambda (&optional frame)
-            (with-selected-frame (or frame (selected-frame))
-              (setq inhibit-message t)
-              (run-with-idle-timer 0 nil (lambda () (setq inhibit-message nil))))))
+;; (add-hook 'after-make-frame-functions
+;;           (lambda (&optional frame)
+;;             (with-selected-frame (or frame (selected-frame))
+;;               (setq inhibit-message t)
+;;               (run-with-idle-timer 0 nil (lambda () (setq inhibit-message nil))))))
 
 (use-package dired
   :ensure nil
   :hook (dired-mode . hl-line-mode))
 
 ;;;;;;;;;;;;;;;
+;; Mode-line ;;
+;;;;;;;;;;;;;;;
+
+(setq-default mode-line-format
+              '(("-"
+                  mode-line-mule-info
+                  mode-line-modified
+                  mode-line-frame-identification
+                  mode-line-buffer-identification
+                  "   "
+                  mode-line-position
+                  (vc-mode vc-mode)
+                  "   "
+                  mode-name)))
+
+;;;;;;;;;;;;;;;
 ;; Dashboard ;;
 ;;;;;;;;;;;;;;;
 
-;; can't defer
 (use-package dashboard
   :init
   (setq initial-buffer-choice       (lambda ()
@@ -311,18 +367,18 @@
 ;; Mode line ;;
 ;;;;;;;;;;;;;;;
 
-(use-package doom-modeline
-  :init
-  (setq doom-modeline-buffer-encoding        nil
-        doom-modeline-github                 nil
-        doom-modeline-icon                   nil
-        doom-modeline-project-detection      'project
-        doom-modeline-buffer-file-name-style 'file-name)
-  (unless after-init-time
-    ;; prevent flash of unstyled modeline at startup
-    (setq-default mode-line-format nil))
-  :config
-  (doom-modeline-mode +1))
+;; (use-package doom-modeline
+;;   :init
+;;   (setq doom-modeline-buffer-encoding        nil
+;;         doom-modeline-github                 nil
+;;         doom-modeline-icon                   nil
+;;         doom-modeline-project-detection      'project
+;;         doom-modeline-buffer-file-name-style 'file-name)
+;;   (unless after-init-time
+;;     ;; prevent flash of unstyled modeline at startup
+;;     (setq-default mode-line-format nil))
+;;   :config
+;;   (doom-modeline-mode +1))
 
 ;;;;;;;;;;
 ;; Evil ;;
@@ -453,8 +509,8 @@
   (global-evil-mc-mode +1))
 
 ;; show # of candidates in isearch
-(use-package evil-anzu
-  :after evil)
+;; (use-package evil-anzu
+;;   :after evil)
 
 ;; (use-package evil-args
 ;;   :config
@@ -475,33 +531,33 @@
 ;; Auto-compie ;;
 ;;;;;;;;;;;;;;;;;
 
-(use-package auto-compile
-  :init
-  (setq auto-compile-display-buffer nil
-        auto-compile-mode-line-counter t)
-  :config
-  (auto-compile-on-load-mode +1)
-  (auto-compile-on-save-mode +1)
-  (setq auto-compile-display-buffer               nil
-        auto-compile-mode-line-counter            t
-        auto-compile-source-recreate-deletes-dest t
-        auto-compile-toggle-deletes-nonlib-dest   t
-        auto-compile-update-autoloads             t))
+;(use-package auto-compile
+  ;:init
+  ;(setq auto-compile-display-buffer nil
+        ;auto-compile-mode-line-counter t)
+  ;:config
+  ;(auto-compile-on-load-mode +1)
+  ;(auto-compile-on-save-mode +1)
+  ;(setq auto-compile-display-buffer               nil
+        ;auto-compile-mode-line-counter            t
+        ;auto-compile-source-recreate-deletes-dest t
+        ;auto-compile-toggle-deletes-nonlib-dest   t
+        ;auto-compile-update-autoloads             t))
 
 ;;;;;;;;;;;;;;;
 ;; which-key ;;
 ;;;;;;;;;;;;;;;
 
-(use-package which-key
-  :config
-  (which-key-mode +1))
+;; (use-package which-key
+;;   :config
+;;   (which-key-mode +1))
 
 ;;:;;;;;;;;;;;;;;;;;;
 ;; Misc. Languages ;;
 ;;;;;;;;;;;;;;;:;;;;;
 
-(use-package gitattributes-mode
-  :mode ("\\.gitattributes\\'" . gitattributes-mode))
+;; (use-package gitattributes-mode
+;;   :mode ("\\.gitattributes\\'" . gitattributes-mode))
 
 (use-package gitconfig-mode
   :mode ("\\.gitconfig\\'" . gitconfig-mode))
@@ -525,24 +581,24 @@
 (use-package graphql-mode
   :mode ("\\.graphql\\'" . graphql-mode))
 
-(use-package purescript-mode
-  :mode ("\\.psc\\'" . purescript-mode))
+;; (use-package purescript-mode
+;;   :mode ("\\.psc\\'" . purescript-mode))
 
-(use-package psc-ide
-  :config
-  (add-hook 'purescript-mode-hook
-            (lambda ()
-              (push 'company-psc-ide-backend company-backends)
-              (psc-ide-mode)
-              (company-mode)
-              (flycheck-mode)
-              (turn-on-purescript-indentation))))
+;; (use-package psc-ide
+;;   :config
+;;   (add-hook 'purescript-mode-hook
+;;             (lambda ()
+;;               (push 'company-psc-ide-backend company-backends)
+;;               (psc-ide-mode)
+;;               (company-mode)
+;;               (flycheck-mode)
+;;               (turn-on-purescript-indentation))))
 
 (use-package rust-mode
   :mode "\\.rs\\'")
 
-(use-package haskell-mode
-  :mode "\\.hs\\'")
+;; (use-package haskell-mode
+;;   :mode "\\.hs\\'")
 
 (use-package typescript-mode
   :mode (("\\.tsx\\'" . typescript-mode)
@@ -656,8 +712,8 @@
 ;;               (when (string-match-p "\\.tsx?" buffer-file-name)
 ;;                 (mmm-reapply)))))
 
-(use-package indium
-  :commands (indium-connect))
+;; (use-package indium
+;;   :commands (indium-connect))
 
 ;;;;;;;;;;;;;;;;;;
 ;; Code Folding ;;
@@ -748,9 +804,10 @@
 ;; Dired ;;
 ;;;;;;;;;;;
 
-(use-package diredfl
-  :config
-  (diredfl-global-mode +1))
+;; ;; adds tons of faces to face-list
+;; (use-package diredfl
+;;   :config
+;;   (diredfl-global-mode +1))
 
 ;;;;;;;;;;;;;;;;;
 ;; Completion  ;;
@@ -811,9 +868,9 @@
   (global-set-key (kbd "C-x C-r") 'counsel-buffer-or-recentf)
   (counsel-mode +1))
 
-(use-package request)
-(use-package counsel-web
-  :commands (counsel-web-search))
+;; (use-package request)
+;; (use-package counsel-web
+;;   :commands (counsel-web-search))
 
 (use-package projectile
   :init
@@ -868,35 +925,6 @@
    :keymaps '(normal insert visual)
    "M-r" 'counsel-imenu))
 
-;; (use-package ivy-rich
-;;   :after ivy
-;;   :init
-;;   (setq ivy-rich-path-style 'abbrev
-;;         ivy-rich-parse-remote-buffer nil
-;;         ivy-switch-buffer-faces-alist nil)
-;;   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
-;;   :config
-;;   ;; Highlight buffers differently based on whether they're in the same project
-;;   ;; as the current project or not.
-;;   (let* ((plist (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))
-;;          (switch-buffer-alist (assq 'ivy-rich-candidate (plist-get plist :columns))))
-;;     (when switch-buffer-alist
-;;       (setcar switch-buffer-alist '+ivy-rich-buffer-name)))
-;;   (ivy-set-display-transformer 'internal-complete-buffer nil)
-;;   (ivy-rich-mode +1))
-
-;; ;; doesn't match spaces for dashes why ???
-;; (use-package flx
-;;   :init
-;;   (setq ivy-flx-limit 1000)
-;;   :config
-;;   ;; fuzzy matching in ivy
-;;   (setq ivy-initial-inputs-alist nil)
-;;   (setq ivy-re-builders-alist
-;;         '((counsel-find-file  . ivy--regex-fuzzy)
-;;           (counsel-projectile . ivy--regex-fuzzy)
-;;           (t                  . ivy--regex-plus))))
-
 ;; we add this for sort-by-frequency
 (use-package smex)
 
@@ -947,10 +975,9 @@
 ;; Color ;;
 ;;;;;;;;;;;
 
-;; can't defer
-(use-package doom-themes
-  :config
-  (load-theme 'doom-one t))
+;; (use-package doom-themes
+;;   :config
+;;   (load-theme 'doom-one t))
 
 ;;;;;;;;;;;;;;
 ;; Flycheck ;;
@@ -1012,8 +1039,8 @@
 ;;  (list :name "@vsintellicode/typescript-intellicode-plugin"
 ;;        :location "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
 
-(use-package lsp-haskell
-  :after lsp-mode)
+;; (use-package lsp-haskell
+;;   :after lsp-mode)
 
 (use-package lsp-ui
   :after lsp-mode)
@@ -1076,12 +1103,12 @@
 ;; Git ;;
 ;;;;;;;;;
 
-(use-package magit
-  :commands (magit))
-(use-package magit-todos
-  :after magit)
-(use-package evil-magit
-  :after magit)
+;; (use-package magit
+;;   :commands (magit))
+;; (use-package magit-todos
+;;   :after magit)
+;; (use-package evil-magit
+;;   :after magit)
 ;; (use-package git-timemachine
 ;;   :commands (git-timemachine))
 
@@ -1093,7 +1120,7 @@
   :hook (prog-mode . jammer-mode)
   :init
   (setq jammer-repeat-type                'linear
-        jammer-repeat-allowed-repetitions 7))
+        jammer-repeat-allowed-repetitions 3))
 
 ;;;;;;;;;
 ;; Org ;;
@@ -1109,10 +1136,6 @@
 ;;   :config
 ;;   (smartparens-global-mode))
 
-;; (use-package smart-jump
-;;   :config
-;;   (smart-jump-setup-default-registers))
-
 ;;;;;;;;;
 ;; RSS ;;
 ;;;;;;;;;
@@ -1127,13 +1150,13 @@
 ;; GC Magic Hack ;;
 ;;;;;;;;;;;;;;;;;;;
 
-(use-package gcmh
-  :config
-  (when (not noninteractive)
-    (add-hook 'pre-command-hook (gcmh-mode +1))
-    (with-eval-after-load 'gcmh
-      (setq gcmh-idle-delay 10
-            gcmh-verbose nil
-            gcmh-high-cons-threshold most-positive-fixnum
-            gc-cons-percentage 0.1)
-      (add-function :after after-focus-change-function #'gcmh-idle-garbage-collect))))
+;; (use-package gcmh
+;;   :config
+;;   (when (not noninteractive)
+;;     (add-hook 'pre-command-hook (gcmh-mode +1))
+;;     (with-eval-after-load 'gcmh
+;;       (setq gcmh-idle-delay 10
+;;             gcmh-verbose nil
+;;             gcmh-high-cons-threshold most-positive-fixnum
+;;             gc-cons-percentage 0.1)
+;;       (add-function :after after-focus-change-function #'gcmh-idle-garbage-collect))))

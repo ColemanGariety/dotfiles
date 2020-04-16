@@ -13,3 +13,6 @@ export BROWSER=chromium
 PATH=$PATH:$HOME/.cargo/bin
 PATH=$PATH:$HOME/.yarn/bin
 PATH=$HOME/.bin:$PATH
+
+LANG=en_US.UTF-8
+LC_ALL=en_US.UTF-8

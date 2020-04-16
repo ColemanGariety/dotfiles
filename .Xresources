@@ -22,6 +22,8 @@ URxvt.boldFont: xft:"Operator Mono Lig Medium":style=bold:size=12:antialias=true
 URxvt.geometry: 115x35
 URxvt.meta8: false
 
+Emacs*geometry: 115x35
+
 ! Solarized color scheme for the X Window System
 !
 ! http://ethanschoonover.com/solarized

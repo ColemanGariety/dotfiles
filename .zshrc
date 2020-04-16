@@ -68,6 +68,10 @@ setopt autocd
 # Use emacs keybinds, since they're modeless and closer to bash defaults
 bindkey -e
 
+# backward kill word or directory
+autoload -U select-word-style
+select-word-style bash
+
 ###########
 # Aliases #
 ###########
@@ -81,8 +85,7 @@ alias ...='cd ../../'
 alias ....='cd ../../../'
 alias untar='tar -zxvf '
 alias startx='startx -- -ardelay 200 -arinterval 30'
-alias emacs='emacsclient -nw -a "" -t'
-alias e='emacs'
+alias e='emacsclient -nw -a "" -t'
 
 setopt completealiases
 
@@ -101,29 +104,7 @@ source ~/.zsh/zsh-colored-man-pages/colored-man-pages.plugin.zsh
 # NVM #
 #######
 
-# lazy load
-# see: http://broken-by.me/lazy-load-nvm/
-
-nvm() {
-    unset -f nvm
-    export NVM_DIR=~/.nvm
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-    nvm "$@"
-}
- 
-node() {
-    unset -f node
-    export NVM_DIR=~/.nvm
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-    node "$@"
-}
- 
-npm() {
-    unset -f npm
-    export NVM_DIR=~/.nvm
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-    npm "$@"
-}
+source /usr/share/nvm/init-nvm.sh
 
 ###################
 # Autosuggestions #
