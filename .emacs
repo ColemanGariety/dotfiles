@@ -39,7 +39,8 @@
 ;; Inhibit stuff ;;
 ;;;;;;;;;;;;;;;;;;;
 
-(remove-hook 'find-file-hook 'vc-find-file-hook)
+;; ;; Can't remember why I added this
+;; (remove-hook 'find-file-hook 'vc-find-file-hook)
 
 (setq inhibit-default-init t)
 (setq inhibit-compacting-font-caches t)
@@ -71,7 +72,7 @@
 (defvar my/terminal-initted nil)
 
 ;; HACK: this function does a lot of unnecessary work, and it runs every time a
-;; frame is made so let's modify it a bit
+;; terminal frame is made so let's modify it a bit
 (defun my/tty-create-frame-with-faces (orig-fun &rest args)
   (let* ((parameters (car args))
 				(frame (make-terminal-frame parameters))
@@ -177,7 +178,7 @@
 (global-visual-line-mode +1) ;; word-wrap
 (setq show-paren-delay 0.25)
 (show-paren-mode +1)         ;; show matching parentheses
-(display-time) ;; in mode-line
+;; (display-time) ;; in mode-line
 (size-indication-mode +1)
 (column-number-mode +1) ;; Column numbers in modeline
 (delete-selection-mode +1) ;; Replace selection
@@ -238,6 +239,7 @@
 (defvar apropos-do-all)
 (defvar compilation-message-face)
 (setq echo-keystrokes                 show-paren-delay
+      scroll-preserve-screen-position t
       user-full-name                  "Coleman Gariety"
       initial-buffer-choice           t
       sentence-end-double-space       nil
@@ -272,13 +274,6 @@
       tab-width         2
       js-indent-level   2
       c-basic-offset    2)
-
-;; Inhibit annoying "when done with this frame..." message
-;; (add-hook 'after-make-frame-functions
-;;           (lambda (&optional frame)
-;;             (with-selected-frame (or frame (selected-frame))
-;;               (setq inhibit-message t)
-;;               (run-with-idle-timer 0 nil (lambda () (setq inhibit-message nil))))))
 
 (use-package dired
   :ensure nil
@@ -499,14 +494,12 @@
 (use-package evil-collection
   :config
   (evil-collection-init))
+  ;; (evil-collection-define-key 'normal 'package-menu-mode-map
+  ;;  "gr" 'revert-buffer))
 
 (use-package evil-surround
   :config
   (global-evil-surround-mode +1))
-
-(use-package evil-mc
-  :config
-  (global-evil-mc-mode +1))
 
 ;; show # of candidates in isearch
 ;; (use-package evil-anzu
@@ -548,9 +541,9 @@
 ;; which-key ;;
 ;;;;;;;;;;;;;;;
 
-;; (use-package which-key
-;;   :config
-;;   (which-key-mode +1))
+(use-package which-key
+  :config
+  (which-key-mode +1))
 
 ;;:;;;;;;;;;;;;;;;;;;
 ;; Misc. Languages ;;
@@ -559,11 +552,11 @@
 ;; (use-package gitattributes-mode
 ;;   :mode ("\\.gitattributes\\'" . gitattributes-mode))
 
-(use-package gitconfig-mode
-  :mode ("\\.gitconfig\\'" . gitconfig-mode))
+;; (use-package gitconfig-mode
+;;   :mode ("\\.gitconfig\\'" . gitconfig-mode))
 
-(use-package gitignore-mode
-  :mode ("\\.gitignore\\'" . gitignore-mode))
+;; (use-package gitignore-mode
+;;   :mode ("\\.gitignore\\'" . gitignore-mode))
 
 (use-package json-mode
   :mode ("\\.json\\'" . json-mode)
@@ -575,8 +568,8 @@
 
 (add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
 
-(use-package dhall-mode
-  :mode ("\\.dhall\\'" . dhall-mode))
+;; (use-package dhall-mode
+;;   :mode ("\\.dhall\\'" . dhall-mode))
 
 (use-package graphql-mode
   :mode ("\\.graphql\\'" . graphql-mode))
@@ -594,8 +587,8 @@
 ;;               (flycheck-mode)
 ;;               (turn-on-purescript-indentation))))
 
-(use-package rust-mode
-  :mode "\\.rs\\'")
+;; (use-package rust-mode
+;;   :mode "\\.rs\\'")
 
 ;; (use-package haskell-mode
 ;;   :mode "\\.hs\\'")
@@ -615,6 +608,8 @@
 ;;          ("\\.jsx\\'"  . web-mode)
 ;;          ("\\.js\\'"  . web-mode))
 ;;   :init
+;;   (setq web-mode-content-types-alist
+;;         '(("javascript"  . "\\.tsx\\'")))
 ;;   (setq web-mode-code-indent-offset                   2
 ;;         web-mode-markup-indent-offset                 2
 ;;         web-mode-css-indent-offset                    2
@@ -662,9 +657,9 @@
 ;;     (dolist (type types)
 ;;       (push (cons type "//") web-mode-comment-formats))))
 
-(use-package exec-path-from-shell
-  :config
-  (exec-path-from-shell-initialize))
+;; (use-package exec-path-from-shell
+;;   :config
+;;   (exec-path-from-shell-initialize))
 
 (use-package prettier-js
   :after typescript-mode
@@ -719,11 +714,11 @@
 ;; Code Folding ;;
 ;;;;;;;;;;;;;;;;;;
 
-(use-package origami
-  :bind ("M-o" . origami-toggle-node)
-  :config
-  (global-origami-mode +1)
-  (global-set-key (kbd "M-o") 'origami-toggle-node))
+;; (use-package origami
+;;   :bind ("M-o" . origami-toggle-node)
+;;   :config
+;;   (global-origami-mode +1)
+;;   (global-set-key (kbd "M-o") 'origami-toggle-node))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; Expand region ;;
@@ -770,35 +765,39 @@
         avy-background t))
 
 (use-package evil-easymotion
-  :after avy)
-
-(use-package general
-  :after evil-easymotion
-  :init
-  (defvar general-override-states)
-  (setq general-override-states '(insert
-                                  emacs
-                                  hybrid
-                                  normal
-                                  visual
-                                  motion
-                                  operator
-                                  replace))
+  :after avy
   :config
-  (general-define-key
-   :states '(normal visual motion)
-   :keymaps 'override
-   ;; there can be no better config
-   "f" 'evilem-motion-find-char
-   "F" 'evilem-motion-find-char-backward
-   "t" 'evilem-motion-find-char-to
-   "T" 'evilem-motion-find-char-to-backward
-   "C-c C-j" 'evilem-motion-next-line
-   "C-c C-k" 'evilem-motion-previous-line)
-  (general-define-key
-   :states 'insert
-   :keymaps 'override
-   "C-k" 'kill-line))
+  (evilem-default-keybindings "SPC"))
+
+(use-package general)
+
+;; (use-package general
+;;   :after evil-easymotion
+;;   :init
+;;   (defvar general-override-states)
+;;   (setq general-override-states '(insert
+;;                                   emacs
+;;                                   hybrid
+;;                                   normal
+;;                                   visual
+;;                                   motion
+;;                                   operator
+;;                                   replace)))
+  ;; :config
+  ;; (general-define-key
+  ;;  :states '(normal visual motion)
+  ;;  :keymaps 'override
+  ;;  :prefix "SPC"
+  ;;  "f" 'evilem-motion-find-char
+  ;;  "F" 'evilem-motion-find-char-backward
+  ;;  "t" 'evilem-motion-find-char-to
+  ;;  "T" 'evilem-motion-find-char-to-backward
+  ;;  "j" 'evilem-motion-next-line)
+  ;; (general-define-key
+  ;;  :states '(normal visual motion)
+  ;;  :keymaps 'override
+  ;;  "C-j" 
+  ;;  "C-k" 'evilem-motion-previous-line))
 
 ;;;;;;;;;;;
 ;; Dired ;;
@@ -1007,7 +1006,7 @@
   :commands lsp
   :hook ((rust-mode       . lsp)
          (typescript-mode . lsp)
-          (web-mode       . lsp)
+          ;; (web-mode       . lsp)
           (lsp-mode       . lsp-enable-which-key-integration))
   :init
   (defvar read-process-output-max)
@@ -1032,14 +1031,15 @@
         lsp-idle-delay                        show-paren-delay
         lsp-clients-typescript-log-verbosity "debug"))
 
-;; ;; Intellicode
-;; lsp-clients-typescript-plugins
-;; max-mini-window-height                1
-;; (vector
-;;  (list :name "@vsintellicode/typescript-intellicode-plugin"
-;;        :location "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
+;; ;; ;; Intellicode
+;; ;; lsp-clients-typescript-plugins
+;; ;; max-mini-window-height                1
+;; ;; (vector
+;; ;;  (list :name "@vsintellicode/typescript-intellicode-plugin"
+;; ;;        :location "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
 
 ;; (use-package lsp-haskell
+;;   :hook (haskell-mode . lsp)
 ;;   :after lsp-mode)
 
 (use-package lsp-ui
@@ -1116,11 +1116,11 @@
 ;; Hardcore ;;
 ;;;;;;;;;;;;;;
 
-(use-package jammer
-  :hook (prog-mode . jammer-mode)
-  :init
-  (setq jammer-repeat-type                'linear
-        jammer-repeat-allowed-repetitions 3))
+;; (use-package jammer
+;;   :hook (prog-mode . jammer-mode)
+;;   :init
+;;   (setq jammer-repeat-type                'linear
+;;         jammer-repeat-allowed-repetitions 3))
 
 ;;;;;;;;;
 ;; Org ;;

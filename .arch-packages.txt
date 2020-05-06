@@ -32,7 +32,11 @@ freetype2-infinality-remix
 fsarchiver
 gimp
 gmrun
+gnome-applets
+gnome-control-center
+gnome-panel
 gnome-system-monitor
+gnome-weather
 go
 google-chrome
 gpick

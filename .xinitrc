@@ -16,3 +16,5 @@ sxhkd &
 # exec bspwm -c ~/.config/bspwm/bspwmrc
 exec karmen
 # exec wind
+# exec fvwm2
+# exec twm

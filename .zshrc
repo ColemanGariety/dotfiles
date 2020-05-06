@@ -2,7 +2,7 @@
 # neofetch #
 ############
 
-neofetch
+# neofetch
 
 #############
 # Auto-pair #
@@ -72,6 +72,9 @@ bindkey -e
 autoload -U select-word-style
 select-word-style bash
 
+# no autocd
+unsetopt autocd
+
 ###########
 # Aliases #
 ###########
@@ -80,9 +83,10 @@ alias ls='ls -F --color=auto'
 alias la='ls -Falh --color=auto'
 alias hg='history | grep '
 alias trash='mv -t ~/.local/share/Trash/files --backup=t'
+alias .='cd .'
 alias ..='cd ..'
-alias ...='cd ../../'
-alias ....='cd ../../../'
+alias ...='cd ../..'
+alias ....='cd ../../..'
 alias untar='tar -zxvf '
 alias startx='startx -- -ardelay 200 -arinterval 30'
 alias e='emacsclient -nw -a "" -t'
@@ -138,3 +142,4 @@ function precmd() {
 
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 ZSH_HIGHLIGHT_STYLES[path]='fg=gray'
+[ -f "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env" ] && source "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env"
