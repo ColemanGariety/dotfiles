@@ -6,7 +6,7 @@
  '(avy-background t)
  '(ccm-recenter-at-end-of-file nil)
  '(package-selected-packages
-   '(org-brain dashboard xterm-title html-mode prettier-js typescript-mode auto-compile gcmh git-timemachine highlight-numbers hl-todo lsp-ui lsp-mode flycheck smex counsel-projectile projectile counsel company general evil-easymotion avy graphql-mode yaml-mode json-mode which-key evil-surround evil-collection evil-terminal-cursor-changer evil use-package no-littering))
+   '(dhall-mode highlight-indent-guides purescript-mode dashboard xterm-title html-mode prettier-js typescript-mode gcmh git-timemachine highlight-numbers hl-todo lsp-ui lsp-mode flycheck smex counsel-projectile projectile counsel company general evil-easymotion avy graphql-mode yaml-mode json-mode which-key evil-surround evil-collection evil-terminal-cursor-changer evil use-package no-littering))
  '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

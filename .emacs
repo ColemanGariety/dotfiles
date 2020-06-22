@@ -493,9 +493,9 @@
 
 (use-package evil-collection
   :config
-  (evil-collection-init))
-  ;; (evil-collection-define-key 'normal 'package-menu-mode-map
-  ;;  "gr" 'revert-buffer))
+  (evil-collection-init)
+  (evil-collection-define-key 'normal 'package-menu-mode-map
+   "gr" 'revert-buffer))
 
 (use-package evil-surround
   :config
@@ -568,14 +568,16 @@
 
 (add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
 
-;; (use-package dhall-mode
-;;   :mode ("\\.dhall\\'" . dhall-mode))
+(use-package dhall-mode
+  :mode ("\\.dhall\\'" . dhall-mode))
 
 (use-package graphql-mode
   :mode ("\\.graphql\\'" . graphql-mode))
 
-;; (use-package purescript-mode
-;;   :mode ("\\.psc\\'" . purescript-mode))
+(use-package purescript-mode
+  :mode ("\\.psc\\'" . purescript-mode)
+  :config
+  (turn-on-purescript-indentation))
 
 ;; (use-package psc-ide
 ;;   :config
@@ -728,13 +730,13 @@
 ;;   :config
 ;;   (global-set-key (kbd "C-u") 'er/expand-region))
 
-;; ;; broken
-;; (use-package highlight-indent-guides
-;;   :config
-;;   (setq highlight-indent-guides-method 'character)
-;;   (setq highlight-indent-guides-auto-enabled nil)
-;;   ;; (add-hook 'prog-mode-hook #'highlight-indent-guides-auto-set-faces)
-;;   (add-hook 'prog-mode-hook #'highlight-indent-guides-mode))
+;; broken
+(use-package highlight-indent-guides
+  :config
+  (setq highlight-indent-guides-method 'character)
+  (setq highlight-indent-guides-auto-enabled nil)
+  ;; (add-hook 'prog-mode-hook #'highlight-indent-guides-auto-set-faces)
+  (add-hook 'prog-mode-hook #'highlight-indent-guides-mode))
 
 ;; ;; can't use glyphs O_o ??
 ;; (use-package highlight-indentation
@@ -1006,6 +1008,7 @@
   :commands lsp
   :hook ((rust-mode       . lsp)
          (typescript-mode . lsp)
+         (purescript-mode . lsp)
           ;; (web-mode       . lsp)
           (lsp-mode       . lsp-enable-which-key-integration))
   :init
