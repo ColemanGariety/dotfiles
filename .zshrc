@@ -128,8 +128,8 @@ ZLE_RPROMPT_INDENT=0
 source ~/.zsh/gitstatus.prompt.zsh
 PROMPT='%~ $ '               # left prompt: directory followed by %/#
 # (normal/root)
-RPROMPT='$GITSTATUS_PROMPT'
-# RPROMPT='$GITSTATUS_PROMPT %{%F{blue}%}%t'
+# RPROMPT='$GITSTATUS_PROMPT'
+RPROMPT='$GITSTATUS_PROMPT%{%F{blue}%}'
 
 function precmd() {
     # set window title

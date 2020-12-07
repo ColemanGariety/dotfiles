@@ -5,8 +5,10 @@
  ;; If there is more than one, they won't work right.
  '(avy-background t)
  '(ccm-recenter-at-end-of-file nil)
+ '(evil-undo-system 'undo-tree)
+ '(js-jsx-syntax t)
  '(package-selected-packages
-   '(dhall-mode highlight-indent-guides purescript-mode dashboard xterm-title html-mode prettier-js typescript-mode gcmh git-timemachine highlight-numbers hl-todo lsp-ui lsp-mode flycheck smex counsel-projectile projectile counsel company general evil-easymotion avy graphql-mode yaml-mode json-mode which-key evil-surround evil-collection evil-terminal-cursor-changer evil use-package no-littering))
+   '(evil-anzu doom-themes web-mode lsp-haskell haskell-mode undo-tree yaml-mode psc-ide dhall-mode purescript-mode dashboard xterm-title html-mode prettier-js gcmh git-timemachine highlight-numbers hl-todo lsp-ui lsp-mode flycheck smex counsel-projectile projectile counsel company general evil-easymotion avy graphql-mode json-mode which-key evil-surround evil-collection evil-terminal-cursor-changer evil use-package no-littering))
  '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -59,7 +61,7 @@
  '(ivy-separator ((t (:inherit nil))))
  '(ivy-virtual ((t (:inherit nil :foreground "#ddd"))))
  '(line-number ((t (:inherit default :foreground "yellow" :strike-through nil :underline nil :slant normal :weight normal))))
- '(line-number-current-line ((t (:background "brightblack" :foreground "yellow" :strike-through nil :underline nil :slant normal :weight normal))))
+ '(line-number-current-line ((t (:foreground "yellow" :strike-through nil :underline nil :slant normal :weight normal))))
  '(linum ((t (:inherit default :foreground "#a9a1e1" :strike-through nil :underline nil :slant normal :weight normal))))
  '(lsp-face-highlight-read ((t (:background "color-25" :foreground "#dfdfdf" :weight bold))))
  '(lsp-face-highlight-textual ((t (:inherit highlight :background "color-25" :foreground "#dfdfdf" :weight bold))))
@@ -70,6 +72,9 @@
  '(lsp-ui-peek-list ((t (:background "black"))))
  '(lsp-ui-peek-peek ((t (:background "black"))))
  '(lsp-ui-peek-selection ((t (:background "black" :foreground "cyan" :weight bold))))
+ '(markdown-blockquote-face ((t (:inherit italic :foreground "color-240"))))
+ '(markdown-footnote-marker-face ((t (:inherit markdown-markup-face :foreground "cyan"))))
+ '(markdown-markup-face ((t (:foreground "white"))))
  '(mode-line ((t (:background "black" :foreground "#bfbfbf" :box nil))))
  '(mode-line-inactive ((t (:background "black" :foreground "#525252" :box nil))))
  '(popup-scroll-bar-background-face ((t (:background "black"))))
@@ -77,7 +82,9 @@
  '(region ((t (:extend t :background "color-248" :foreground "black"))))
  '(rust-unsafe-face ((t (:inherit font-lock-error-face :foreground "brightred"))))
  '(show-paren-match ((t (:background "black" :foreground "#ff6655"))))
+ '(tooltip ((t (:inherit variable-pitch :background "black" :foreground "black"))))
  '(warning ((t (:foreground "yellow" :weight bold))))
+ '(web-mode-html-tag-face ((t (:foreground "cyan"))))
  '(window-divider ((t (:inherit nil :background "black" :foreground "black")))))
 
 

@@ -310,7 +310,18 @@
         dashboard-page-separator    "\n\n"
         dashboard-set-init-info     nil
         dashboard-items             '((recents   . 5)
-                                      (projects  . 5)))
+                                      (projects  . 5))
+        dashboard-footer-messages '("Just as little is seen in pure light as in pure darkness."
+                                    "Freedom is the truth of necessity."
+                                    "Only what is living feels a lack."
+                                    "We learn from history that we do not learn from history."
+                                    "Nothing great in the world has ever been accomplished without passion."
+                                    "If you want to love you must serve, if you want freedom you must die."
+                                    "To be independent of public opinion is the first formal condition of achieving anything great."
+                                    "Evil resides in the very gaze which perceives evil all around itself."
+                                    "The owl of Minerva begins its flight only with the coming of the dusk."
+                                    "History is not the soil in which happiness grows; the periods of happiness in it are the blank pages of history."
+                                    "The image of true infinity becomes the circle, the line that has reached itself."))
   :config
   (dashboard-setup-startup-hook))
 
@@ -379,12 +390,17 @@
 ;; Evil ;;
 ;;;;;;;;;;
 
+(use-package undo-tree
+  :config
+  (global-undo-tree-mode))
+
 (use-package evil
   :preface
   (setq evil-want-keybinding                 nil
         evil-cross-lines                     t
         evil-symbol-word-search              t
         evil-shift-width                     2
+        evil-undo-system                     'undo-tree
         evil-ex-interactive-search-highlight 'selected-window)
   (setq-default evil-kill-on-visual-paste nil) ;; doesn't work :(
   :config
@@ -502,8 +518,10 @@
   (global-evil-surround-mode +1))
 
 ;; show # of candidates in isearch
-;; (use-package evil-anzu
-;;   :after evil)
+(use-package evil-anzu
+  :after evil
+  :config
+  (global-anzu-mode +1))
 
 ;; (use-package evil-args
 ;;   :config
@@ -566,7 +584,7 @@
 (use-package yaml-mode
   :mode ("\\.yml\\'" . yaml-mode))
 
-(add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
+;; (add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
 
 (use-package dhall-mode
   :mode ("\\.dhall\\'" . dhall-mode))
@@ -574,10 +592,8 @@
 (use-package graphql-mode
   :mode ("\\.graphql\\'" . graphql-mode))
 
-(use-package purescript-mode
-  :mode ("\\.psc\\'" . purescript-mode)
-  :config
-  (turn-on-purescript-indentation))
+;; (use-package purescript-mode
+;;   :mode ("\\.psc\\'" . purescript-mode))
 
 ;; (use-package psc-ide
 ;;   :config
@@ -592,59 +608,60 @@
 ;; (use-package rust-mode
 ;;   :mode "\\.rs\\'")
 
-;; (use-package haskell-mode
-;;   :mode "\\.hs\\'")
+(use-package haskell-mode
+  :mode "\\.hs\\'")
 
-(use-package typescript-mode
-  :mode (("\\.tsx\\'" . typescript-mode)
-         ("\\.ts\\'" . typescript-mode))
-  :init
-  (setq typescript-indent-level 2))
+;; (use-package typescript-mode
+;;   :mode (("\\.tsx\\'" . typescript-mode)
+;;          ("\\.ts\\'" . typescript-mode))
+;;   :init
+;;   (setq typescript-indent-level 2))
 
 ;; (use-package rjsx-mode
 ;;   :mode ("\\.jsx?\\'" "\\.mjs\\'"))
 
-;; (use-package web-mode
-;;   :mode (("\\.tsx\\'"  . web-mode)
-;;          ("\\.ts\\'"  . web-mode)
-;;          ("\\.jsx\\'"  . web-mode)
-;;          ("\\.js\\'"  . web-mode))
-;;   :init
-;;   (setq web-mode-content-types-alist
-;;         '(("javascript"  . "\\.tsx\\'")))
-;;   (setq web-mode-code-indent-offset                   2
-;;         web-mode-markup-indent-offset                 2
-;;         web-mode-css-indent-offset                    2
-;;         web-mode-enable-html-entities-fontification   nil
-;;         web-mode-enable-block-face                    nil
-;;         web-mode-enable-comment-annotation            nil
-;;         web-mode-enable-comment-interpolation         nil
-;;         web-mode-enable-control-block-indentation     nil
-;;         web-mode-enable-css-colorization              nil
-;;         web-mode-enable-current-column-highlight      nil
-;;         web-mode-enable-current-element-highlight     nil
-;;         web-mode-enable-element-content-fontification nil
-;;         web-mode-enable-heredoc-fontification         nil
-;;         web-mode-enable-inlays                        nil
-;;         web-mode-enable-optional-tags                 nil
-;;         web-mode-enable-part-face                     nil
-;;         web-mode-enable-sexp-functions                nil
-;;         web-mode-enable-sql-detection                 nil
-;;         web-mode-enable-string-interpolation          nil
-;;         web-mode-enable-whitespace-fontification      nil
-;;         web-mode-enable-auto-expanding                nil
-;;         web-mode-enable-auto-indentation              nil
-;;         web-mode-enable-auto-closing                  nil
-;;         web-mode-enable-auto-opening                  nil
-;;         web-mode-enable-auto-pairing                  nil
-;;         web-mode-enable-auto-quoting                  nil
-;;         web-mode-fontification-off                    nil
-;;         web-mode-whitespaces-off                      t)
-;;   :config
-;;   ;; (defun eslint-fix-file ()
-;;   ;;   (interactive)
-;;   ;;   (message "eslint --fixing the file" (buffer-file-name))
-;;   ;;   (shell-command (concat "eslint --fix " (buffer-file-name))))
+(use-package web-mode
+  :mode (("\\.tsx\\'"  . web-mode)
+         ("\\.ts\\'"  . web-mode)
+         ("\\.jsx\\'"  . web-mode)
+         ("\\.js\\'"  . web-mode))
+  :init
+  ;; (setq web-mode-content-types-alist
+  ;;       '(("javascript"  . "\\.tsx\\'")))
+  (setq web-mode-code-indent-offset                   2
+        web-mode-markup-indent-offset                 2
+        web-mode-css-indent-offset                    2
+        web-mode-enable-html-entities-fontification   nil
+        web-mode-enable-block-face                    nil
+        web-mode-enable-comment-annotation            nil
+        web-mode-enable-comment-interpolation         nil
+        web-mode-enable-control-block-indentation     nil
+        web-mode-enable-css-colorization              nil
+        web-mode-enable-current-column-highlight      nil
+        web-mode-enable-current-element-highlight     nil
+        web-mode-enable-element-content-fontification nil
+        web-mode-enable-heredoc-fontification         nil
+        web-mode-enable-inlays                        nil
+        web-mode-enable-optional-tags                 nil
+        web-mode-enable-part-face                     nil
+        web-mode-enable-sexp-functions                nil
+        web-mode-enable-sql-detection                 nil
+        web-mode-enable-string-interpolation          nil
+        web-mode-enable-whitespace-fontification      nil
+        web-mode-enable-auto-expanding                nil
+        web-mode-enable-auto-indentation              nil
+        web-mode-enable-auto-closing                  nil
+        web-mode-enable-auto-opening                  nil
+        web-mode-enable-auto-pairing                  nil
+        web-mode-enable-auto-quoting                  nil
+        web-mode-fontification-off                    nil
+        web-mode-whitespaces-off                      t))
+
+  ;; :config
+  ;; (defun eslint-fix-file ()
+  ;;   (interactive)
+  ;;   (message "eslint --fixing the file" (buffer-file-name))
+  ;;   (shell-command (concat "eslint --fix " (buffer-file-name))))
 
 ;;   ;; (defun eslint-fix-file-and-revert ()
 ;;   ;;   (interactive)
@@ -664,9 +681,9 @@
 ;;   (exec-path-from-shell-initialize))
 
 (use-package prettier-js
-  :after typescript-mode
+  :after web-mode
   :config
-  (add-hook 'typescript-mode-hook 'prettier-js-mode)
+  (add-hook 'web-mode-hook 'prettier-js-mode)
   (setq prettier-js-args '("--single-quote"   "true"
                            "--trailing-comma" "all"
                            "--prose-wrap"     "never")))
@@ -730,13 +747,12 @@
 ;;   :config
 ;;   (global-set-key (kbd "C-u") 'er/expand-region))
 
-;; broken
-(use-package highlight-indent-guides
-  :config
-  (setq highlight-indent-guides-method 'character)
-  (setq highlight-indent-guides-auto-enabled nil)
-  ;; (add-hook 'prog-mode-hook #'highlight-indent-guides-auto-set-faces)
-  (add-hook 'prog-mode-hook #'highlight-indent-guides-mode))
+;; (use-package highlight-indent-guides
+;;   :config
+;;   (setq highlight-indent-guides-method 'character)
+;;   (setq highlight-indent-guides-auto-enabled nil)
+;;   ;; (add-hook 'prog-mode-hook #'highlight-indent-guides-auto-set-faces)
+;;   (add-hook 'prog-mode-hook #'highlight-indent-guides-mode))
 
 ;; ;; can't use glyphs O_o ??
 ;; (use-package highlight-indentation
@@ -821,14 +837,14 @@
   (defvar company-dabbrev-code-other-buffers)
   (setq-local completion-ignore-case t)
   (setq company-minimum-prefix-length      3 ;; responsive > cpu cycles
-        company-idle-delay                 show-paren-delay
+        company-idle-delay                 0
         company-tooltip-limit              10
         company-tooltip-flip-when-above    t
         company-tooltip-align-annotations  t
-        ;; nonde of these work O_o
+        ;; none of these work O_o
         completion-ignore-case             t
         company-dabbrev-code-ignore-case   t
-        company-dabbrev-downcase           t
+        company-dabbrev-downcase           nil
         company-dabbrev-ignore-case        t
         company-dabbrev-code-other-buffers t
         company-require-match              'never
@@ -942,43 +958,43 @@
 
 (require 'cl)
 (case system-type
-    ('darwin (unless window-system
-               (setq interprogram-cut-function
-                     (lambda (text &optional push)
-                       (let* ((process-connection-type nil)
-                              (pbproxy (start-process "pbcopy"
-                                                      "pbcopy"
-                                                      "/usr/bin/pbcopy")))
-                         (process-send-string pbproxy text)
-                         (process-send-eof pbproxy))))))
-    ('gnu/linux (progn
-                  (setq select-enable-clipboard t)
-                  (defun xsel-cut-function (text &optional push)
-                    (with-temp-buffer
-                      (insert text)
-                      (call-process-region (point-min)
-                                           (point-max)
-                                           "xsel"
-                                           nil
-                                           0
-                                           nil
-                                           "--clipboard"
-                                           "--input")))
-                  (defun xsel-paste-function()
-                    (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
+  ('darwin (unless window-system
+             (setq interprogram-cut-function
+                   (lambda (text &optional push)
+                     (let* ((process-connection-type nil)
+                            (pbproxy (start-process "pbcopy"
+                                                    "pbcopy"
+                                                    "/usr/bin/pbcopy")))
+                       (process-send-string pbproxy text)
+                       (process-send-eof pbproxy))))))
+  ('gnu/linux (progn
+                (setq select-enable-clipboard t)
+                (defun xsel-cut-function (text &optional push)
+                  (with-temp-buffer
+                    (insert text)
+                    (call-process-region (point-min)
+                                         (point-max)
+                                         "xsel"
+                                         nil
+                                         0
+                                         nil
+                                         "--clipboard"
+                                         "--input")))
+                (defun xsel-paste-function()
+                  (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
 
-                      (unless (string= (car kill-ring) xsel-output)
-                        xsel-output)))
-                  (setq interprogram-cut-function 'xsel-cut-function)
-                  (setq interprogram-paste-function 'xsel-paste-function))))
+                    (unless (string= (car kill-ring) xsel-output)
+                      xsel-output)))
+                (setq interprogram-cut-function 'xsel-cut-function)
+                (setq interprogram-paste-function 'xsel-paste-function))))
 
 ;;;;;;;;;;;
 ;; Color ;;
 ;;;;;;;;;;;
 
-;; (use-package doom-themes
-;;   :config
-;;   (load-theme 'doom-one t))
+(use-package doom-themes
+  :config
+  (load-theme 'doom-one t))
 
 ;;;;;;;;;;;;;;
 ;; Flycheck ;;
@@ -1000,25 +1016,26 @@
   (setq-default flycheck-temp-prefix ".flycheck"))
 
 
-;;;;;;;;:
-;; LSP ;;
-;;;;;;;;;
+;; ;;;;;;;;:
+;; ;; LSP ;;
+;; ;;;;;;;;;
 
 (use-package lsp-mode
   :commands lsp
   :hook ((rust-mode       . lsp)
-         (typescript-mode . lsp)
-         (purescript-mode . lsp)
-          ;; (web-mode       . lsp)
-          (lsp-mode       . lsp-enable-which-key-integration))
+         (web-mode . lsp)
+         ;; (purescript-mode . lsp) ;; NOTE: missing lots of features (use
+         ;; psc-ide instead)
+         ;; (web-mode       . lsp)
+         (lsp-mode       . lsp-enable-which-key-integration))
   :init
   (defvar read-process-output-max)
   (setq read-process-output-max               3145728 ;; 3mb max packet size
         lsp-auto-guess-root                   nil
         lsp-keep-workspace-alive              nil
         lsp-keymap-prefix                     "C-l"
-        lsp-prefer-capf                       t
-        lsp-enable-completion-at-point        t
+        lsp-completion-provider               :capf
+        lsp-completion-enable                 t
         lsp-enable-folding                    nil
         lsp-enable-file-watchers              nil
         lsp-enable-text-document-color        nil
@@ -1030,6 +1047,7 @@
         lsp-signature-render-documentation    nil
         lsp-ui-doc-enable                     nil ;; too big
         lsp-ui-sideline-ignore-duplicate      t
+        lsp-ui-sideline-show-code-actions     nil
         lsp-enable-symbol-highlighting        t
         lsp-idle-delay                        show-paren-delay
         lsp-clients-typescript-log-verbosity "debug"))
@@ -1041,9 +1059,9 @@
 ;; ;;  (list :name "@vsintellicode/typescript-intellicode-plugin"
 ;; ;;        :location "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
 
-;; (use-package lsp-haskell
-;;   :hook (haskell-mode . lsp)
-;;   :after lsp-mode)
+(use-package lsp-haskell
+  :hook (haskell-mode . lsp)
+  :after lsp-mode)
 
 (use-package lsp-ui
   :after lsp-mode)
@@ -1129,7 +1147,23 @@
 ;; Org ;;
 ;;;;;;;;;
 
-;; (use-package org-brain)
+;; (use-package org-brain
+;;   :init
+;;   (setq org-brain-path "~/org/")
+;;   (with-eval-after-load 'evil
+;;     (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
+;;   :config
+;;   (bind-key "C-c b" 'org-brain-prefix-map org-mode-map)
+;;   (setq org-id-track-globally t)
+;;   (setq org-id-locations-file "~/.emacs.d/.org-id-locations")
+;;   (add-hook 'before-save-hook #'org-brain-ensure-ids-in-buffer)
+;;   (push '("b" "Brain" plain (function org-brain-goto-end)
+;;           "* %i%?" :empty-lines 1)
+;;         org-capture-templates)
+;;   (setq org-brain-visualize-default-choices 'all)
+;;   (setq org-brain-title-max-length 12)
+;;   (setq org-brain-include-file-entries nil
+;;         org-brain-file-entries-use-title nil))
 
 ;;;;;;;;;;;;;;;;;;
 ;; Smart Parens ;;
