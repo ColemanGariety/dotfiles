@@ -8,20 +8,21 @@
  '(evil-undo-system 'undo-tree)
  '(js-jsx-syntax t)
  '(package-selected-packages
-   '(evil-anzu doom-themes web-mode lsp-haskell haskell-mode undo-tree yaml-mode psc-ide dhall-mode purescript-mode dashboard xterm-title html-mode prettier-js gcmh git-timemachine highlight-numbers hl-todo lsp-ui lsp-mode flycheck smex counsel-projectile projectile counsel company general evil-easymotion avy graphql-mode json-mode which-key evil-surround evil-collection evil-terminal-cursor-changer evil use-package no-littering))
+   '(elm-mode horizon-theme evil-anzu doom-themes web-mode lsp-haskell haskell-mode undo-tree yaml-mode psc-ide dhall-mode purescript-mode dashboard xterm-title html-mode prettier-js gcmh git-timemachine highlight-numbers hl-todo lsp-ui lsp-mode flycheck smex counsel-projectile projectile counsel company general evil-easymotion avy graphql-mode json-mode which-key evil-surround evil-collection evil-terminal-cursor-changer evil use-package no-littering))
  '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "unspecified-bg" :foreground "#c7c9cb" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 1 :width normal :foundry "default" :family "default"))))
  '(ac-candidate-face ((t (:inherit popup-face :background "black" :foreground "#073642"))))
  '(ac-completion-face ((t (:foreground "color-239" :underline nil))))
  '(ac-selection-face ((t (:inherit popup-menu-selection-face :background "black" :foreground "#2aa198"))))
  '(avy-background-face ((t (:foreground "#525252"))))
  '(avy-lead-face ((t (:background "inherit" :foreground "red" :weight bold))))
  '(avy-lead-face-0 ((t (:inherit avy-lead-face :background "inherit" :foreground "#FF6666"))))
- '(avy-lead-face-1 ((t (:inherit avy-lead-face :background "brightblack" :foreground "black"))))
+ '(avy-lead-face-1 ((t (:inherit avy-lead-face :foreground "brightblack"))))
  '(avy-lead-face-2 ((t (:inherit avy-lead-face :background "inherit" :foreground "#FF9999"))))
  '(company-echo-common ((t (:foreground "blue"))))
  '(company-preview-common ((t (:inherit company-preview :foreground "blue"))))
@@ -32,6 +33,7 @@
  '(company-tooltip-common ((t (:foreground "blue"))))
  '(company-tooltip-selection ((t (:background "brightblack" :foreground "brightcyan" :weight bold))))
  '(counsel-variable-documentation ((t (:inherit nil))))
+ '(custom-button-unraised ((t (:background "unspecified" :foreground "#b877db" :box (:line-width (1 . 1) :style none)))))
  '(doom-modeline-bar-inactive ((t nil)))
  '(doom-modeline-battery-normal ((t (:inherit mode-line :background "black" :weight normal))))
  '(doom-modeline-debug-visual ((t (:background "#073642"))))
@@ -60,8 +62,8 @@
  '(ivy-minibuffer-match-face-3 ((t (:background "#7777ff" :foreground "black" :weight bold))))
  '(ivy-separator ((t (:inherit nil))))
  '(ivy-virtual ((t (:inherit nil :foreground "#ddd"))))
- '(line-number ((t (:inherit default :foreground "yellow" :strike-through nil :underline nil :slant normal :weight normal))))
- '(line-number-current-line ((t (:foreground "yellow" :strike-through nil :underline nil :slant normal :weight normal))))
+ '(line-number ((t (:inherit default :background "unspecified" :foreground "yellow" :strike-through nil :underline nil :slant normal :weight normal))))
+ '(line-number-current-line ((t (:inherit (hl-line default) :background "unspecified" :foreground "yellow" :strike-through nil :underline nil :slant normal :weight normal))))
  '(linum ((t (:inherit default :foreground "#a9a1e1" :strike-through nil :underline nil :slant normal :weight normal))))
  '(lsp-face-highlight-read ((t (:background "color-25" :foreground "#dfdfdf" :weight bold))))
  '(lsp-face-highlight-textual ((t (:inherit highlight :background "color-25" :foreground "#dfdfdf" :weight bold))))

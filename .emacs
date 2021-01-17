@@ -39,9 +39,6 @@
 ;; Inhibit stuff ;;
 ;;;;;;;;;;;;;;;;;;;
 
-;; ;; Can't remember why I added this
-;; (remove-hook 'find-file-hook 'vc-find-file-hook)
-
 (setq inhibit-default-init t)
 (setq inhibit-compacting-font-caches t)
 (setq inhibit-bidi-mirroring t)
@@ -188,6 +185,8 @@
 (window-divider-mode +1)
 (electric-pair-mode +1)
 (global-display-line-numbers-mode +1)
+;; (global-hl-line-mode +1)
+
 ;; NOTE: so that I can easily resize my terminal window to the fill column width
 ;; (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
 ;; (global-display-fill-column-indicator-mode +1)
@@ -611,6 +610,9 @@
 (use-package haskell-mode
   :mode "\\.hs\\'")
 
+(use-package elm-mode
+  :mode "\\.elm\\'")
+
 ;; (use-package typescript-mode
 ;;   :mode (("\\.tsx\\'" . typescript-mode)
 ;;          ("\\.ts\\'" . typescript-mode))
@@ -992,9 +994,13 @@
 ;; Color ;;
 ;;;;;;;;;;;
 
-(use-package doom-themes
+;; (use-package doom-themes
+;;   :config
+;;   (load-theme 'doom-horizon t))
+
+(use-package horizon-theme
   :config
-  (load-theme 'doom-one t))
+  (load-theme 'horizon t))
 
 ;;;;;;;;;;;;;;
 ;; Flycheck ;;
@@ -1039,7 +1045,7 @@
         lsp-enable-folding                    nil
         lsp-enable-file-watchers              nil
         lsp-enable-text-document-color        nil
-        lsp-enable-semantic-highlighting      nil
+        lsp-semantic-tokens-enable            nil
         lsp-enable-indentation                nil
         lsp-enable-on-type-formatting         nil
         lsp-flycheck-live-reporting           nil ;; was causing seizures
@@ -1050,14 +1056,15 @@
         lsp-ui-sideline-show-code-actions     nil
         lsp-enable-symbol-highlighting        t
         lsp-idle-delay                        show-paren-delay
-        lsp-clients-typescript-log-verbosity "debug"))
+        lsp-headerline-breadcrumb-enable      nil))
 
 ;; ;; ;; Intellicode
 ;; ;; lsp-clients-typescript-plugins
 ;; ;; max-mini-window-height                1
 ;; ;; (vector
 ;; ;;  (list :name "@vsintellicode/typescript-intellicode-plugin"
-;; ;;        :location "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
+;; ;;        :location
+;; ;; "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
 
 (use-package lsp-haskell
   :hook (haskell-mode . lsp)
