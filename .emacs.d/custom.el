@@ -5,11 +5,20 @@
  ;; If there is more than one, they won't work right.
  '(avy-background t)
  '(ccm-recenter-at-end-of-file nil)
+ '(comment-auto-fill-only-comments t)
+ '(comment-column 32)
+ '(comment-multi-line t)
  '(evil-undo-system 'undo-tree)
  '(js-jsx-syntax t)
  '(package-selected-packages
-   '(elm-mode horizon-theme evil-anzu doom-themes web-mode lsp-haskell haskell-mode undo-tree yaml-mode psc-ide dhall-mode purescript-mode dashboard xterm-title html-mode prettier-js gcmh git-timemachine highlight-numbers hl-todo lsp-ui lsp-mode flycheck smex counsel-projectile projectile counsel company general evil-easymotion avy graphql-mode json-mode which-key evil-surround evil-collection evil-terminal-cursor-changer evil use-package no-littering))
- '(paradox-github-token t))
+   '(horizon-theme evil-anzu doom-themes web-mode lsp-haskell haskell-mode undo-tree yaml-mode psc-ide purescript-mode dashboard xterm-title html-mode prettier-js gcmh git-timemachine highlight-numbers hl-todo lsp-ui lsp-mode flycheck smex counsel-projectile projectile counsel company general evil-easymotion avy json-mode which-key evil-surround evil-collection evil-terminal-cursor-changer evil use-package no-littering))
+ '(paradox-github-token t)
+ '(web-mode-comment-formats
+   '(("java" . "/*")
+     ("javascript" . "//")
+     ("typescript" . "//")
+     ("php" . "/*")
+     ("css" . "/*")) t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

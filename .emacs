@@ -118,7 +118,7 @@
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
-(setq package-enable-at-startup nil)
+;; (setq package-enable-at-startup nil)
 
 (unless (and (file-exists-p (expand-file-name "elpa/archives/gnu" user-emacs-directory))
              (file-exists-p (expand-file-name "elpa/archives/melpa" user-emacs-directory)))
@@ -185,7 +185,7 @@
 (window-divider-mode +1)
 (electric-pair-mode +1)
 (global-display-line-numbers-mode +1)
-;; (global-hl-line-mode +1)
+(global-hl-line-mode +1)
 
 ;; NOTE: so that I can easily resize my terminal window to the fill column width
 ;; (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
@@ -276,7 +276,7 @@
 
 (use-package dired
   :ensure nil
-  :hook (dired-mode . hl-line-mode))
+  :hook (dired-mode . (lambda () (display-line-numbers-mode -1))))
 
 ;;;;;;;;;;;;;;;
 ;; Mode-line ;;
@@ -585,11 +585,11 @@
 
 ;; (add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
 
-(use-package dhall-mode
-  :mode ("\\.dhall\\'" . dhall-mode))
+;; (use-package dhall-mode
+;;   :mode ("\\.dhall\\'" . dhall-mode))
 
-(use-package graphql-mode
-  :mode ("\\.graphql\\'" . graphql-mode))
+;; (use-package graphql-mode
+;;   :mode ("\\.graphql\\'" . graphql-mode))
 
 ;; (use-package purescript-mode
 ;;   :mode ("\\.psc\\'" . purescript-mode))
@@ -610,8 +610,8 @@
 (use-package haskell-mode
   :mode "\\.hs\\'")
 
-(use-package elm-mode
-  :mode "\\.elm\\'")
+;; (use-package elm-mode
+;;   :mode "\\.elm\\'")
 
 ;; (use-package typescript-mode
 ;;   :mode (("\\.tsx\\'" . typescript-mode)
@@ -657,7 +657,9 @@
         web-mode-enable-auto-pairing                  nil
         web-mode-enable-auto-quoting                  nil
         web-mode-fontification-off                    nil
-        web-mode-whitespaces-off                      t))
+        web-mode-whitespaces-off                      t
+        web-mode-comment-formats                      '(("javascript" . "//")
+                                                        ("typescript" . "//"))))
 
   ;; :config
   ;; (defun eslint-fix-file ()

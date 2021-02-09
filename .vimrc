@@ -6,9 +6,17 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-scripts/surround.vim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'easymotion/vim-easymotion'
-" Plug 'roxma/nvim-yarp'
+" " Plug 'roxma/nvim-yarp'
+Plug 'pangloss/vim-javascript'
 Plug 'leafgarland/typescript-vim'
-Plug 'liuchengxu/vim-clap'
+" " Plug 'liuchengxu/vim-clap'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'maxmellon/vim-jsx-pretty'
+" " Plug 'jparise/vim-graphql'
+Plug 'neoclide/coc.nvim' , { 'branch' : 'release' }
+Plug 'ntk148v/vim-horizon'
+
+
 " Plug 'roxma/vim-hug-neovim-rpc'
 " Plug 'joshdick/onedark.vim'
 " Plug 'altercation/vim-colors-solarized'
@@ -26,6 +34,8 @@ call plug#end()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set nocompatible
 
+set shortmess=at
+
 set hidden
 
 " Use the system clipboard (Linux)
@@ -38,20 +48,21 @@ set history=500
 filetype plugin on
 filetype indent on
 
-" Set to auto read when a file is changed from the outside
-set autoread
+set foldmethod=marker
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
-let mapleader = ","
-
-" Quickly edit/reload the vimrc file
-nmap <silent> <leader>ev :e ~/.vimrc<CR>
-nmap <silent> <leader>sv :so ~/.vimrc<CR>
+nnoremap <SPACE> <Nop>
+let mapleader = " "
 
 " :W sudo saves the file
 " (useful for handling the permission-denied error)
 command W w !sudo tee % > /dev/null
+
+" Set CWD to to that of current file
+set autochdir
+
+set timeoutlen=1000 ttimeoutlen=0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
@@ -59,34 +70,14 @@ command W w !sudo tee % > /dev/null
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=4
 
-" NERDtree
-" map <C-n> :NERDTreeToggle<CR>
-
-" Avoid garbled characters in Chinese language windows OS
-let $LANG='en'
-set langmenu=en
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
-
 " Turn on the Wild menu
 set wildmenu
-
-" Ignore compiled files
-set wildignore=*.o,*~,*.pyc
-if has("win16") || has("win32")
-    set wildignore+=.git\*,.hg\*,.svn\*
-else
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
-endif
 
 "Always show current position
 set ruler
 
 " Height of the command bar
 set cmdheight=1
-
-" A buffer becomes hidden when it is abandoned
-set hid
 
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
@@ -99,13 +90,17 @@ set ignorecase
 set smartcase
 
 " Highlight search results
-set hlsearch
+set nohlsearch
 
 " Makes search act like search in modern browsers
 set incsearch
 
 " Don't redraw while executing macros (good performance config)
 set lazyredraw
+set ttyfast
+
+" x line
+set cursorline
 
 " Show matching brackets when text indicator is over them
 set showmatch
@@ -125,11 +120,6 @@ set regexpengine=1
 " C-b and C-f scroll instead of page
 nnoremap <C-b> <C-u>
 nnoremap <C-f> <C-d>
-
-set lazyredraw
-
-" Ranger
-" nnoremap <C-l> :Ranger<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Grep, Command-T
@@ -165,6 +155,10 @@ set background=dark
 set number
 highlight LineNr ctermbg=NONE
 
+" Horizon
+set termguicolors
+colorscheme horizon
+let g:lightline = {'colorscheme' : 'horizon'}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -177,6 +171,8 @@ set noswapfile
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+set expandtab
 
 " Be smart when using tabs ;)
 set smarttab
@@ -200,25 +196,25 @@ set wrap "Wrap lines
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Smart way to move between windows
-nnoremap <silent> <A-h>j <C-W>h
-nnoremap <silent> <A-j>j <C-W>j
-nnoremap <silent> <A-k>k <C-W>k
-nnoremap <silent> <A-l>l <C-W>l
-function! Altmap(char)
-  if has('gui_running') | return ' <A-'.a:char.'> ' | else | return ' <Esc>'.a:char.' '|endif
-endfunction
-if $TERM == 'rxvt-unicode-256color'&&!has('gui_running')
-  set ttimeoutlen=10
-  augroup FastEscape
-    autocmd!
-    autocmd InsertEnter * set timeoutlen=400
-    autocmd InsertLeave * set timeoutlen=2000
-  augroup END
-  execute 'nnoremap <silent>'.Altmap('h').'<C-w>h'
-  execute 'nnoremap <silent>'.Altmap('j').'<C-w>j'
-  execute 'nnoremap <silent>'.Altmap('k').'<C-w>k'
-  execute 'nnoremap <silent>'.Altmap('l').'<C-w>l'
-endif
+" nnoremap <silent> <A-h>j <C-W>h
+" nnoremap <silent> <A-j>j <C-W>j
+" nnoremap <silent> <A-k>k <C-W>k
+" nnoremap <silent> <A-l>l <C-W>l
+" function! Altmap(char)
+"   if has('gui_running') | return ' <A-'.a:char.'> ' | else | return ' <Esc>'.a:char.' '|endif
+" endfunction
+" if $TERM == 'rxvt-unicode-256color'&&!has('gui_running')
+"   set ttimeoutlen=10
+"   augroup FastEscape
+"     autocmd!
+"     autocmd InsertEnter * set timeoutlen=400
+"     autocmd InsertLeave * set timeoutlen=2000
+"   augroup END
+"   execute 'nnoremap <silent>'.Altmap('h').'<C-w>h'
+"   execute 'nnoremap <silent>'.Altmap('j').'<C-w>j'
+"   execute 'nnoremap <silent>'.Altmap('k').'<C-w>k'
+"   execute 'nnoremap <silent>'.Altmap('l').'<C-w>l'
+" endif
 
 " Close all the buffers
 map <leader>ba :bufdo bd<cr>
@@ -234,17 +230,20 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 
 " <Leader>f{char} to move to {char}
 " let g:EasyMotion_do_shade = 0
-map F <Plug>(easymotion-F)
-map f <Plug>(easymotion-f)
-map T <Plug>(easymotion-T)
-map t <Plug>(easymotion-t)
+map <Leader>F <Plug>(easymotion-F)
+map <Leader>f <Plug>(easymotion-f)
+map <Leader>T <Plug>(easymotion-T)
+map <Leader>t <Plug>(easymotion-t)
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+" " map <Leader> <Plug>(easymotion-prefix)
 let g:EasyMotion_off_screen_search = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remap VIM 0 to first non-blank character
-map 0 ^
+" map 0 ^
 
 " Move a line of text using ALT+[jk] or Command+[jk] on mac
 nmap <C-j> mz:m+<cr>`z
@@ -252,3 +251,48 @@ nmap <C-k> mz:m-2<cr>`z
 vmap <C-j> :m'>+<cr>`<my`>mzgv`yo`z
 
 vmap <C-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Completions
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:coc_global_extensions = [ 'coc-tsserver' ]
+
+" Give more space for displaying messages.
+set cmdheight=2
+
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=300
+
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
+
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+if has("patch-8.1.1564")
+	" Recently vim can merge signcolumn and number column into one
+	set signcolumn=number
+else
+	set signcolumn=yes
+endif
+
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+			\ pumvisible() ? "\<C-n>" :
+			\ <SID>check_back_space() ? "\<TAB>" :
+			\ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+
+function! s:check_back_space() abort
+	let col = col('.') - 1
+	return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => NERD
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let NERDSpaceDelims=1
