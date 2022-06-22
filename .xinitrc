@@ -11,9 +11,10 @@ picom &
 xscreensaver -no-splash &
 dunst &
 conky &
-~/.bin/gitstatus-prompt-watcher &
+# ~/.bin/gitstatus-prompt-watcher &
 # redshift -l 45.5155:122.6793 -t 6500K:3000K &
 sxhkd &
+thunar --daemon &
 # exec bspwm -c ~/.config/bspwm/bspwmrc
 exec karmen
 # exec wind

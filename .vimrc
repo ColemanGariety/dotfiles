@@ -6,16 +6,17 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-scripts/surround.vim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'easymotion/vim-easymotion'
-" " Plug 'roxma/nvim-yarp'
-Plug 'pangloss/vim-javascript'
+" Plug 'roxma/nvim-yarp'
+" Plug 'pangloss/vim-javascript'
 Plug 'leafgarland/typescript-vim'
-" " Plug 'liuchengxu/vim-clap'
+" Plug 'liuchengxu/vim-clap'
 Plug 'prabirshrestha/vim-lsp'
-Plug 'maxmellon/vim-jsx-pretty'
-" " Plug 'jparise/vim-graphql'
+" Plug 'maxmellon/vim-jsx-pretty'
+" Plug 'jparise/vim-graphql'
 Plug 'neoclide/coc.nvim' , { 'branch' : 'release' }
-Plug 'ntk148v/vim-horizon'
+" Plug 'rescript-lang/vim-rescript'
 
+Plug 'ntk148v/vim-horizon'
 
 " Plug 'roxma/vim-hug-neovim-rpc'
 " Plug 'joshdick/onedark.vim'
@@ -26,6 +27,7 @@ Plug 'ntk148v/vim-horizon'
 " Plug 'kien/ctrlp.vim'
 " Plug 'wincent/command-t'
 " Plug 'wincent/command-t', { 'do': 'cd ruby/command-t/ext/command-t && ruby extconf.rb && make' }
+" Plug 'Shougo/unite.vim'
 
 call plug#end()
 
@@ -158,7 +160,7 @@ highlight LineNr ctermbg=NONE
 " Horizon
 set termguicolors
 colorscheme horizon
-let g:lightline = {'colorscheme' : 'horizon'}
+" let g:lightline = {'colorscheme' : 'horizon'}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -290,6 +292,23 @@ function! s:check_back_space() abort
 	let col = col('.') - 1
 	return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Cursor Shape (Gnome and Kitty)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" NOTE: Changed instances of "redraw!" to "redraw" (no exclamation mark)
+" because it is jarring if the screen clears when switching modes.
+if has("autocmd")
+  au VimEnter,InsertLeave * silent execute '!echo -ne "\e[2 q"' | redraw
+  au InsertEnter,InsertChange *
+    \ if v:insertmode == 'i' | 
+    \   silent execute '!echo -ne "\e[6 q"' | redraw |
+    \ elseif v:insertmode == 'r' |
+    \   silent execute '!echo -ne "\e[4 q"' | redraw |
+    \ endif
+  au VimLeave * silent execute '!echo -ne "\e[ q"' | redraw
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => NERD

@@ -7,17 +7,6 @@
 ;; ...i've found that the only way to reliably prevent emacs from
 ;; skipping/jumping when scrolling is to set an ungodly high gc threshold.
 ;; yeah... high number
-(setq gc-cons-threshold  most-positive-fixnum
-      gc-cons-percentage 0.6)
-
-(setq load-prefer-newer t)
-
-;; This is consulted on every `require', `load' and various path/io functions.
-;; You get a minor speed up by nooping this.
-(unless noninteractive
-  (setq file-name-handler-alist nil))
-
-;; Emacs "updates" its ui more often than it needs to.
 (setq idle-update-delay 1)
 
 ;; Disable bidirectional text rendering for a modest performance boost.
@@ -66,49 +55,49 @@
 	;(shell-command "emacswindow")
                                         ;(shell-command "tmux detach"))
 
-(defvar my/terminal-initted nil)
+;; (defvar my/terminal-initted nil)
 
-;; HACK: this function does a lot of unnecessary work, and it runs every time a
-;; terminal frame is made so let's modify it a bit
-(defun my/tty-create-frame-with-faces (orig-fun &rest args)
-  (let* ((parameters (car args))
-				(frame (make-terminal-frame parameters))
-        ;; success
-        )
-		;; (unwind-protect
-			(with-selected-frame
-          frame
-          (unless my/terminal-initted
-            (tty-handle-reverse-video frame (frame-parameters frame))
-            (set-locale-environment nil frame)
-            (xterm-register-default-colors xterm-standard-colors)
-            (setq my/terminal-initted t))
-          ;; (setq success t)
-          )
-      ;; (unless success
-      ;;   (delete-frame frame)))
-    frame))
+;; ;; HACK: this function does a lot of unnecessary work, and it runs every time a
+;; ;; terminal frame is made so let's modify it a bit
+;; (defun my/tty-create-frame-with-faces (orig-fun &rest args)
+;;   (let* ((parameters (car args))
+;; 				(frame (make-terminal-frame parameters))
+;;         ;; success
+;;         )
+;; 		;; (unwind-protect
+;; 			(with-selected-frame
+;;           frame
+;;           (unless my/terminal-initted
+;;             (tty-handle-reverse-video frame (frame-parameters frame))
+;;             (set-locale-environment nil frame)
+;;             (xterm-register-default-colors xterm-standard-colors)
+;;             (setq my/terminal-initted t))
+;;           ;; (setq success t)
+;;           )
+;;       ;; (unless success
+;;       ;;   (delete-frame frame)))
+;;     frame))
 
-;; HACK: load this once instead of with every new frame
-(load (concat term-file-prefix "xterm"))
+;; ;; HACK: load this once instead of with every new frame
+;; (load (concat term-file-prefix "xterm"))
 
-;; ;; just a util
-;; (defun print-elements-of-list (list)
-;;   "Print each element of LIST on a line of its own."
-;;   (while list
-;;     (print (car list))
-;;     (setq list (cdr list))))
+;; ;; ;; just a util
+;; ;; (defun print-elements-of-list (list)
+;; ;;   "Print each element of LIST on a line of its own."
+;; ;;   (while list
+;; ;;     (print (car list))
+;; ;;     (setq list (cdr list))))
 
-;; HACK: initialize xterm colors manually for speed
-(add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (with-selected-frame (or frame (selected-frame))
-              (frame-set-background-mode frame t)
-              (face-set-after-frame-default frame)
-              (setq inhibit-message t)
-              (run-with-idle-timer 0 nil (lambda () (setq inhibit-message nil))))))
+;; ;; HACK: initialize xterm colors manually for speed
+;; (add-hook 'after-make-frame-functions
+;;           (lambda (frame)
+;;             (with-selected-frame (or frame (selected-frame))
+;;               (frame-set-background-mode frame t)
+;;               (face-set-after-frame-default frame)
+;;               (setq inhibit-message t)
+;;               (run-with-idle-timer 0 nil (lambda () (setq inhibit-message nil))))))
 
-(advice-add 'tty-create-frame-with-faces :around 'my/tty-create-frame-with-faces)
+;; (advice-add 'tty-create-frame-with-faces :around 'my/tty-create-frame-with-faces)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package management ;;
@@ -562,6 +551,33 @@
   :config
   (which-key-mode +1))
 
+;;;;;;;;;;;;;;;;;;
+;; Code Folding ;;
+;;;;;;;;;;;;;;;;;;
+
+;; (use-package origami
+;;   :bind ("M-o" . origami-toggle-node)
+;;   :config
+;;   (global-origami-mode +1)
+;;   (global-set-key (kbd "M-o") 'origami-toggle-node))
+
+;;;;;;;;;;;;;;;;;
+;; Tree Sitter ;;
+;;;;;;;;;;;;;;;;;
+
+(use-package origami
+  :config
+  (global-origami-mode +1))
+(use-package tree-sitter
+  :config
+  (global-tree-sitter-mode +1))
+(use-package tree-sitter-langs)
+(use-package typescript-mode)
+(use-package tsi
+  :load-path "~/Git/tsi.el")
+(use-package tsx-mode
+  :load-path "~/Git/tsx-mode.el"
+  :mode ("\\.tsx\\'" "\\.jsx\\'"))
 ;;:;;;;;;;;;;;;;;;;;;
 ;; Misc. Languages ;;
 ;;;;;;;;;;;;;;;:;;;;;
@@ -607,8 +623,8 @@
 ;; (use-package rust-mode
 ;;   :mode "\\.rs\\'")
 
-(use-package haskell-mode
-  :mode "\\.hs\\'")
+;; (use-package haskell-mode
+;;   :mode "\\.hs\\'")
 
 ;; (use-package elm-mode
 ;;   :mode "\\.elm\\'")
@@ -622,44 +638,59 @@
 ;; (use-package rjsx-mode
 ;;   :mode ("\\.jsx?\\'" "\\.mjs\\'"))
 
-(use-package web-mode
-  :mode (("\\.tsx\\'"  . web-mode)
-         ("\\.ts\\'"  . web-mode)
-         ("\\.jsx\\'"  . web-mode)
-         ("\\.js\\'"  . web-mode))
-  :init
-  ;; (setq web-mode-content-types-alist
-  ;;       '(("javascript"  . "\\.tsx\\'")))
-  (setq web-mode-code-indent-offset                   2
-        web-mode-markup-indent-offset                 2
-        web-mode-css-indent-offset                    2
-        web-mode-enable-html-entities-fontification   nil
-        web-mode-enable-block-face                    nil
-        web-mode-enable-comment-annotation            nil
-        web-mode-enable-comment-interpolation         nil
-        web-mode-enable-control-block-indentation     nil
-        web-mode-enable-css-colorization              nil
-        web-mode-enable-current-column-highlight      nil
-        web-mode-enable-current-element-highlight     nil
-        web-mode-enable-element-content-fontification nil
-        web-mode-enable-heredoc-fontification         nil
-        web-mode-enable-inlays                        nil
-        web-mode-enable-optional-tags                 nil
-        web-mode-enable-part-face                     nil
-        web-mode-enable-sexp-functions                nil
-        web-mode-enable-sql-detection                 nil
-        web-mode-enable-string-interpolation          nil
-        web-mode-enable-whitespace-fontification      nil
-        web-mode-enable-auto-expanding                nil
-        web-mode-enable-auto-indentation              nil
-        web-mode-enable-auto-closing                  nil
-        web-mode-enable-auto-opening                  nil
-        web-mode-enable-auto-pairing                  nil
-        web-mode-enable-auto-quoting                  nil
-        web-mode-fontification-off                    nil
-        web-mode-whitespaces-off                      t
-        web-mode-comment-formats                      '(("javascript" . "//")
-                                                        ("typescript" . "//"))))
+;; (use-package tsx-mode
+;;   :after tsi-typescript
+;;   :load-path "~/Git/tsx-mode.el/"
+;;   :mode (("\\.tsx\\'"  . tsx-mode)
+;;          ("\\.ts\\'"  . tsx-mode)))
+
+;; (use-package typescript-mode
+;;   :mode ("\\.tsx\\'" . typescript-tsx-tree-sitter-mode)
+;;   :config
+;;   (setq typescript-indent-level 2)
+;;   (define-derived-mode typescript-tsx-tree-sitter-mode typescript-mode "TypeScript TSX")
+;;   (add-to-list 'tree-sitter-major-mode-language-alist
+;;   '(typescript-tsx-tree-sitter-mode . tsx)))
+
+
+;; (use-package web-mode
+;;   ;; :mode (("\\.tsx\\'"  . web-mode)
+;;   ;;        ("\\.ts\\'"  . web-mode)
+;;   :mode  (("\\.jsx\\'"  . web-mode)
+;;           ("\\.js\\'"  . web-mode))
+;;   :init
+;;   ;; (setq web-mode-content-types-alist
+;;   ;;       '(("javascript"  . "\\.tsx\\'")))
+;;   (setq web-mode-code-indent-offset                   2
+;;         web-mode-markup-indent-offset                 2
+;;         web-mode-css-indent-offset                    2
+;;         web-mode-enable-html-entities-fontification   nil
+;;         web-mode-enable-block-face                    nil
+;;         web-mode-enable-comment-annotation            nil
+;;         web-mode-enable-comment-interpolation         nil
+;;         web-mode-enable-control-block-indentation     nil
+;;         web-mode-enable-css-colorization              nil
+;;         web-mode-enable-current-column-highlight      nil
+;;         web-mode-enable-current-element-highlight     nil
+;;         web-mode-enable-element-content-fontification nil
+;;         web-mode-enable-heredoc-fontification         nil
+;;         web-mode-enable-inlays                        nil
+;;         web-mode-enable-optional-tags                 nil
+;;         web-mode-enable-part-face                     nil
+;;         web-mode-enable-sexp-functions                nil
+;;         web-mode-enable-sql-detection                 nil
+;;         web-mode-enable-string-interpolation          nil
+;;         web-mode-enable-whitespace-fontification      nil
+;;         web-mode-enable-auto-expanding                nil
+;;         web-mode-enable-auto-indentation              nil
+;;         web-mode-enable-auto-closing                  nil
+;;         web-mode-enable-auto-opening                  nil
+;;         web-mode-enable-auto-pairing                  nil
+;;         web-mode-enable-auto-quoting                  nil
+;;         web-mode-fontification-off                    nil
+;;         web-mode-whitespaces-off                      t
+;;         web-mode-comment-formats                      '(("javascript" . "//")
+;;                                                         ("typescript" . "//"))))
 
   ;; :config
   ;; (defun eslint-fix-file ()
@@ -681,7 +712,7 @@
 ;;       (push (cons type "//") web-mode-comment-formats))))
 
 ;; (use-package exec-path-from-shell
-;;   :config
+;;   :confic
 ;;   (exec-path-from-shell-initialize))
 
 (use-package prettier-js
@@ -732,16 +763,6 @@
 
 ;; (use-package indium
 ;;   :commands (indium-connect))
-
-;;;;;;;;;;;;;;;;;;
-;; Code Folding ;;
-;;;;;;;;;;;;;;;;;;
-
-;; (use-package origami
-;;   :bind ("M-o" . origami-toggle-node)
-;;   :config
-;;   (global-origami-mode +1)
-;;   (global-set-key (kbd "M-o") 'origami-toggle-node))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; Expand region ;;
@@ -998,7 +1019,7 @@
 
 ;; (use-package doom-themes
 ;;   :config
-;;   (load-theme 'doom-horizon t))
+;;   (load-theme 'doom-vibrant t))
 
 (use-package horizon-theme
   :config
@@ -1068,9 +1089,10 @@
 ;; ;;        :location
 ;; ;; "~/.vscode/extensions/visualstudioexptteam.vscodeintellicode-1.2.6/"))))
 
-(use-package lsp-haskell
-  :hook (haskell-mode . lsp)
-  :after lsp-mode)
+;; (use-package lsp-haskell
+;;   :hook ((haskell-mode          . lsp)
+;;          (haskell-literate-mode . lsp))
+;;   :after lsp-mode)
 
 (use-package lsp-ui
   :after lsp-mode)
