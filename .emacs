@@ -7,6 +7,16 @@
 ;; ...i've found that the only way to reliably prevent emacs from
 ;; skipping/jumping when scrolling is to set an ungodly high gc threshold.
 ;; yeah... high number
+(setq gc-cons-threshold  most-positive-fixnum
+      gc-cons-percentage 0.6)
+
+(setq load-prefer-newer t)
+
+;; This is consulted on every `require', `load' and various path/io functions.
+;; You get a minor speed up by nooping this.
+(unless noninteractive
+  (setq file-name-handler-alist nil))
+
 (setq idle-update-delay 1)
 
 ;; Disable bidirectional text rendering for a modest performance boost.
@@ -55,49 +65,52 @@
 	;(shell-command "emacswindow")
                                         ;(shell-command "tmux detach"))
 
-;; (defvar my/terminal-initted nil)
 
-;; ;; HACK: this function does a lot of unnecessary work, and it runs every time a
-;; ;; terminal frame is made so let's modify it a bit
-;; (defun my/tty-create-frame-with-faces (orig-fun &rest args)
-;;   (let* ((parameters (car args))
-;; 				(frame (make-terminal-frame parameters))
-;;         ;; success
-;;         )
-;; 		;; (unwind-protect
-;; 			(with-selected-frame
-;;           frame
-;;           (unless my/terminal-initted
-;;             (tty-handle-reverse-video frame (frame-parameters frame))
-;;             (set-locale-environment nil frame)
-;;             (xterm-register-default-colors xterm-standard-colors)
-;;             (setq my/terminal-initted t))
-;;           ;; (setq success t)
-;;           )
-;;       ;; (unless success
-;;       ;;   (delete-frame frame)))
-;;     frame))
+;; ANOTHER PERFORMANCE HACK
 
-;; ;; HACK: load this once instead of with every new frame
-;; (load (concat term-file-prefix "xterm"))
+(defvar my/terminal-initted nil)
 
-;; ;; ;; just a util
-;; ;; (defun print-elements-of-list (list)
-;; ;;   "Print each element of LIST on a line of its own."
-;; ;;   (while list
-;; ;;     (print (car list))
-;; ;;     (setq list (cdr list))))
+;; HACK: this function does a lot of unnecessary work, and it runs every time a
+;; terminal frame is made so let's modify it a bit
+(defun my/tty-create-frame-with-faces (orig-fun &rest args)
+  (let* ((parameters (car args))
+				(frame (make-terminal-frame parameters))
+        ;; success
+        )
+		;; (unwind-protect
+			(with-selected-frame
+          frame
+          (unless my/terminal-initted
+            (tty-handle-reverse-video frame (frame-parameters frame))
+            (set-locale-environment nil frame)
+            (xterm-register-default-colors xterm-standard-colors)
+            (setq my/terminal-initted t))
+          ;; (setq success t)
+          )
+      ;; (unless success
+      ;;   (delete-frame frame)))
+    frame))
 
-;; ;; HACK: initialize xterm colors manually for speed
-;; (add-hook 'after-make-frame-functions
-;;           (lambda (frame)
-;;             (with-selected-frame (or frame (selected-frame))
-;;               (frame-set-background-mode frame t)
-;;               (face-set-after-frame-default frame)
-;;               (setq inhibit-message t)
-;;               (run-with-idle-timer 0 nil (lambda () (setq inhibit-message nil))))))
+;; HACK: load this once instead of with every new frame
+(load (concat term-file-prefix "xterm"))
 
-;; (advice-add 'tty-create-frame-with-faces :around 'my/tty-create-frame-with-faces)
+;; ;; just a util
+;; (defun print-elements-of-list (list)
+;;   "Print each element of LIST on a line of its own."
+;;   (while list
+;;     (print (car list))
+;;     (setq list (cdr list))))
+
+;; HACK: initialize xterm colors manually for speed
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (with-selected-frame (or frame (selected-frame))
+              (frame-set-background-mode frame t)
+              (face-set-after-frame-default frame)
+              (setq inhibit-message t)
+              (run-with-idle-timer 0 nil (lambda () (setq inhibit-message nil))))))
+
+(advice-add 'tty-create-frame-with-faces :around 'my/tty-create-frame-with-faces)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package management ;;
@@ -187,9 +200,6 @@
 (advice-add #'set-locale-environment :override #'ignore)
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
-(set-face-inverse-video 'vertical-border nil)
-(set-face-background 'vertical-border "black")
-(set-face-foreground 'vertical-border (face-background 'vertical-border))
 (setq-default fill-column 80)
 (setq comment-auto-fill-only-comments t)
 (add-hook 'prog-mode-hook 'auto-fill-mode)
@@ -263,9 +273,16 @@
       js-indent-level   2
       c-basic-offset    2)
 
-(use-package dired
-  :ensure nil
-  :hook (dired-mode . (lambda () (display-line-numbers-mode -1))))
+;; no line numbers in dired or eshell
+
+;; (use-package dired
+;;   :ensure nil
+;;   :hook (dired-mode . (lambda () (display-line-numbers-mode -1))))
+
+;; INHIBIT LINE NUMBERS
+
+(add-hook 'dired-mode-hook (lambda () (display-line-numbers-mode -1)))
+(add-hook 'eshell-mode-hook (lambda () (display-line-numbers-mode -1)))
 
 ;;;;;;;;;;;;;;;
 ;; Mode-line ;;
@@ -287,31 +304,31 @@
 ;; Dashboard ;;
 ;;;;;;;;;;;;;;;
 
-(use-package dashboard
-  :init
-  (setq initial-buffer-choice       (lambda ()
-                                      (get-buffer "*dashboard*"))
-        dashboard-center-content    t
-        dashboard-set-file-icons    t
-        dashboard-set-heading-icons t
-        dashboard-startup-banner    3
-        dashboard-page-separator    "\n\n"
-        dashboard-set-init-info     nil
-        dashboard-items             '((recents   . 5)
-                                      (projects  . 5))
-        dashboard-footer-messages '("Just as little is seen in pure light as in pure darkness."
-                                    "Freedom is the truth of necessity."
-                                    "Only what is living feels a lack."
-                                    "We learn from history that we do not learn from history."
-                                    "Nothing great in the world has ever been accomplished without passion."
-                                    "If you want to love you must serve, if you want freedom you must die."
-                                    "To be independent of public opinion is the first formal condition of achieving anything great."
-                                    "Evil resides in the very gaze which perceives evil all around itself."
-                                    "The owl of Minerva begins its flight only with the coming of the dusk."
-                                    "History is not the soil in which happiness grows; the periods of happiness in it are the blank pages of history."
-                                    "The image of true infinity becomes the circle, the line that has reached itself."))
-  :config
-  (dashboard-setup-startup-hook))
+;; (use-package dashboard
+;;   :init
+;;   (setq initial-buffer-choice       (lambda ()
+;;                                       (get-buffer "*dashboard*"))
+;;         dashboard-center-content    t
+;;         dashboard-set-file-icons    t
+;;         dashboard-set-heading-icons t
+;;         dashboard-startup-banner    3
+;;         dashboard-page-separator    "\n\n"
+;;         dashboard-set-init-info     nil
+;;         dashboard-items             '((recents   . 5)
+;;                                       (projects  . 5))
+;;         dashboard-footer-messages '("Just as little is seen in pure light as in pure darkness."
+;;                                     "Freedom is the truth of necessity."
+;;                                     "Only what is living feels a lack."
+;;                                     "We learn from history that we do not learn from history."
+;;                                     "Nothing great in the world has ever been accomplished without passion."
+;;                                     "If you want to love you must serve, if you want freedom you must die."
+;;                                     "To be independent of public opinion is the first formal condition of achieving anything great."
+;;                                     "Evil resides in the very gaze which perceives evil all around itself."
+;;                                     "The owl of Minerva begins its flight only with the coming of the dusk."
+;;                                     "History is not the soil in which happiness grows; the periods of happiness in it are the blank pages of history."
+;;                                     "The image of true infinity becomes the circle, the line that has reached itself."))
+;;   :config
+;;   (dashboard-setup-startup-hook))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Centered cursor ;;
@@ -361,18 +378,18 @@
 ;; Mode line ;;
 ;;;;;;;;;;;;;;;
 
-;; (use-package doom-modeline
-;;   :init
-;;   (setq doom-modeline-buffer-encoding        nil
-;;         doom-modeline-github                 nil
-;;         doom-modeline-icon                   nil
-;;         doom-modeline-project-detection      'project
-;;         doom-modeline-buffer-file-name-style 'file-name)
-;;   (unless after-init-time
-;;     ;; prevent flash of unstyled modeline at startup
-;;     (setq-default mode-line-format nil))
-;;   :config
-;;   (doom-modeline-mode +1))
+(use-package doom-modeline
+  :init
+  (setq doom-modeline-buffer-encoding        nil
+        doom-modeline-github                 nil
+        doom-modeline-icon                   nil
+        doom-modeline-project-detection      'project
+        doom-modeline-buffer-file-name-style 'file-name)
+  (unless after-init-time
+    ;; prevent flash of unstyled modeline at startup
+    (setq-default mode-line-format nil))
+  :config
+  (doom-modeline-mode +1))
 
 ;;;;;;;;;;
 ;; Evil ;;
@@ -530,18 +547,18 @@
 ;; Auto-compie ;;
 ;;;;;;;;;;;;;;;;;
 
-;(use-package auto-compile
-  ;:init
-  ;(setq auto-compile-display-buffer nil
-        ;auto-compile-mode-line-counter t)
-  ;:config
-  ;(auto-compile-on-load-mode +1)
-  ;(auto-compile-on-save-mode +1)
-  ;(setq auto-compile-display-buffer               nil
-        ;auto-compile-mode-line-counter            t
-        ;auto-compile-source-recreate-deletes-dest t
-        ;auto-compile-toggle-deletes-nonlib-dest   t
-        ;auto-compile-update-autoloads             t))
+;; (use-package auto-compile
+;;   :init
+;;   (setq auto-compile-display-buffer nil
+;;         auto-compile-mode-line-counter t)
+;;   :config
+;;   ;; (auto-compile-on-load-mode +1)
+;;   (auto-compile-on-save-mode +1)
+;;   (setq auto-compile-display-buffer               nil
+;;         auto-compile-mode-line-counter            t
+;;         auto-compile-source-recreate-deletes-dest t
+;;         auto-compile-toggle-deletes-nonlib-dest   t
+;;         auto-compile-update-autoloads             t))
 
 ;;;;;;;;;;;;;;;
 ;; which-key ;;
@@ -551,33 +568,36 @@
   :config
   (which-key-mode +1))
 
-;;;;;;;;;;;;;;;;;;
-;; Code Folding ;;
-;;;;;;;;;;;;;;;;;;
-
-;; (use-package origami
-;;   :bind ("M-o" . origami-toggle-node)
-;;   :config
-;;   (global-origami-mode +1)
-;;   (global-set-key (kbd "M-o") 'origami-toggle-node))
-
-;;;;;;;;;;;;;;;;;
-;; Tree Sitter ;;
-;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Folding + Tree Sitter + TypeScript ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package origami
+  ;; :bind ("M-o" . origami-toggle-node)
   :config
   (global-origami-mode +1))
+  ;; (global-set-key (kbd "M-o") 'origami-toggle-node))
+
 (use-package tree-sitter
   :config
   (global-tree-sitter-mode +1))
 (use-package tree-sitter-langs)
+
 (use-package typescript-mode)
 (use-package tsi
   :load-path "~/Git/tsi.el")
 (use-package tsx-mode
   :load-path "~/Git/tsx-mode.el"
-  :mode ("\\.tsx\\'" "\\.jsx\\'"))
+  :mode ("\\.tsx\\'" "\\.ts\\'" "\\.jsx\\'"))
+
+(use-package prettier-js
+  :after web-mode
+  :config
+  (add-hook 'tsx-mode-hook 'prettier-js-mode)
+  (setq prettier-js-args '("--single-quote"   "true"
+                           "--trailing-comma" "all"
+                           "--prose-wrap"     "never")))
+
 ;;:;;;;;;;;;;;;;;;;;;
 ;; Misc. Languages ;;
 ;;;;;;;;;;;;;;;:;;;;;
@@ -711,20 +731,22 @@
 ;;     (dolist (type types)
 ;;       (push (cons type "//") web-mode-comment-formats))))
 
+;;;;;;;;;;;;
+;; Eshell ;;
+;;;;;;;;;;;;
+
+;; NOTE: this might be a good package actually
+;; (use-package eshell-syntax-highlighting
+;;   :hook (eshell-mode . eshell-syntax-highlighting-mode))
+
+
 ;; (use-package exec-path-from-shell
-;;   :confic
+;;   :config
 ;;   (exec-path-from-shell-initialize))
 
-(use-package prettier-js
-  :after web-mode
-  :config
-  (add-hook 'web-mode-hook 'prettier-js-mode)
-  (setq prettier-js-args '("--single-quote"   "true"
-                           "--trailing-comma" "all"
-                           "--prose-wrap"     "never")))
+;; (use-package esh-autosuggest
+;;   :hook (eshell-mode . esh-autosuggest-mode))
 
-;; Assign typescript-mode to .tsx files
-;; (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
 
 ;; (use-package mmm-mode
 ;;   :config
@@ -872,11 +894,11 @@
         company-dabbrev-downcase           nil
         company-dabbrev-ignore-case        t
         company-dabbrev-code-other-buffers t
-        company-require-match              'never
+        ;; company-require-match              'never
         company-backends                   '(company-capf)
         company-frontends                  '(company-pseudo-tooltip-frontend
-                                             company-echo-metadata-frontend
-                                             company-tng-frontend))
+                                             company-echo-metadata-frontend))
+                                             ;; company-tng-frontend))
   :config
   ;; don't persist company when switching back to normal mode
   (add-hook 'evil-normal-state-entry-hook #'company-abort)
@@ -1017,13 +1039,13 @@
 ;; Color ;;
 ;;;;;;;;;;;
 
-;; (use-package doom-themes
-;;   :config
-;;   (load-theme 'doom-vibrant t))
-
-(use-package horizon-theme
+(use-package doom-themes
   :config
-  (load-theme 'horizon t))
+  (load-theme 'doom-solarized-dark t))
+
+;; (use-package horizon-theme
+;;   :config
+;;   (load-theme 'horizon t))
 
 ;;;;;;;;;;;;;;
 ;; Flycheck ;;
@@ -1059,27 +1081,44 @@
          (lsp-mode       . lsp-enable-which-key-integration))
   :init
   (defvar read-process-output-max)
+  
   (setq read-process-output-max               3145728 ;; 3mb max packet size
         lsp-auto-guess-root                   nil
         lsp-keep-workspace-alive              nil
         lsp-keymap-prefix                     "C-l"
-        lsp-completion-provider               :capf
-        lsp-completion-enable                 t
+        lsp-diagnostics-provider              :flycheck
+        lsp-enable-snippet                    nil
+        lsp-enable-links                      nil
+        ;; lsp-completion-provider               :capf
+        lsp-completion-enable                 nil
+        lsp-completion-show-detail            nil
+        lsp-completion-show-kind              nil
+        lsp-enable-completion-at-point        nil
         lsp-enable-folding                    nil
         lsp-enable-file-watchers              nil
         lsp-enable-text-document-color        nil
         lsp-semantic-tokens-enable            nil
         lsp-enable-indentation                nil
         lsp-enable-on-type-formatting         nil
-        lsp-flycheck-live-reporting           nil ;; was causing seizures
-        lsp-signature-auto-activate           nil
-        lsp-signature-render-documentation    nil
-        lsp-ui-doc-enable                     nil ;; too big
+        lsp-log-io                            nil
+        ;; lsp-enable-semantic-highlighting      nil
+        ;; lsp-flycheck-live-reporting           nil ;; was causing seizures
+        ;; lsp-signature-auto-activate           nil
+        ;; lsp-signature-render-documentation    nil
+        lsp-ui-doc-enable                     t
+        lsp-ui-doc-show-with-cursor           nil
+        lsp-ui-sideline-enable                t
         lsp-ui-sideline-ignore-duplicate      t
-        lsp-ui-sideline-show-code-actions     nil
+        lsp-modeline-diagnostics-enable       t
+        ;; lsp-ui-sideline-show-code-actions     nil
         lsp-enable-symbol-highlighting        t
+        ;; lsp-eldoc-hook                        nil
+        lsp-eldoc-enable-hover                nil
         lsp-idle-delay                        show-paren-delay
-        lsp-headerline-breadcrumb-enable      nil))
+        lsp-headerline-breadcrumb-enable      t))
+
+(use-package lsp-ui
+  :after lsp-mode)
 
 ;; ;; ;; Intellicode
 ;; ;; lsp-clients-typescript-plugins
@@ -1093,9 +1132,6 @@
 ;;   :hook ((haskell-mode          . lsp)
 ;;          (haskell-literate-mode . lsp))
 ;;   :after lsp-mode)
-
-(use-package lsp-ui
-  :after lsp-mode)
 
 ;; (use-package lsp-ivy
 ;;   :requires lsp-mode)

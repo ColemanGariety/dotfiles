@@ -9,3 +9,9 @@ super + Escape
 
 super + Return
 	killall karmen
+
+alt + super + k
+  amixer set 'Master' 5%+
+
+alt + super + j
+  amixer set 'Master' 5%-

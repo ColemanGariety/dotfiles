@@ -11,6 +11,8 @@ picom &
 xscreensaver -no-splash &
 dunst &
 conky &
+# tint2 &
+# pnmixer &
 # ~/.bin/gitstatus-prompt-watcher &
 # redshift -l 45.5155:122.6793 -t 6500K:3000K &
 sxhkd &
