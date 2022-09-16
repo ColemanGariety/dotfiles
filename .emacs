@@ -280,9 +280,14 @@
 ;;   :hook (dired-mode . (lambda () (display-line-numbers-mode -1))))
 
 ;; INHIBIT LINE NUMBERS
+;; (and company)
 
+(setq eshell-cmpl-cycle-completions t)
 (add-hook 'dired-mode-hook (lambda () (display-line-numbers-mode -1)))
-(add-hook 'eshell-mode-hook (lambda () (display-line-numbers-mode -1)))
+(add-hook 'eshell-mode-hook (lambda ()
+                              (display-line-numbers-mode -1)
+                              (company-mode -1)
+                              (setq-local global-hl-line-mode nil)))
 
 ;;;;;;;;;;;;;;;
 ;; Mode-line ;;
@@ -424,7 +429,7 @@
    "C-a" 'evil-beginning-of-line
    "C-e" 'evil-end-of-line)
   (general-define-key
-   :keymaps 'global
+   :keymaps '(global eshell-mode-map)
    "M-k" 'evil-window-up
    "M-j" 'evil-window-down
    "M-h" 'evil-window-left
@@ -583,17 +588,30 @@
   (global-tree-sitter-mode +1))
 (use-package tree-sitter-langs)
 
-(use-package typescript-mode)
+(use-package typescript-mode
+  :init
+  (setq typescript-indent-level 2
+        js-jsx-indent-level     2))
 (use-package tsi
   :load-path "~/Git/tsi.el")
 (use-package tsx-mode
   :load-path "~/Git/tsx-mode.el"
-  :mode ("\\.tsx\\'" "\\.ts\\'" "\\.jsx\\'"))
+  :mode ("\\.tsx\\'" "\\.ts\\'" "\\.jsx\\'")
+  :init
+  (setq tsx-mode-css-force-highlighting t
+        tsx-mode-gql-force-highlighting t
+        tsx-mode-tsx-auto-tags          t)
+  :general
+  ("C-c C-p" 'prettier-js))
+(use-package coverlay)
+(use-package graphql-mode
+  :mode ("\\.graphql\\'" . graphql-mode))
+
 
 (use-package prettier-js
-  :after web-mode
+  :after tsx-mode
   :config
-  (add-hook 'tsx-mode-hook 'prettier-js-mode)
+  ;; (add-hook 'tsx-mode-hook 'prettier-js-mode)
   (setq prettier-js-args '("--single-quote"   "true"
                            "--trailing-comma" "all"
                            "--prose-wrap"     "never")))
@@ -623,9 +641,6 @@
 
 ;; (use-package dhall-mode
 ;;   :mode ("\\.dhall\\'" . dhall-mode))
-
-;; (use-package graphql-mode
-;;   :mode ("\\.graphql\\'" . graphql-mode))
 
 ;; (use-package purescript-mode
 ;;   :mode ("\\.psc\\'" . purescript-mode))
@@ -735,6 +750,13 @@
 ;; Eshell ;;
 ;;;;;;;;;;;;
 
+;; (use-package eshell
+;;   :general
+;;   (:states 'insert
+;;            "TAB" 'completion-at-point))
+
+;; (use-package eshell-git-prompt)
+
 ;; NOTE: this might be a good package actually
 ;; (use-package eshell-syntax-highlighting
 ;;   :hook (eshell-mode . eshell-syntax-highlighting-mode))
@@ -746,7 +768,6 @@
 
 ;; (use-package esh-autosuggest
 ;;   :hook (eshell-mode . esh-autosuggest-mode))
-
 
 ;; (use-package mmm-mode
 ;;   :config
@@ -883,7 +904,7 @@
   (defvar company-dabbrev-ignore-case)
   (defvar company-dabbrev-code-other-buffers)
   (setq-local completion-ignore-case t)
-  (setq company-minimum-prefix-length      3 ;; responsive > cpu cycles
+  (setq company-minimum-prefix-length      1 ;; responsive > cpu cycles
         company-idle-delay                 0
         company-tooltip-limit              10
         company-tooltip-flip-when-above    t
@@ -902,11 +923,11 @@
   :config
   ;; don't persist company when switching back to normal mode
   (add-hook 'evil-normal-state-entry-hook #'company-abort)
-  (add-hook 'after-init-hook 'global-company-mode)
-  (general-define-key
-   :keymaps 'company-active-map
-   "<backtab>" 'company-select-previous ;; no back-cycle?
-   "TAB"       'company-complete-common-or-cycle))
+  (add-hook 'after-init-hook 'global-company-mode))
+  ;; (general-define-key
+  ;;  :keymaps 'company-active-map
+  ;;  "<backtab>" 'company-select-previous ;; no back-cycle?
+  ;;  "TAB"       'company-complete-common-or-cycle))
 
 ;; (use-package company-flx
 ;;   :after company
@@ -1004,7 +1025,7 @@
 ;;;;;;;;;;;;;;;;
 
 (require 'cl)
-(case system-type
+(cl-case system-type
   ('darwin (unless window-system
              (setq interprogram-cut-function
                    (lambda (text &optional push)
@@ -1041,7 +1062,7 @@
 
 (use-package doom-themes
   :config
-  (load-theme 'doom-solarized-dark t))
+  (load-theme 'doom-gruvbox t))
 
 ;; (use-package horizon-theme
 ;;   :config
@@ -1093,13 +1114,13 @@
         lsp-completion-enable                 nil
         lsp-completion-show-detail            nil
         lsp-completion-show-kind              nil
-        lsp-enable-completion-at-point        nil
+        ;; lsp-enable-completion-at-point        nil
         lsp-enable-folding                    nil
         lsp-enable-file-watchers              nil
         lsp-enable-text-document-color        nil
         lsp-semantic-tokens-enable            nil
-        lsp-enable-indentation                nil
-        lsp-enable-on-type-formatting         nil
+        lsp-enable-indentation                t
+        lsp-enable-on-type-formatting         t
         lsp-log-io                            nil
         ;; lsp-enable-semantic-highlighting      nil
         ;; lsp-flycheck-live-reporting           nil ;; was causing seizures
@@ -1109,13 +1130,15 @@
         lsp-ui-doc-show-with-cursor           nil
         lsp-ui-sideline-enable                t
         lsp-ui-sideline-ignore-duplicate      t
+        lsp-ui-sideline-show-code-actions     t
         lsp-modeline-diagnostics-enable       t
-        ;; lsp-ui-sideline-show-code-actions     nil
         lsp-enable-symbol-highlighting        t
         ;; lsp-eldoc-hook                        nil
         lsp-eldoc-enable-hover                nil
         lsp-idle-delay                        show-paren-delay
-        lsp-headerline-breadcrumb-enable      t))
+        lsp-headerline-breadcrumb-enable      t
+        ;; typescript-language-server specific
+        lsp-clients-typescript-disable-automatic-typing-acquisition t))
 
 (use-package lsp-ui
   :after lsp-mode)
@@ -1135,12 +1158,6 @@
 
 ;; (use-package lsp-ivy
 ;;   :requires lsp-mode)
-
-;; ;; So slow!
-;; (use-package company-lsp
-;;   :after lsp-mode
-;;   :config
-;;   (push 'company-lsp company-backends))
 
 ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 ;; (use-package treemacs
