@@ -1,0 +1,6 @@
+[submodule "Git/tsx-mode.el"]
+	path = Git/tsx-mode.el
+	url = https://github.com/orzechowskid/tsx-mode.el.git
+[submodule "Git/tsi.el"]
+	path = Git/tsi.el
+	url = https://github.com/orzechowskid/tsi.el.git
