@@ -13,7 +13,7 @@ export BROWSER=chromium
 export PYENV_ROOT="$HOME/.pyenv"
 export PIPENV_PYTHON="$PYENV_ROOT/shims/python"
 
-export AWS_PROFILE=main
+export AWS_PROFILE=humindex
 
 # export LSP_USE_PLISTS=true
 
