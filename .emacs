@@ -459,12 +459,13 @@
     "F" 'evilem-motion-find-char-backward
     "t" 'evilem-motion-find-char-to
     "T" 'evilem-motion-find-char-to-backward
-    "b" 'consult-buffer
-    "r" 'consult-recent-file
-    "g" 'consult-ripgrep
+    "b" 'counsel-switch-buffer
+    "r" 'counsel-recentf
+    "g" 'counsel-projectile-rg
     "o" 'consult-outline
-    "i" 'consult-imenu
-    "s" 'consult-line))
+    "i" 'counsel-imenu
+    "s" 'counsel-grep-or-swiper
+    "p" 'counsel-projectile-switch-project))
 
 ;; ;; old evil config
 ;; (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
@@ -1018,42 +1019,42 @@
 ;; Ivy ;;
 ;;;;;;;;;
 
-(use-package vertico
-  :init
-  (vertico-mode)
-  :config
-  (general-define-key
-   :keymaps 'vertico-map
-   "C-b" 'backward-kill-word))
+;; (use-package vertico
+;;   :init
+;;   (vertico-mode)
+;;   :config
+;;   (general-define-key
+;;    :keymaps 'vertico-map
+;;    "C-b" 'backward-kill-word))
 
-(use-package savehist
-  :init
-  (savehist-mode))
+;; (use-package savehist
+;;   :init
+;;   (savehist-mode))
 
-(use-package orderless
-  :init
-  ;; Configure a custom style dispatcher (see the Consult wiki)
-  ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
-  ;;       orderless-component-separator #'orderless-escapable-split-on-space)
-  (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
+;; (use-package orderless
+;;   :init
+;;   ;; Configure a custom style dispatcher (see the Consult wiki)
+;;   ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+;;   ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+;;   (setq completion-styles '(orderless basic)
+;;         completion-category-defaults nil
+;;         completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package marginalia
   :init
   (marginalia-mode))
 
-(use-package consult
-  :bind (("C-x b" . consult-buffer)
-         ("C-x C-b" . electric-buffer-list)
-         ("C-x p b" . consult-project-buffer)
-         ("C-x C-r" . consult-recent-file)
-         ("M-g g" . consult-goto-line)
-         ("M-g M-g" . consult-goto-line)
-         ("C-c C-o" . consult-outline)
-         ("C-c C-i" . consult-imenu)
-         ("C-x C-g" . consult-ripgrep)
-         ("C-s" . consult-line)))
+;; (use-package consult
+;;   :bind (("C-x C-b" . consult-buffer)
+;;          ("C-x b" . ibuffer)
+;;          ("C-x p b" . consult-project-buffer)
+;;          ("C-x C-r" . consult-recent-file)
+;;          ("M-g g" . consult-goto-line)
+;;          ("M-g M-g" . consult-goto-line)
+;;          ("C-c C-o" . consult-outline)
+;;          ("C-c C-i" . consult-imenu)
+;;          ("C-x C-g" . consult-ripgrep)
+;;          ("C-s" . consult-line)))
 
 ;;;;;;;;;;;;;
 ;; Recentf ;;
@@ -1067,83 +1068,86 @@
 ;;; Ivy + Counsel + Swiper ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (use-package counsel
-;;   :init
-;;   (let ((base-command "rg -i -M 120 --no-heading --line-number --color never %s"))
-;;     (setq counsel-rg-base-command   base-command
-;;           counsel-grep-base-command base-command))
-;;   :config
-;;   (global-set-key (kbd "M-x") 'counsel-M-x)
-;;   (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-;;   (global-set-key (kbd "C-x RET") 'counsel-evil-marks)
-;;   (global-set-key (kbd "M-y") 'counsel-yank-pop)
-;;   (global-set-key (kbd "M-p") 'counsel-evil-registers)
-;;   (global-set-key (kbd "C-x C-b") 'counsel-ibuffer)
-;;   (global-set-key (kbd "C-x C-r") 'counsel-buffer-or-recentf)
-;;   (counsel-mode +1))
+(use-package counsel
+  :init
+  (let ((base-command "rg -i -M 120 --no-heading --line-number --color never %s"))
+    (setq counsel-rg-base-command   base-command
+          counsel-grep-base-command base-command))
+  :config
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+  (global-set-key (kbd "C-x RET") 'counsel-evil-marks)
+  (global-set-key (kbd "M-y") 'counsel-yank-pop)
+  (global-set-key (kbd "M-p") 'counsel-evil-registers)
+  (global-set-key (kbd "C-x C-b") 'counsel-ibuffer)
+  (global-set-key (kbd "C-x C-r") 'counsel-buffer-or-recentf)
+  (counsel-mode +1))
 
-;; (use-package projectile
-;;   :init
-;;   (setq projectile-enable-caching t))
+(use-package projectile
+  :init
+  (setq projectile-enable-caching t))
 
-; (use-package counsel-projectile
-;;   :after projectile
-;;   :init
-;;   (setq counsel-projectile-sort-files t)
-;;   :config
-;;   (counsel-projectile-mode +1)
-;;   (general-define-key
-;;    :keymaps 'projectile-mode-map
-;;    "C-c p" 'projectile-command-map
-;;    "C-x C-j" 'counsel-projectile-find-file
-;;    "C-x C-g" 'counsel-projectile-rg))
+(use-package counsel-projectile
+  :after projectile
+  :init
+  (setq counsel-projectile-sort-files t)
+  :config
+  (counsel-projectile-mode +1)
+  (general-define-key
+   :keymaps 'projectile-mode-map
+   "C-c p" 'projectile-command-map
+   "C-x C-j" 'counsel-projectile-find-file
+   "C-x C-g" 'counsel-projectile-rg))
 
-;; (use-package ivy
-;;   :init
-;;   (setq ivy-wrap                         t
-;;         enable-recursive-minibuffers     t
-;;         projectile-completion-system     'ivy
-;;         ivy-magic-slash-non-match-action nil
-;;         ivy-on-del-error-function        #'ignore
-;;         ivy-use-virtual-buffers          t
-;;         ivy-use-selectable-prompt        t
-;;         ivy-count-format                 "[%d/%d] ")
-;;   (setf (alist-get 't ivy-format-functions-alist)
-;;         #'ivy-format-function-line)
-;;   :config
-;;   (ivy-mode +1)
-;;   (global-set-key (kbd "C-x b") 'ivy-switch-buffer)
-;;   (global-set-key (kbd "C-c v") 'ivy-push-view)
-;;   (global-set-key (kbd "C-c V") 'ivy-pop-view)
-;;   (defun ivy-resize--minibuffer-setup-hook ()
-;;     (add-hook 'post-command-hook #'ivy-resize--post-command-hook nil t))
-;;   (defun ivy-resize--post-command-hook ()
-;;     (when ivy-mode
-;;       (shrink-window (1+ ivy-height))))
-;;   (add-hook 'minibuffer-setup-hook 'ivy-resize--minibuffer-setup-hook)
-;;   (general-define-key
-;;    :keymaps 'ivy-minibuffer-map
-;;    "<ESC>" 'minibuffer-keyboard-quit
-;;    "TAB" 'ivy-alt-done
-;;    "C-l" 'ivy-call
-;;    "C-b" 'counsel-up-directory)
-;;   (general-define-key
-;;    :keymaps '(counsel-imenu-map counsel-ag-map)
-;;    "C-n" 'ivy-next-line-and-call
-;;    "C-p" 'ivy-previous-line-and-call)
-;;   (general-define-key
-;;    :keymaps '(normal insert visual)
-;;    "M-r" 'counsel-imenu))
+(use-package ivy
+  :init
+  (setq ivy-wrap                         t
+        enable-recursive-minibuffers     t
+        projectile-completion-system     'ivy
+        ivy-magic-slash-non-match-action nil
+        ivy-on-del-error-function        #'ignore
+        ivy-use-virtual-buffers          t
+        ivy-use-selectable-prompt        t
+        ivy-count-format                 "[%d/%d] ")
+  (setf (alist-get 't ivy-format-functions-alist)
+        #'ivy-format-function-line)
+  :config
+  (ivy-mode +1)
+  (global-set-key (kbd "C-x b") 'ibuffer)
+  (global-set-key (kbd "C-c v") 'ivy-push-view)
+  (global-set-key (kbd "C-c V") 'ivy-pop-view)
+
+  ;; shrink ivy window
+  ;; (defun ivy-resize--minibuffer-setup-hook ()
+  ;;   (add-hook 'post-command-hook #'ivy-resize--post-command-hook nil t))
+  ;; (defun ivy-resize--post-command-hook ()
+  ;;   (when ivy-mode
+  ;;     (shrink-window (1+ ivy-height))))
+  ;; (add-hook 'minibuffer-setup-hook 'ivy-resize--minibuffer-setup-hook)
+
+  (general-define-key
+   :keymaps 'ivy-minibuffer-map
+   "<ESC>" 'minibuffer-keyboard-quit
+   "TAB" 'ivy-alt-done
+   "C-l" 'ivy-call
+   "C-b" 'counsel-up-directory)
+  (general-define-key
+   :keymaps '(counsel-imenu-map counsel-ag-map)
+   "C-n" 'ivy-next-line-and-call
+   "C-p" 'ivy-previous-line-and-call)
+  (general-define-key
+   :keymaps '(normal insert visual)
+   "M-r" 'counsel-imenu))
 
 ;; we add this for sort-by-frequency
-;; (use-package smex)
+(use-package smex)
 
-;; (use-package swiper
-;;   :init
-;;   (setq swiper-action-recenter t)
-;;   :config
-;;   (global-set-key (kbd "C-s") 'swiper)
-;;   (global-set-key (kbd "C-x C-a") 'swiper-all))
+(use-package swiper
+  :init
+  (setq swiper-action-recenter t)
+  :config
+  (global-set-key (kbd "C-s") 'counsel-grep-or-swiper)
+  (global-set-key (kbd "C-x C-a") 'swiper-all))
 
 ;;;;;;;;;;;;;;;;
 ;; Copy/paste ;;
@@ -1232,9 +1236,7 @@
   :init
   (defvar read-process-output-max)
 
-  (advice-add #'lsp-completion--regex-fuz :override #'identity)
-  
-  (setq read-process-output-max               3145728 ;; 3mb max packet size
+  (setq read-process-output-max               3145000 ;; 3mb max packet size
         lsp-auto-guess-root                   nil
         lsp-keep-workspace-alive              nil
         lsp-keymap-prefix                     "C-l"
@@ -1269,7 +1271,7 @@
         ;; lsp-eldoc-hook                        nil
         lsp-eldoc-enable-hover                nil
         lsp-idle-delay                        show-paren-delay
-        lsp-headerline-breadcrumb-enable      nil
+        lsp-headerline-breadcrumb-enable      t
         ;; typescript-language-server specific
         lsp-clients-typescript-disable-automatic-typing-acquisition t))
 
