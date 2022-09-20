@@ -9,8 +9,11 @@
  '(eshell-cmpl-cycle-cutoff-length 20)
  '(native-comp-async-report-warnings-errors nil)
  '(package-selected-packages
-   '(auto-compile consult marginalia orderless vertico doom-themes gruvbox-theme diff-hl paradox esh-autosuggest company-lsp graphql-mode coverlay lsp-ui lsp-mode yaml-mode doom-modeline which-key use-package undo-tree typescript-mode tree-sitter-langs rjsx-mode reason-mode purescript-mode prettier-js origami no-littering json-mode horizon-theme hl-todo highlight-numbers git-timemachine general gcmh flycheck exec-path-from-shell evil-terminal-cursor-changer evil-surround evil-easymotion evil-collection evil-anzu dashboard counsel-projectile company))
- '(warning-suppress-log-types '((lsp-mode))))
+   '(lsp-ui lsp-mode corfu-quit-at-boundary straight\.el straight corfu-terminal cape corfu evilem evil-leader embark-consult embark auto-compile consult marginalia orderless vertico doom-themes gruvbox-theme diff-hl paradox esh-autosuggest company-lsp graphql-mode coverlay yaml-mode doom-modeline which-key use-package undo-tree typescript-mode tree-sitter-langs rjsx-mode reason-mode purescript-mode prettier-js origami no-littering json-mode horizon-theme hl-todo highlight-numbers git-timemachine general gcmh flycheck exec-path-from-shell evil-terminal-cursor-changer evil-surround evil-easymotion evil-collection evil-anzu dashboard counsel-projectile company))
+ '(tsx-mode-css-force-highlighting nil)
+ '(tsx-mode-gql-force-highlighting nil)
+ '(warning-suppress-log-types '((lsp-mode)))
+ '(warning-suppress-types '((use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

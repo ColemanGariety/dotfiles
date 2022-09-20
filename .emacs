@@ -441,6 +441,31 @@
    "C-q" 'delete-window)
   (evil-mode +1))
 
+(use-package evil-easymotion
+  :ensure t)
+
+(use-package evil-leader
+  :init
+  (global-evil-leader-mode)
+  :config
+  (evil-leader/set-leader "<SPC>")
+  (evil-leader/set-key
+    "e" 'find-file
+    "w" 'avy-goto-whitespace-end-below
+    "W" 'avy-goto-whitespace-end-above
+    "k" 'evilem-motion-previous-line
+    "j" 'evilem-motion-next-line
+    "f" 'evilem-motion-find-char
+    "F" 'evilem-motion-find-char-backward
+    "t" 'evilem-motion-find-char-to
+    "T" 'evilem-motion-find-char-to-backward
+    "b" 'consult-buffer
+    "r" 'consult-recent-file
+    "g" 'consult-ripgrep
+    "o" 'consult-outline
+    "i" 'consult-imenu
+    "s" 'consult-line))
+
 ;; ;; old evil config
 ;; (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
 
@@ -847,13 +872,13 @@
 (use-package avy
   :init
   (setq avy-keys       (eval-when-compile (string-to-list "jfkdls;anviroe"))
-        avy-style      'de-bruijn
+        avy-style      'at-full
         avy-background t))
 
-(use-package evil-easymotion
-  :after avy
-  :config
-  (evilem-default-keybindings "SPC"))
+;; (use-package evil-easymotion
+;;   :after avy
+;;   :config
+;;   (evilem-default-keybindings "SPC"))
 
 (use-package general)
 
@@ -898,13 +923,68 @@
 ;; Completion  ;;
 ;;;;;;;;;;;;;;;;;
 
+;; (use-package popon
+;;   :load-path "~/Git/emacs-popon")
+
+;; (use-package corfu-terminal
+;;   :load-path "~/Git/emacs-corfu-terminal"
+;;   :config
+;;   (corfu-terminal-mode +1))
+
+;; (use-package corfu
+;;   :init
+;;   (global-corfu-mode)
+;;   :config
+;;   (setq corfu-auto          t
+;;         corfu-auto-delay    0
+;;         corfu-auto-prefix   1
+;;         corfu-quit-no-match 'separator
+;;         completion-styles   '(basic)))
+
+;; (use-pack)
+
+;; (use-package cape
+;;   ;; Bind dedicated completion commands
+;;   ;; Alternative prefix keys: C-c p, M-p, M-+, ...
+;;   :bind (("C-c p p" . completion-at-point) ;; capf
+;;          ("C-c p t" . complete-tag)        ;; etags
+;;          ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
+;;          ("C-c p h" . cape-history)
+;;          ("C-c p f" . cape-file)
+;;          ("C-c p k" . cape-keyword)
+;;          ("C-c p s" . cape-symbol)
+;;          ("C-c p a" . cape-abbrev)
+;;          ("C-c p i" . cape-ispell)
+;;          ("C-c p l" . cape-line)
+;;          ("C-c p w" . cape-dict)
+;;          ("C-c p \\" . cape-tex)
+;;          ("C-c p _" . cape-tex)
+;;          ("C-c p ^" . cape-tex)
+;;          ("C-c p &" . cape-sgml)
+;;          ("C-c p r" . cape-rfc1345))
+;;   :init
+;;   ;; Add `completion-at-point-functions', used by `completion-at-point'.
+;;   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+;;   (add-to-list 'completion-at-point-functions #'cape-file)
+;;   ;;(add-to-list 'completion-at-point-functions #'cape-history)
+;;   ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
+;;   ;;(add-to-list 'completion-at-point-functions #'cape-tex)
+;;   ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
+;;   ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
+;;   ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+;;   ;;(add-to-list 'completion-at-point-functions #'cape-ispell)
+;;   ;;(add-to-list 'completion-at-point-functions #'cape-dict)
+;;   ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
+;;   ;;(add-to-list 'completion-at-point-functions #'cape-line)
+;;   )
+
 (use-package company
   :init
   (defvar company-dabbrev-downcase)
   (defvar company-dabbrev-ignore-case)
   (defvar company-dabbrev-code-other-buffers)
   (setq-local completion-ignore-case t)
-  (setq company-minimum-prefix-length      1 ;; responsive > cpu cycles
+  (setq company-minimum-prefix-length      3 ;; responsive > cpu cycles
         company-idle-delay                 0
         company-tooltip-limit              10
         company-tooltip-flip-when-above    t
@@ -923,11 +1003,11 @@
   :config
   ;; don't persist company when switching back to normal mode
   (add-hook 'evil-normal-state-entry-hook #'company-abort)
-  (add-hook 'after-init-hook 'global-company-mode))
-  ;; (general-define-key
-  ;;  :keymaps 'company-active-map
-  ;;  "<backtab>" 'company-select-previous ;; no back-cycle?
-  ;;  "TAB"       'company-complete-common-or-cycle))
+  (add-hook 'after-init-hook 'global-company-mode)
+  (general-define-key
+   :keymaps 'company-active-map
+   "RET" 'newline
+   "TAB" 'company-complete-selection))
 
 ;; (use-package company-flx
 ;;   :after company
@@ -965,14 +1045,13 @@
 
 (use-package consult
   :bind (("C-x b" . consult-buffer)
-         ("C-x C-b" . consult-buffer)
+         ("C-x C-b" . electric-buffer-list)
          ("C-x p b" . consult-project-buffer)
          ("C-x C-r" . consult-recent-file)
          ("M-g g" . consult-goto-line)
          ("M-g M-g" . consult-goto-line)
          ("C-c C-o" . consult-outline)
          ("C-c C-i" . consult-imenu)
-         ("C-x j" . consult-find)
          ("C-x C-g" . consult-ripgrep)
          ("C-s" . consult-line)))
 
@@ -1152,6 +1231,8 @@
          (lsp-mode       . lsp-enable-which-key-integration))
   :init
   (defvar read-process-output-max)
+
+  (advice-add #'lsp-completion--regex-fuz :override #'identity)
   
   (setq read-process-output-max               3145728 ;; 3mb max packet size
         lsp-auto-guess-root                   nil
@@ -1161,6 +1242,7 @@
         lsp-enable-snippet                    nil
         lsp-enable-links                      nil
         ;; lsp-completion-provider               :capf
+        lsp-completion-provider               :none
         lsp-completion-enable                 nil
         lsp-completion-show-detail            nil
         lsp-completion-show-kind              nil
@@ -1183,10 +1265,11 @@
         lsp-ui-sideline-show-code-actions     t
         lsp-modeline-diagnostics-enable       t
         lsp-enable-symbol-highlighting        t
+        lsp-use-plists                        t
         ;; lsp-eldoc-hook                        nil
         lsp-eldoc-enable-hover                nil
         lsp-idle-delay                        show-paren-delay
-        lsp-headerline-breadcrumb-enable      t
+        lsp-headerline-breadcrumb-enable      nil
         ;; typescript-language-server specific
         lsp-clients-typescript-disable-automatic-typing-acquisition t))
 

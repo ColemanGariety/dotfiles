@@ -15,8 +15,7 @@ export PIPENV_PYTHON="$PYENV_ROOT/shims/python"
 
 export AWS_PROFILE=humindex
 
-# export LSP_USE_PLISTS=true
-
+export LSP_USE_PLISTS=true
 
 PATH=$PATH:$HOME/.cargo/bin
 PATH=$PATH:$HOME/.yarn/bin
