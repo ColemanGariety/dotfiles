@@ -152,3 +152,8 @@ ZSH_HIGHLIGHT_STYLES[path]='fg=gray'
 if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv init -)"
 fi
+
+# pnpm
+export PNPM_HOME="/home/coleman/.local/share/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+# pnpm end

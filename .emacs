@@ -441,8 +441,7 @@
    "C-q" 'delete-window)
   (evil-mode +1))
 
-(use-package evil-easymotion
-  :ensure t)
+(use-package evil-easymotion)
 
 (use-package evil-leader
   :init
@@ -462,10 +461,10 @@
     "b" 'counsel-switch-buffer
     "r" 'counsel-recentf
     "g" 'counsel-projectile-rg
-    "o" 'consult-outline
     "i" 'counsel-imenu
     "s" 'counsel-grep-or-swiper
-    "p" 'counsel-projectile-switch-project))
+    "p" 'counsel-projectile-find-file
+    "o" 'other-window))
 
 ;; ;; old evil config
 ;; (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
@@ -545,19 +544,47 @@
 
 (use-package evil-collection
   :config
-  (evil-collection-init)
-  (evil-collection-define-key 'normal 'package-menu-mode-map
-   "gr" 'revert-buffer))
+  (evil-collection-init))
+  ;; (evil-collection-define-key 'normal 'package-menu-mode-map
+  ;;  "gr" 'package-refresh-contents))
 
 (use-package evil-surround
   :config
   (global-evil-surround-mode +1))
+
+;; ;; NOTE: this is a great package!
+;; ;; But I don't usually align stuff
+;; (use-package evil-lion
+;;   :config
+;;   (evil-lion-mode))
+
+;; NOTE: makes % support HTML tags
+(use-package evil-matchit
+  :config
+  (global-evil-matchit-mode +1)
+  (evilmi-load-plugin-rules '(tsx-mode) '(simple javascript html)))
+
+;; NOTE: really good package!
+(use-package evil-mc
+  :init
+  (global-evil-mc-mode +1))
 
 ;; show # of candidates in isearch
 (use-package evil-anzu
   :after evil
   :config
   (global-anzu-mode +1))
+
+;; NOTE: pretty useful I guess
+;; (use-package evil-quickscope
+;;   :init
+;;   (global-evil-quickscope-mode +1))
+
+;; NOTE: not useful enough
+;; (use-package evil-numbers
+;;   :config
+;;   (define-key evil-normal-state-map (kbd "+") 'evil-numbers/inc-at-pt)
+;;   (define-key evil-normal-state-map (kbd "-") 'evil-numbers/dec-at-pt))
 
 ;; (use-package evil-args
 ;;   :config
@@ -578,18 +605,18 @@
 ;; Auto-compie ;;
 ;;;;;;;;;;;;;;;;;
 
-(use-package auto-compile
-  :init
-  (setq auto-compile-display-buffer nil
-        auto-compile-mode-line-counter t)
-  :config
-  ;; (auto-compile-on-load-mode +1)
-  (auto-compile-on-save-mode +1)
-  (setq auto-compile-display-buffer               nil
-        auto-compile-mode-line-counter            t
-        auto-compile-source-recreate-deletes-dest t
-        auto-compile-toggle-deletes-nonlib-dest   t
-        auto-compile-update-autoloads             t))
+;; (use-package auto-compile
+;;   :init
+;;   (setq auto-compile-display-buffer nil
+;;         auto-compile-mode-line-counter t)
+;;   :config
+;;   ;; (auto-compile-on-load-mode +1)
+;;   (auto-compile-on-save-mode +1)
+;;   (setq auto-compile-display-buffer               nil
+;;         auto-compile-mode-line-counter            t
+;;         auto-compile-source-recreate-deletes-dest t
+;;         auto-compile-toggle-deletes-nonlib-dest   t
+;;         auto-compile-update-autoloads             t))
 
 ;;;;;;;;;;;;;;;
 ;; which-key ;;
@@ -1117,6 +1144,18 @@
   (global-set-key (kbd "C-c v") 'ivy-push-view)
   (global-set-key (kbd "C-c V") 'ivy-pop-view)
 
+  ;; ;; sort by exact match
+
+  (setq ivy-sort-matches-functions-alist
+        '((t)
+          (ivy-switch-buffer . ivy-sort-function-buffer)
+          (counsel-find-file . ivy--sort-by-length)))
+
+  (defun ivy--sort-by-length (_name candidates)
+    (cl-sort (copy-sequence candidates)
+             (lambda (f1 f2)
+               (< (length f1) (length f2)))))
+
   ;; shrink ivy window
   ;; (defun ivy-resize--minibuffer-setup-hook ()
   ;;   (add-hook 'post-command-hook #'ivy-resize--post-command-hook nil t))
@@ -1146,8 +1185,8 @@
   :init
   (setq swiper-action-recenter t)
   :config
-  (global-set-key (kbd "C-s") 'counsel-grep-or-swiper)
-  (global-set-key (kbd "C-x C-a") 'swiper-all))
+  (setq swiper-use-visual-line-p (lambda (n-lines) nil))
+  (global-set-key (kbd "C-s") 'counsel-grep-or-swiper))
 
 ;;;;;;;;;;;;;;;;
 ;; Copy/paste ;;
@@ -1197,6 +1236,10 @@
   :config
   (load-theme 'doom-gruvbox t))
 
+;; (use-package zenburn-theme
+;;   :config
+;;   (load-theme 'zenburn t))
+
 ;; (use-package horizon-theme
 ;;   :config
 ;;   (load-theme 'horizon t))
@@ -1221,9 +1264,9 @@
   (setq-default flycheck-temp-prefix ".flycheck"))
 
 
-;; ;;;;;;;;:
-;; ;; LSP ;;
-;; ;;;;;;;;;
+;;;;;;;;:
+;; LSP ;;
+;;;;;;;;;
 
 (use-package lsp-mode
   :commands lsp
@@ -1233,6 +1276,8 @@
          ;; psc-ide instead)
          ;; (web-mode       . lsp)
          (lsp-mode       . lsp-enable-which-key-integration))
+  :bind (("M-n" . lsp-ui-find-next-reference)
+         ("M-p" . lsp-ui-find-prev-reference))
   :init
   (defvar read-process-output-max)
 
@@ -1252,7 +1297,7 @@
         lsp-enable-folding                    nil
         lsp-enable-file-watchers              nil
         lsp-enable-text-document-color        nil
-        lsp-semantic-tokens-enable            nil
+        lsp-semantic-tokens-enable            t
         lsp-enable-indentation                t
         lsp-enable-on-type-formatting         t
         lsp-log-io                            nil
@@ -1269,7 +1314,7 @@
         lsp-enable-symbol-highlighting        t
         lsp-use-plists                        t
         ;; lsp-eldoc-hook                        nil
-        lsp-eldoc-enable-hover                nil
+        lsp-eldoc-enable-hover                t
         lsp-idle-delay                        show-paren-delay
         lsp-headerline-breadcrumb-enable      t
         ;; typescript-language-server specific
