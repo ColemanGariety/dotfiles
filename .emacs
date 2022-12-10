@@ -59,13 +59,6 @@
 (fset #'display-startup-echo-area-message #'ignore)
 (add-hook 'emacs-startup-hook (lambda () (message "")))
 
-;; (unload-feature 'tramp)
-
-;(defadvice save-buffers-kill-terminal (before update-mod-flag activate)
-	;(shell-command "emacswindow")
-                                        ;(shell-command "tmux detach"))
-
-
 ;; ANOTHER PERFORMANCE HACK
 
 (defvar my/terminal-initted nil)
@@ -216,7 +209,7 @@
 (setq-default frame-title-format '("%b"))
 
 (use-package xterm-frobs
-  :load-path "~/Git/emacs-xterm"
+  :load-path "~/git/emacs-xterm"
   :config
   (autoload 'xterm-frobs "xterm-frobs" nil t)
   (add-hook 'buffer-list-update-hook
@@ -256,7 +249,8 @@
       create-lockfiles                nil ;; no lockfiles in server mode
       apropos-do-all                  t
       auto-window-vscroll             nil
-      auto-mode-case-fold             nil)
+      auto-mode-case-fold             nil
+      standard-indent                 2)
 
 ;; Indentation
 
@@ -400,9 +394,9 @@
 ;; Evil ;;
 ;;;;;;;;;;
 
-(use-package undo-tree
-  :config
-  (global-undo-tree-mode))
+;; (use-package undo-tree
+;;   :config
+;;   (global-undo-tree-mode))
 
 (use-package evil
   :preface
@@ -410,10 +404,13 @@
         evil-cross-lines                     t
         evil-symbol-word-search              t
         evil-shift-width                     2
-        evil-undo-system                     'undo-tree
+        evil-undo-system                     'undo-redo
         evil-ex-interactive-search-highlight 'selected-window)
   (setq-default evil-kill-on-visual-paste nil) ;; doesn't work :(
   :config
+  ;; prevent RSI and over-use of control key
+  (define-key evil-motion-state-map (kbd "C-f") nil)
+  (define-key evil-motion-state-map (kbd "C-b") nil)
   (general-define-key
    :keymaps '(normal motion)
    "<remap> <evil-next-line>" 'evil-next-visual-line
@@ -426,22 +423,27 @@
    ;; "C-j" 'move-line-or-region          ;; to mess up
    "C-n" 'evil-next-line
    "C-p" 'evil-previous-line
-   "C-a" 'evil-beginning-of-line
-   "C-e" 'evil-end-of-line)
-  (general-define-key
-   :keymaps '(global eshell-mode-map)
-   "M-k" 'evil-window-up
-   "M-j" 'evil-window-down
-   "M-h" 'evil-window-left
-   "M-l" 'evil-window-right
-   "M-K" 'evil-window-split
-   "M-J" 'evil-window-split
-   "M-H" 'evil-window-vsplit
-   "M-L" 'evil-window-vsplit
-   "C-q" 'delete-window)
+   "C-e" 'evil-end-of-line
+  ;; "C-a" 'evil-beginning-of-line
+   "C-f" 'evil-scroll-page-down
+   "C-b" 'evil-scroll-page-up)          ;
+   ;; NOTE: trying to mitigate pinky strain
+   ;; "C-a" 'evil-beginning-of-line
+   ;; "C-e" 'evil-end-of-line)
+  ;; (general-define-key
+  ;;  :keymaps '(global)
+  ;;  "M-k" 'evil-window-up
+  ;;  "M-j" 'evil-window-down
+  ;;  "M-h" 'evil-window-left
+  ;;  "M-l" 'evil-window-right
+  ;;  "M-K" 'evil-window-split
+  ;;  "M-J" 'evil-window-split
+  ;;  "M-H" 'evil-window-vsplit
+  ;;  "M-L" 'evil-window-vsplit)
+  ;; (general-define-key
+  ;;  :keymaps '(counsel-mode-map)
+  ;;  "M-n" 'keyboard-quit)
   (evil-mode +1))
-
-(use-package evil-easymotion)
 
 (use-package evil-leader
   :init
@@ -458,13 +460,26 @@
     "F" 'evilem-motion-find-char-backward
     "t" 'evilem-motion-find-char-to
     "T" 'evilem-motion-find-char-to-backward
-    "b" 'counsel-switch-buffer
+    "b" 'counsel-ibuffer
     "r" 'counsel-recentf
-    "g" 'counsel-projectile-rg
+    "g" 'keyboard-quit
+    "/" 'counsel-projectile-rg
     "i" 'counsel-imenu
     "s" 'counsel-grep-or-swiper
     "p" 'counsel-projectile-find-file
-    "o" 'other-window))
+    "o" 'other-window
+    "c" 'comment-dwim
+    "x" 'counsel-M-x
+    "3" 'split-window-right
+    "2" 'split-window-below
+    "0" 'delete-window
+    ))
+
+(use-package evil-easymotion)
+
+(use-package evil-commentary
+  :init
+  (evil-commentary-mode))
 
 ;; ;; old evil config
 ;; (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
@@ -510,7 +525,7 @@
 
 ;; ;; couldn't get it to work I think
 ;; (use-package rotate-text
-;;   :load-path "~/Git/rotate-text.el"
+;;   :load-path "~/git/rotate-text.el"
 ;;   :init
 ;;   (autoload 'rotate-text "rotate-text" nil t)
 ;;   (autoload 'rotate-text-backward "rotate-text" nil t)
@@ -525,7 +540,7 @@
 
 ;; ;; just don't know how to work it
 ;; (use-package targets
-;;   :load-path "~/Git/targets.el/targets.el"
+;;   :load-path "~/git/targets.el/targets.el"
 ;;   :init
 ;;   (setq targets-user-text-objects '((pipe "|" nil separator)
 ;;                                     (paren "(" ")" pair :more-keys "b")
@@ -641,25 +656,22 @@
   (global-tree-sitter-mode +1))
 (use-package tree-sitter-langs)
 
-(use-package typescript-mode
-  :init
-  (setq typescript-indent-level 2
-        js-jsx-indent-level     2))
+;; (use-package typescript-mode
+;;   :init
+;;   (setq typescript-indent-level 2
+;;         js-jsx-indent-level     2))
 (use-package tsi
-  :load-path "~/Git/tsi.el")
+  :load-path "~/git/tsi.el")
 (use-package tsx-mode
-  :load-path "~/Git/tsx-mode.el"
-  :mode ("\\.tsx\\'" "\\.ts\\'" "\\.jsx\\'")
+  :load-path "~/git/tsx-mode.el"
+  :mode ("\\.tsx\\'" "\\.ts\\'" "\\.jsx\\'" "\\.js\\'")
   :init
   (setq tsx-mode-css-force-highlighting t
         tsx-mode-gql-force-highlighting t
-        tsx-mode-tsx-auto-tags          t)
-  :general
-  ("C-c C-p" 'prettier-js))
+        tsx-mode-tsx-auto-tags          t))
 (use-package coverlay)
 (use-package graphql-mode
   :mode ("\\.graphql\\'" . graphql-mode))
-
 
 (use-package prettier-js
   :after tsx-mode
@@ -667,7 +679,8 @@
   ;; (add-hook 'tsx-mode-hook 'prettier-js-mode)
   (setq prettier-js-args '("--single-quote"   "true"
                            "--trailing-comma" "all"
-                           "--prose-wrap"     "never")))
+                           "--prose-wrap"     "never"
+                           "--tab-width"      "2")))
 
 ;;:;;;;;;;;;;;;;;;;;;
 ;; Misc. Languages ;;
@@ -682,6 +695,11 @@
 ;; (use-package gitignore-mode
 ;;   :mode ("\\.gitignore\\'" . gitignore-mode))
 
+;; (use-package terraform-mode
+;;   :mode ("\\.tf\\'" . terraform-mode)
+;;   :init
+;;   (setq json-reformat:indent-width 2))
+
 (use-package json-mode
   :mode ("\\.json\\'" . json-mode)
   :init
@@ -689,6 +707,9 @@
 
 (use-package yaml-mode
   :mode ("\\.yml\\'" . yaml-mode))
+
+(use-package go-mode
+  :mode ("\\.go\\'" . go-mode))
 
 ;; (add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
 
@@ -728,7 +749,7 @@
 
 ;; (use-package tsx-mode
 ;;   :after tsi-typescript
-;;   :load-path "~/Git/tsx-mode.el/"
+;;   :load-path "~/git/tsx-mode.el/"
 ;;   :mode (("\\.tsx\\'"  . tsx-mode)
 ;;          ("\\.ts\\'"  . tsx-mode)))
 
@@ -952,10 +973,10 @@
 ;;;;;;;;;;;;;;;;;
 
 ;; (use-package popon
-;;   :load-path "~/Git/emacs-popon")
+;;   :load-path "~/git/emacs-popon")
 
 ;; (use-package corfu-terminal
-;;   :load-path "~/Git/emacs-corfu-terminal"
+;;   :load-path "~/git/emacs-corfu-terminal"
 ;;   :config
 ;;   (corfu-terminal-mode +1))
 
@@ -1014,9 +1035,11 @@
   (setq-local completion-ignore-case t)
   (setq company-minimum-prefix-length      3 ;; responsive > cpu cycles
         company-idle-delay                 0
+        company-tooltip-idle-delay         0
         company-tooltip-limit              10
         company-tooltip-flip-when-above    t
         company-tooltip-align-annotations  t
+        company-selection-wrap-around      t
         ;; none of these work O_o
         completion-ignore-case             t
         company-dabbrev-code-ignore-case   t
@@ -1034,6 +1057,8 @@
   (add-hook 'after-init-hook 'global-company-mode)
   (general-define-key
    :keymaps 'company-active-map
+   "C-n" 'company-select-next
+   "C-p" 'company-select-previous
    "RET" 'newline
    "TAB" 'company-complete-selection))
 
@@ -1042,9 +1067,9 @@
 ;;   :config
 ;;   (company-flx-mode +1))
 
-;;;;;;;;;
-;; Ivy ;;
-;;;;;;;;;
+;;;;;;;;;;;;;
+;; Vertico ;;
+;;;;;;;;;;;;;
 
 ;; (use-package vertico
 ;;   :init
@@ -1101,13 +1126,13 @@
     (setq counsel-rg-base-command   base-command
           counsel-grep-base-command base-command))
   :config
-  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (global-set-key (kbd "C-s") 'counsel-grep-or-swiper)
   (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-  (global-set-key (kbd "C-x RET") 'counsel-evil-marks)
+  (global-set-key (kbd "C-x RET") 'counsel-evil-marks) ;
   (global-set-key (kbd "M-y") 'counsel-yank-pop)
   (global-set-key (kbd "M-p") 'counsel-evil-registers)
   (global-set-key (kbd "C-x C-b") 'counsel-ibuffer)
-  (global-set-key (kbd "C-x C-r") 'counsel-buffer-or-recentf)
+  (global-set-key (kbd "C-x C-r") 'counsel-buffer-or-recentf) ;
   (counsel-mode +1))
 
 (use-package projectile
@@ -1120,11 +1145,12 @@
   (setq counsel-projectile-sort-files t)
   :config
   (counsel-projectile-mode +1)
-  (general-define-key
-   :keymaps 'projectile-mode-map
-   "C-c p" 'projectile-command-map
-   "C-x C-j" 'counsel-projectile-find-file
-   "C-x C-g" 'counsel-projectile-rg))
+  ;; (general-define-key
+  ;;  :keymaps 'projectile-mode-map
+  ;;  "C-c p" 'projectile-command-map
+  ;;  "C-x C-j" 'counsel-projectile-find-file
+  ;;  "C-x C-g" 'counsel-projectile-rg)
+  )
 
 (use-package ivy
   :init
@@ -1140,9 +1166,9 @@
         #'ivy-format-function-line)
   :config
   (ivy-mode +1)
-  (global-set-key (kbd "C-x b") 'ibuffer)
-  (global-set-key (kbd "C-c v") 'ivy-push-view)
-  (global-set-key (kbd "C-c V") 'ivy-pop-view)
+  ;; (global-set-key (kbd "C-x b") 'ibuffer)
+  ;; (global-set-key (kbd "C-c v") 'ivy-push-view)
+  ;; (global-set-key (kbd "C-c V") 'ivy-pop-view)
 
   ;; ;; sort by exact match
 
@@ -1163,13 +1189,18 @@
   ;;   (when ivy-mode
   ;;     (shrink-window (1+ ivy-height))))
   ;; (add-hook 'minibuffer-setup-hook 'ivy-resize--minibuffer-setup-hook)
-
+  (general-define-key
+   :keymaps 'ivy-mode-map
+   "M-n" 'ivy-next-line
+   "M-p" 'ivy-previous-line
+   "C-b" 'counsel-up-directory
+   "C-l" 'ivy-call)
   (general-define-key
    :keymaps 'ivy-minibuffer-map
    "<ESC>" 'minibuffer-keyboard-quit
    "TAB" 'ivy-alt-done
-   "C-l" 'ivy-call
-   "C-b" 'counsel-up-directory)
+   "M-n" 'ivy-next-line
+   "M-p" 'ivy-previous-line)
   (general-define-key
    :keymaps '(counsel-imenu-map counsel-ag-map)
    "C-n" 'ivy-next-line-and-call
@@ -1185,8 +1216,7 @@
   :init
   (setq swiper-action-recenter t)
   :config
-  (setq swiper-use-visual-line-p (lambda (n-lines) nil))
-  (global-set-key (kbd "C-s") 'counsel-grep-or-swiper))
+  (setq swiper-use-visual-line-p (lambda (n-lines) nil)))
 
 ;;;;;;;;;;;;;;;;
 ;; Copy/paste ;;
@@ -1276,8 +1306,8 @@
          ;; psc-ide instead)
          ;; (web-mode       . lsp)
          (lsp-mode       . lsp-enable-which-key-integration))
-  :bind (("M-n" . lsp-ui-find-next-reference)
-         ("M-p" . lsp-ui-find-prev-reference))
+  ;; :bind (("M-n" . lsp-ui-find-next-reference)
+  ;;        ("M-p" . lsp-ui-find-prev-reference))
   :init
   (defvar read-process-output-max)
 
@@ -1296,10 +1326,11 @@
         ;; lsp-enable-completion-at-point        nil
         lsp-enable-folding                    nil
         lsp-enable-file-watchers              nil
-        lsp-enable-text-document-color        nil
-        lsp-semantic-tokens-enable            t
         lsp-enable-indentation                t
         lsp-enable-on-type-formatting         t
+        lsp-enable-text-document-color        t
+        lsp-enable-symbol-highlighting        t
+        lsp-semantic-tokens-enable            nil
         lsp-log-io                            nil
         ;; lsp-enable-semantic-highlighting      nil
         ;; lsp-flycheck-live-reporting           nil ;; was causing seizures
@@ -1311,7 +1342,6 @@
         lsp-ui-sideline-ignore-duplicate      t
         lsp-ui-sideline-show-code-actions     t
         lsp-modeline-diagnostics-enable       t
-        lsp-enable-symbol-highlighting        t
         lsp-use-plists                        t
         ;; lsp-eldoc-hook                        nil
         lsp-eldoc-enable-hover                t

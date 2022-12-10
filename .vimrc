@@ -54,8 +54,8 @@ set foldmethod=marker
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
-nnoremap <SPACE> <Nop>
-let mapleader = " "
+" nnoremap <SPACE> <Nop>
+let mapleader = ","
 
 " :W sudo saves the file
 " (useful for handling the permission-denied error)

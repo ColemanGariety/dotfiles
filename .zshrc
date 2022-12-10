@@ -157,3 +157,10 @@ fi
 export PNPM_HOME="/home/coleman/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
+
+###########
+# vi mode #
+###########
+
+# source $HOME/.zsh/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+# bindkey -v

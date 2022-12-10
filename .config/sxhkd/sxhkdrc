@@ -1,14 +1,8 @@
-alt + Return
+control + Return
 	kitty --single-instance
 
-super + space
+alt + space
 	rofi -show run -font "consolas 20"
-
-super + Escape
-  ~/.bin/screenshot
-
-super + Return
-	killall karmen
 
 alt + super + k
   amixer set 'Master' 5%+

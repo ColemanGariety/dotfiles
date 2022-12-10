@@ -1,4 +1,5 @@
-setxkbmap -option 'altwin:swap_alt_win,compose:ralt'
+# setxkbmap -option 'caps:escape' # for Kinesis Advantage2
+setxkbmap -option 'altwin:ctrl_win,caps:escape' # for HHKB # ctrl:swapcaps
 xrdb ~/.Xresources
 xsetroot -xcf /usr/share/icons/Adwaita/cursors/left_ptr 32
 xset r rate 200 50
